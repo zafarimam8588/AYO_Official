@@ -4,7 +4,6 @@ import { Mail, Phone, MapPin } from "lucide-react";
 import { FaFacebookF } from "react-icons/fa6";
 import { CiTwitter, CiLinkedin, CiYoutube } from "react-icons/ci";
 import { FaInstagram } from "react-icons/fa";
-import { ShineBorder } from "../magicui/shine-border";
 
 const Footer = () => {
   return (

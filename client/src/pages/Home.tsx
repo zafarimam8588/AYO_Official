@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Heart, Users, Globe, Star, CheckCircle, Award } from "lucide-react";
+import { Heart, Users, Globe, CheckCircle, Award } from "lucide-react";
 const Home = () => {
   return (
     <>
