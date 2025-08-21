@@ -5,7 +5,7 @@ export const VolunteerBtn = ({ classStyle }: { classStyle: string }) => {
   return (
     <RainbowButton variant="outline" className={classStyle}>
       <Users className="h-3 w-3 mr-1" />
-      Become a Volunteer
+      Become a Member
     </RainbowButton>
   );
 };

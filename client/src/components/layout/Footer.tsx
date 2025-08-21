@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { Mail, Phone, MapPin } from "lucide-react";
 import { FaFacebookF } from "react-icons/fa6";
 import { CiTwitter, CiLinkedin, CiYoutube } from "react-icons/ci";
@@ -18,19 +17,24 @@ const Footer = () => {
           preserveAspectRatio="none"
         >
           <defs>
+            {/* Soft tricolor gradients with light opacity */}
             <linearGradient id="wave1" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#a8e6cf" stopOpacity="0.2" />
-              <stop offset="100%" stopColor="#56ab91" stopOpacity="0.3" />
+              <stop offset="0%" stopColor="#F59E0B" stopOpacity="0.15" />{" "}
+              {/* saffron */}
+              <stop offset="100%" stopColor="#10B981" stopOpacity="0.22" />{" "}
+              {/* green */}
             </linearGradient>
 
             <linearGradient id="wave2" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#b2f7ef" stopOpacity="0.25" />
-              <stop offset="100%" stopColor="#3ddc84" stopOpacity="0.35" />
+              <stop offset="0%" stopColor="#FDBA74" stopOpacity="0.18" />{" "}
+              {/* light saffron */}
+              <stop offset="100%" stopColor="#86EFAC" stopOpacity="0.26" />{" "}
+              {/* light green */}
             </linearGradient>
 
             <linearGradient id="wave3" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#76c893" stopOpacity="0.2" />
-              <stop offset="100%" stopColor="#1e5631" stopOpacity="0.3" />
+              <stop offset="0%" stopColor="#FB923C" stopOpacity="0.14" />
+              <stop offset="100%" stopColor="#34D399" stopOpacity="0.22" />
             </linearGradient>
           </defs>
 
@@ -51,28 +55,6 @@ const Footer = () => {
 
       <div className="relative z-10 container mx-auto px-6 py-6">
         {/* Newsletter Section */}
-        <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-3xl p-8 mb-12 border border-blue-100">
-          <div className="text-center max-w-2xl mx-auto">
-            <h3 className="text-2xl font-bold text-gray-800 mb-3">
-              Stay in the loop
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Get the latest updates, tips, and exclusive content delivered to
-              your inbox.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-4 py-3 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-
-              <Button className="bg-gradient-to-r from-green-400 to-teal-500 hover:from-green-500 hover:to-teal-600 text-white px-6 py-3 rounded-full whitespace-nowrap transition-all duration-300">
-                Subscribe
-              </Button>
-            </div>
-          </div>
-        </div>
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
@@ -89,7 +71,7 @@ const Footer = () => {
             </div>
             <div className="space-y-3">
               <div className="flex items-center gap-3 text-gray-600">
-                <Mail className="w-5 h-5 text-blue-500" />
+                <Mail className="w-5 h-5 text-orange-500" />
                 <span>hello@landingfolio.com</span>
               </div>
               <div className="flex items-center gap-3 text-gray-600">
@@ -97,7 +79,7 @@ const Footer = () => {
                 <span>+1 (555) 123-4567</span>
               </div>
               <div className="flex items-center gap-3 text-gray-600">
-                <MapPin className="w-5 h-5 text-red-500" />
+                <MapPin className="w-5 h-5 text-orange-400" />
                 <span>San Francisco, CA</span>
               </div>
             </div>
@@ -117,7 +99,7 @@ const Footer = () => {
                 <Link
                   key={item}
                   to="#"
-                  className="text-gray-600 hover:text-blue-600 transition-colors duration-200 hover:translate-x-1 transform"
+                  className="text-gray-600 hover:text-orange-600 transition-colors duration-200 hover:translate-x-1 transform"
                 >
                   {item}
                 </Link>
@@ -139,7 +121,7 @@ const Footer = () => {
                 <Link
                   key={item}
                   to="#"
-                  className="text-gray-600 hover:text-purple-600 transition-colors duration-200 hover:translate-x-1 transform"
+                  className="text-gray-600 hover:text-green-600 transition-colors duration-200 hover:translate-x-1 transform"
                 >
                   {item}
                 </Link>
@@ -161,7 +143,7 @@ const Footer = () => {
                 <Link
                   key={item}
                   to="#"
-                  className="text-gray-600 hover:text-pink-600 transition-colors duration-200 hover:translate-x-1 transform"
+                  className="text-gray-600 hover:text-orange-600 transition-colors duration-200 hover:translate-x-1 transform"
                 >
                   {item}
                 </Link>
@@ -182,27 +164,27 @@ const Footer = () => {
               {[
                 {
                   icon: CiTwitter,
-                  color: "hover:bg-blue-500",
+                  color: "hover:bg-orange-500",
                   name: "Twitter",
                 },
                 {
                   icon: FaFacebookF,
-                  color: "hover:bg-blue-600",
+                  color: "hover:bg-orange-600",
                   name: "Facebook",
                 },
                 {
                   icon: FaInstagram,
-                  color: "hover:bg-pink-500",
+                  color: "hover:bg-green-500",
                   name: "Instagram",
                 },
                 {
                   icon: CiLinkedin,
-                  color: "hover:bg-blue-700",
+                  color: "hover:bg-green-600",
                   name: "LinkedIn",
                 },
                 {
                   icon: CiYoutube,
-                  color: "hover:bg-red-500",
+                  color: "hover:bg-orange-500",
                   name: "YouTube",
                 },
               ].map(({ icon: Icon, color, name }) => (
@@ -218,6 +200,9 @@ const Footer = () => {
             </div>
           </div>
         </div>
+
+        {/* Subtle tricolor separator at very bottom */}
+        <div className="mt-6 h-0.5 w-full bg-gradient-to-r from-orange-200 via-gray-100 to-green-200 rounded-full" />
       </div>
     </footer>
   );

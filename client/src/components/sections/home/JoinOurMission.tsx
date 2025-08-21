@@ -1,105 +1,114 @@
 import { VolunteerBtn, DonateBtn } from "@/components/misc/Buttons";
-import { Phone, Mail, Star, Zap, Shield, Target } from "lucide-react";
+import { Phone, Mail, Users, BookOpen, Heart, Droplets } from "lucide-react";
 
 const JoinOurMission = () => {
   return (
-    <div className="relative min-h-screen bg-slate-900 text-white overflow-hidden">
-      {/* Green Tech Background */}
-      <div className="absolute inset-0">
-        {/* Digital Elements */}
-        <div className="absolute top-10 left-20 w-2 h-2 bg-green-300"></div>
-        <div className="absolute top-32 right-40 w-1 h-1 bg-emerald-300"></div>
-        <div className="absolute top-60 left-1/3 w-1.5 h-1.5 bg-lime-300"></div>
-        <div className="absolute bottom-40 right-20 w-2 h-2 bg-green-400"></div>
-
-        {/* Green Glow Effects */}
-        <div className="absolute top-0 left-0 w-full h-full">
-          <div className="absolute top-20 -left-20 w-96 h-96 bg-green-500/10 blur-3xl"></div>
-          <div className="absolute bottom-20 -right-20 w-80 h-80 bg-emerald-500/10 blur-3xl"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-lime-500/10 blur-3xl"></div>
+    <div className="relative min-h-screen bg-gradient-to-br from-orange-50 via-white to-green-50 text-slate-800 overflow-hidden">
+      {/* Subtle Background Pattern */}
+      <div className="absolute inset-0 pointer-events-none">
+        {/* Subtle geometric pattern */}
+        <div className="absolute inset-0 opacity-[0.03]">
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `radial-gradient(circle at 25% 25%, #FF9933 2px, transparent 2px),
+                             radial-gradient(circle at 75% 75%, #138808 2px, transparent 2px)`,
+              backgroundSize: "50px 50px",
+            }}
+          />
         </div>
 
-        {/* Grid Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="grid grid-cols-12 gap-4 h-full">
-            {Array.from({ length: 48 }).map((_, i) => (
-              <div key={i} className="border border-green-400/20"></div>
-            ))}
-          </div>
-        </div>
+        {/* Moving dots animation */}
+        <div className="absolute top-10 left-10 w-3 h-3 bg-orange-400 rounded-full animate-ping" />
+        <div
+          className="absolute top-32 right-16 w-2 h-2 bg-green-500 rounded-full animate-ping"
+          style={{ animationDelay: "1s" }}
+        />
+        <div
+          className="absolute bottom-20 right-10 w-3 h-3 bg-orange-400 rounded-full animate-ping"
+          style={{ animationDelay: "3s" }}
+        />
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 py-20">
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
         {/* Header Section */}
-        <div className="text-center mb-20">
+        <div className="text-center mb-10 sm:mb-16">
           {/* Mission Badge */}
-          <div className="inline-flex items-center gap-3 bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-400/30 px-8 py-3 mb-8 backdrop-blur-sm">
-            <Zap className="h-5 w-5 text-green-300" />
-            <span className="text-green-300 font-semibold text-lg">
-              MISSION ACTIVE
+          <div className="inline-flex items-center gap-2 sm:gap-3 bg-white/80 border border-orange-200 px-4 sm:px-6 py-2 sm:py-3 rounded-full shadow-lg backdrop-blur">
+            <Heart className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600" />
+            <span className="bg-gradient-to-r from-orange-600 to-green-600 bg-clip-text text-transparent font-bold text-sm sm:text-base tracking-wide">
+              SERVING BIHAR
             </span>
-            <div className="w-3 h-3 bg-green-400"></div>
+            <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-green-600 animate-pulse" />
           </div>
 
-          {/* Title with Green Tech Style */}
-          <h1 className="text-7xl md:text-8xl font-black mb-6 leading-none">
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-emerald-400 to-lime-400">
-              JOIN THE
+          {/* Title */}
+          <h1 className="mt-6 text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight">
+            <span className="block bg-gradient-to-r from-orange-600 via-slate-800 to-green-600 bg-clip-text text-transparent">
+              BIHAR'S
             </span>
-            <span className="block relative">
-              <span className="text-white">REVOLUTION</span>
-              <div className="absolute inset-0 text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400">
-                REVOLUTION
-              </div>
+            <span className="block relative mt-2">
+              <span className="bg-gradient-to-r from-orange-500 to-green-600 bg-clip-text text-transparent">
+                YOUTH POWER
+              </span>
+              <span className="absolute inset-0 bg-gradient-to-r from-orange-300 to-green-300 bg-clip-text text-transparent opacity-30 blur-sm">
+                YOUTH POWER
+              </span>
             </span>
           </h1>
 
-          {/* Terminal Text Effect */}
-          <div className="text-2xl md:text-3xl text-gray-300 mb-8 font-mono">
-            <span className="inline-block">&gt; CHANGING_LIVES.exe</span>
-            <span className="text-green-400 ml-2">█</span>
+          {/* Subtitle */}
+          <div className="mt-4 text-lg sm:text-xl text-slate-600 font-medium">
+            <span className="inline-block">Azad Youth Organisation</span>
+            <span className="text-orange-600 ml-2 animate-pulse">●</span>
           </div>
         </div>
 
-        {/* Stats Dashboard */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
-          <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-green-400/30 p-6 backdrop-blur-sm hover:scale-105 transition-transform duration-300">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-green-500">
-                <Target className="h-8 w-8 text-white" />
+        {/* Impact Stats */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-12 sm:mb-16">
+          <div className="bg-white/70 backdrop-blur border border-orange-200 p-5 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 shadow-md">
+                <Users className="h-6 w-6 text-white" />
               </div>
               <div>
-                <div className="text-3xl font-bold text-green-400">15,000+</div>
-                <div className="text-gray-400 text-sm uppercase tracking-wide">
-                  Lives Impacted
+                <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-orange-600 to-orange-700 bg-clip-text text-transparent">
+                  25,000+
+                </div>
+                <div className="text-slate-600 text-xs sm:text-sm font-medium">
+                  Lives Transformed
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-emerald-500/10 to-lime-500/10 border border-emerald-400/30 p-6 backdrop-blur-sm hover:scale-105 transition-transform duration-300">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-emerald-500">
-                <Shield className="h-8 w-8 text-white" />
+          <div className="bg-white/70 backdrop-blur border border-slate-200 p-5 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-xl bg-gradient-to-br from-slate-600 to-slate-700 shadow-md">
+                <BookOpen className="h-6 w-6 text-white" />
               </div>
               <div>
-                <div className="text-3xl font-bold text-emerald-400">100+</div>
-                <div className="text-gray-400 text-sm uppercase tracking-wide">
-                  Projects Active
+                <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-slate-700 to-slate-800 bg-clip-text text-transparent">
+                  150+
+                </div>
+                <div className="text-slate-600 text-xs sm:text-sm font-medium">
+                  Education Centers
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-lime-500/10 to-green-500/10 border border-lime-400/30 p-6 backdrop-blur-sm hover:scale-105 transition-transform duration-300">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-lime-500">
-                <Star className="h-8 w-8 text-white" />
+          <div className="bg-white/70 backdrop-blur border border-green-200 p-5 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-xl bg-gradient-to-br from-green-500 to-green-600 shadow-md">
+                <Droplets className="h-6 w-6 text-white" />
               </div>
               <div>
-                <div className="text-3xl font-bold text-lime-400">5-Star</div>
-                <div className="text-gray-400 text-sm uppercase tracking-wide">
-                  Impact Rating
+                <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent">
+                  500+
+                </div>
+                <div className="text-slate-600 text-xs sm:text-sm font-medium">
+                  Villages Served
                 </div>
               </div>
             </div>
@@ -107,114 +116,120 @@ const JoinOurMission = () => {
         </div>
 
         {/* Mission Statement */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-12 sm:mb-16">
           <div className="max-w-4xl mx-auto">
-            <p className="text-xl md:text-2xl text-gray-300 leading-relaxed mb-8">
-              Step into the future of humanitarian work. Where technology meets
-              compassion, and every action creates a{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400 font-bold">
-                ripple effect
-              </span>{" "}
-              across communities worldwide.
+            <p className="text-base sm:text-lg md:text-xl text-slate-700 leading-relaxed mb-8">
+              From villages to cities across Bihar, we empower youth through
+              education, healthcare, and employment. Together, we are building
+              <span className="bg-gradient-to-r from-orange-600 to-green-600 bg-clip-text text-transparent font-bold mx-2">
+                a new Bihar
+              </span>
+              where every young person has the opportunity to thrive and
+              contribute to their community.
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
-              <div className="bg-slate-800/50 border border-slate-700 p-6 backdrop-blur-sm">
-                <h3 className="text-green-400 font-bold text-lg mb-3 flex items-center gap-2">
-                  <Zap className="h-5 w-5" />
-                  VOLUNTEER PROTOCOL
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+              <div className="bg-white/80 backdrop-blur border border-orange-200 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
+                <h3 className="bg-gradient-to-r from-orange-600 to-orange-700 bg-clip-text text-transparent font-bold text-lg mb-3 flex items-center gap-3">
+                  <Heart className="h-6 w-6 text-orange-600" />
+                  Become a Volunteer
                 </h3>
-                <p className="text-gray-400">
-                  Join our elite team of change-makers. Deploy your skills where
-                  they matter most. Real impact, real results.
+                <p className="text-slate-700 text-sm leading-relaxed">
+                  Join our mission in education, healthcare, and community
+                  development. Make a real difference in Bihar's rural areas and
+                  urban communities.
                 </p>
               </div>
 
-              <div className="bg-slate-800/50 border border-slate-700 p-6 backdrop-blur-sm">
-                <h3 className="text-emerald-400 font-bold text-lg mb-3 flex items-center gap-2">
-                  <Shield className="h-5 w-5" />
-                  DONATION SYSTEM
+              <div className="bg-white/80 backdrop-blur border border-green-200 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
+                <h3 className="bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent font-bold text-lg mb-3 flex items-center gap-3">
+                  <Droplets className="h-6 w-6 text-green-600" />
+                  Support Our Cause
                 </h3>
-                <p className="text-gray-400">
-                  Fuel the mission with transparent, trackable contributions.
-                  Watch your impact multiply across our global network.
+                <p className="text-slate-700 text-sm leading-relaxed">
+                  Through transparent and effective donations, help improve
+                  education and healthcare services for underprivileged children
+                  and families.
                 </p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Action Buttons - Green Tech Style */}
-        <div className="text-center mb-16">
-          <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">
-            <div className="relative group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-green-500 to-emerald-500 blur opacity-60 group-hover:opacity-100 transition duration-300"></div>
-              <div className="relative">
-                <VolunteerBtn classStyle="bg-slate-800 border-2 border-green-400 text-green-400 hover:bg-green-400 hover:text-slate-900 transform hover:scale-110 transition-all duration-300 font-bold text-lg px-8 py-4 uppercase tracking-wide" />
-              </div>
-            </div>
-
-            <div className="relative group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-lime-500 blur opacity-60 group-hover:opacity-100 transition duration-300"></div>
-              <div className="relative">
-                <DonateBtn classStyle="bg-slate-800 border-2 border-emerald-400 text-emerald-400 hover:bg-emerald-400 hover:text-slate-900 transform hover:scale-110 transition-all duration-300 font-bold text-lg px-8 py-4 uppercase tracking-wide" />
-              </div>
-            </div>
+        {/* Action Buttons */}
+        <div className="text-center mb-12 sm:mb-16">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            {/* Volunteer */}
+            <VolunteerBtn classStyle="my-2  justify-center" />
+            <DonateBtn classStyle="my-2  justify-center" />
           </div>
         </div>
 
-        {/* Contact Terminal */}
+        {/* Contact Section */}
         <div className="max-w-2xl mx-auto">
-          <div className="bg-slate-900 border border-slate-600 overflow-hidden shadow-2xl">
-            {/* Terminal Header */}
-            <div className="bg-slate-800 px-4 py-3 flex items-center gap-2">
-              <div className="w-3 h-3 bg-red-500"></div>
-              <div className="w-3 h-3 bg-yellow-500"></div>
-              <div className="w-3 h-3 bg-green-500"></div>
-              <span className="ml-4 text-gray-400 text-sm font-mono">
-                contact_terminal_v2.4
-              </span>
+          <div className="bg-white/90 backdrop-blur border border-orange-200 rounded-3xl overflow-hidden shadow-2xl">
+            {/* Header with tricolor */}
+            <div className="bg-gradient-to-r from-orange-500 via-white to-green-500 px-6 py-4">
+              <div className="flex items-center justify-center gap-2">
+                <div className="w-4 h-4 bg-orange-600 rounded-full animate-pulse" />
+                <span className="text-slate-800 font-bold text-lg">
+                  Contact Center
+                </span>
+                <div className="w-4 h-4 bg-green-600 rounded-full animate-pulse" />
+              </div>
             </div>
 
-            {/* Terminal Content */}
-            <div className="p-6 font-mono">
-              <div className="text-green-400 mb-4">
-                <span>$</span> ./connect_to_mission.sh
+            {/* Contact Content */}
+            <div className="p-8">
+              <div className="text-center mb-6">
+                <h3 className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-green-600 bg-clip-text text-transparent">
+                  Get In Touch
+                </h3>
+                <p className="text-slate-600 mt-2">
+                  Ready to make a difference in Bihar?
+                </p>
               </div>
 
               <div className="space-y-4">
-                <div className="flex items-center gap-4 p-4 bg-slate-800/50 hover:bg-slate-800 transition-colors cursor-pointer group">
-                  <div className="p-2 bg-green-600 group-hover:scale-110 transition-transform">
-                    <Phone className="h-5 w-5 text-white" />
+                <div className="flex items-center gap-4 p-5 bg-gradient-to-r from-orange-50 to-orange-100 hover:from-orange-100 hover:to-orange-200 border border-orange-200 rounded-2xl transition-all duration-300 cursor-pointer group">
+                  <div className="p-3 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 text-white group-hover:scale-110 transition-transform shadow-lg">
+                    <Phone className="h-6 w-6" />
                   </div>
-                  <div>
-                    <div className="text-green-400 text-sm">VOICE_CHANNEL:</div>
-                    <div className="text-white font-bold">+91 7836950052</div>
+                  <div className="flex-1">
+                    <div className="text-orange-700 font-semibold text-sm">
+                      Phone Number
+                    </div>
+                    <div className="text-slate-800 font-bold text-lg ">
+                      +91 7836950052
+                    </div>
                   </div>
-                  <div className="ml-auto text-green-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                    [CONNECT]
+                  <div className="text-orange-600 opacity-0 group-hover:opacity-100 transition-opacity font-bold">
+                    Call Now →
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 p-4 bg-slate-800/50 hover:bg-slate-800 transition-colors cursor-pointer group">
-                  <div className="p-2 bg-emerald-600 group-hover:scale-110 transition-transform">
-                    <Mail className="h-5 w-5 text-white" />
+                <div className="flex items-center gap-4 p-5 bg-gradient-to-r from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 border border-green-200 rounded-2xl transition-all duration-300 cursor-pointer group">
+                  <div className="p-3 rounded-xl bg-gradient-to-br from-green-500 to-green-600 text-white group-hover:scale-110 transition-transform shadow-lg">
+                    <Mail className="h-6 w-6" />
                   </div>
-                  <div>
-                    <div className="text-emerald-400 text-sm">DATA_STREAM:</div>
-                    <div className="text-white font-bold">
-                      info@hopefoundation.org
+                  <div className="flex-1">
+                    <div className="text-green-700 font-semibold text-sm">
+                      Email Address
+                    </div>
+                    <div className="text-slate-800 font-bold text-lg">
+                      info@azadyouth.org
                     </div>
                   </div>
-                  <div className="ml-auto text-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                    [SEND]
+                  <div className="text-green-600 opacity-0 group-hover:opacity-100 transition-opacity font-bold">
+                    Send Email →
                   </div>
                 </div>
               </div>
 
-              <div className="mt-6 text-gray-400 text-sm">
-                <span className="text-green-400">&gt;</span> Connection
-                established. Ready to deploy humanity.exe
+              <div className="mt-6 text-center">
+                <p className="text-slate-600 text-sm italic">
+                  "Service is Success" - Azad Youth Organisation
+                </p>
               </div>
             </div>
           </div>
