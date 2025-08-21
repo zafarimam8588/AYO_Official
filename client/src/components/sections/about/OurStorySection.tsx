@@ -1,5 +1,3 @@
-import React from "react";
-
 const OurStorySection = () => {
   return (
     <div className="container mx-auto px-4 py-12 lg:py-16">

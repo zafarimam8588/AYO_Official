@@ -1,18 +1,3 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  Phone,
-  Mail,
-  MapPin,
-  Send,
-  Heart,
-  User,
-  MessageSquare,
-  Clock,
-} from "lucide-react";
 import ReadyToMakeDifference from "@/components/sections/ReadyToMakeDifference";
 import ContactUsFormSection from "@/components/sections/contact/ContactUsFormSection";
 import HeroSection from "@/components/sections/contact/HeroSection";
