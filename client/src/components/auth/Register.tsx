@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
-import { Eye, EyeOff, Mail, Lock, User, Phone, Heart } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { GoogleAuthUrlResponse } from "@/types";
 import axios from "axios";
@@ -50,7 +50,6 @@ const RegisterPage = () => {
   if (token && user) {
     // HERE YOU WILL ADD TOAST THAT YOU ALEADY LOGGED IN
     navigate("/dashboard");
-    alert("You already logged in");
   }
 
   const {
