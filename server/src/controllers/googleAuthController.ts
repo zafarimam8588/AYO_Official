@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { LoginResponse } from "../types";
 import { generateToken } from "../utils/generateToken";
 
 export const getGoogleAuthURL = async (
@@ -39,45 +38,36 @@ export const googleAuthCallback = async (
 
     if (!user) {
       console.error("No user found in callback");
-      res.status(401).json({
-        success: false,
-        message: "Google authentication failed",
-      });
+      res.redirect(`${process.env.FRONTEND_URL}/login?error=auth_failed`);
       return;
     }
 
-    console.log("✅ User authenticated:", user.email);
+    console.log(" User authenticated:", user.email);
 
     // Generate JWT token
     const token = generateToken(user._id);
     console.log("JWT token generated");
 
-    // Send JSON response similar to login
-    const response: LoginResponse = {
-      success: true,
-      message: "Google authentication successful",
-      data: {
-        user: {
-          id: user._id,
-          email: user.email,
-          fullName: user.fullName,
-          role: user.role,
-          isVerified: user.isVerified,
-          isProfileComplete: user.isProfileComplete,
-          profilePic: user.profilePic, // Additional field from Google
-        },
-        token,
-      },
+    const userData = {
+      id: user._id,
+      email: user.email,
+      fullName: user.fullName,
+      role: user.role,
+      isVerified: user.isVerified,
+      isProfileComplete: user.isProfileComplete,
+      profilePic: user.profilePic,
     };
 
-    console.log("Sending JSON response with token");
-    res.status(200).json(response);
+    // Redirect to frontend with success data
+    // You can encode the data in URL params or use a temporary token approach
+    const encodedUserData = encodeURIComponent(JSON.stringify(userData));
+    const encodedToken = encodeURIComponent(token);
+
+    res.redirect(
+      `${process.env.FRONTEND_URL}/auth/callback?success=true&user=${encodedUserData}&token=${encodedToken}`
+    );
   } catch (error: any) {
     console.error("Google auth callback error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Google authentication failed",
-      error: error.message,
-    });
+    res.redirect(`${process.env.FRONTEND_URL}/login?error=server_error`);
   }
 };

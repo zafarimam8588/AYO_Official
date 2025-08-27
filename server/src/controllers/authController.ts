@@ -20,6 +20,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     const {
       email,
       password,
+      confirmPassword,
       googleId,
       fullName,
       profilePic,
@@ -40,7 +41,16 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     if (!googleId && password && password.length < 6) {
       res.status(400).json({
         success: false,
-        message: "Password must be at least 6 characters long",
+        message: "Password must be at least 8 characters long",
+      });
+      return;
+    }
+    // matching password and confirm password
+
+    if (password !== confirmPassword) {
+      res.status(400).json({
+        success: false,
+        message: "Passwords do not match, message from backend",
       });
       return;
     }
@@ -201,6 +211,7 @@ export const verifyEmail = async (
 ): Promise<void> => {
   try {
     const { email, otp } = req.body;
+    console.log(email, otp);
 
     if (!email || !otp) {
       res.status(400).json({
@@ -495,7 +506,7 @@ export const resetPassword = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { email, otp, newPassword } = req.body;
+    const { email, otp, newPassword, confirmPassword } = req.body;
 
     if (!email || !otp || !newPassword) {
       res.status(400).json({
@@ -504,7 +515,15 @@ export const resetPassword = async (
       });
       return;
     }
+    // matching password and confirm password
 
+    if (newPassword !== confirmPassword) {
+      res.status(400).json({
+        success: false,
+        message: "Passwords do not match, message from backend",
+      });
+      return;
+    }
     // Find the OTP record
     const otpRecord = await OTP.findOne({
       email: email.toLowerCase(),
@@ -572,8 +591,6 @@ export const resetPassword = async (
 
 export const logout = async (req: Request, res: Response): Promise<void> => {
   try {
-    // For JWT, logout is handled client-side by removing the token
-
     res.status(200).json({
       success: true,
       message: "Logged out successfully",
