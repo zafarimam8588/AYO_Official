@@ -181,7 +181,7 @@ const TestimonialSection = () => {
         backgroundSize: "60px 60px, 60px 60px, 40px 40px, 40px 40px",
       }}
     >
-      <div className="container mx-auto px-4">
+      <div id="success-stories" className="container mx-auto px-4">
         <div className="text-center mb-16">
           <div className="flex items-center justify-center gap-2 mb-4">
             <div className="w-12 h-1 bg-orange-500 rounded"></div>

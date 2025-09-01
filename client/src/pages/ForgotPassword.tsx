@@ -184,7 +184,7 @@ const ForgotPasswordPage = () => {
             {/* Back Button - Fixed typo */}
             <button
               onClick={() => navigate("/login")}
-              className="flex items-center text-gray-600 hover:text-gray-800 mb-6 transition-colors hover:cursor-pointer lg:-mt-10 lg:mb-32 lg:-ml-8"
+              className="flex items-center text-gray-600 hover:text-gray-800 mb-6 transition-colors hover:cursor-pointer lg:-mt-10 lg:mb-44 lg:-ml-8"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Login

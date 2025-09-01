@@ -16,7 +16,7 @@ const OurPrinciple = () => {
         backgroundSize: "50px 50px, 50px 50px, 100px 100px",
       }}
     >
-      <div className="container mx-auto px-4">
+      <div id="our-principle" className="container mx-auto px-4">
         <div className="text-center mb-10 lg:mb-12">
           <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
             Our Foundation

@@ -39,7 +39,7 @@ const MemberProfileSchema = new Schema<IMemberProfile>(
     gender: {
       type: String,
       required: [true, "Gender is required"],
-      enum: ["male", "female", "other"],
+      enum: ["Male", "Female", "Other"],
     },
 
     whyJoin: {
@@ -91,7 +91,7 @@ MemberProfileSchema.pre("save", async function (next) {
     const count = await mongoose
       .model<IMemberProfile>("Member")
       .countDocuments({
-        status: "approved",
+        memberStatus: "approved",
       });
     this.membershipId = `AYO${year}${String(count + 1).padStart(4, "0")}`;
   }
@@ -99,5 +99,3 @@ MemberProfileSchema.pre("save", async function (next) {
 });
 
 export default mongoose.model<IMemberProfile>("Member", MemberProfileSchema);
-
-//  MEMBERSHIPID AND MEMBERSHIP STATUS WILL BE CHANGED BY ADMIN CONTROLLER WHEN WHEN ADMIN APPROVES

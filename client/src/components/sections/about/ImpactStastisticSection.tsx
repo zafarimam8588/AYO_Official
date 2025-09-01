@@ -14,7 +14,7 @@ const ImpactStastisticSection = () => {
         backgroundSize: "30px 30px, 30px 30px, 60px 60px, 60px 60px",
       }}
     >
-      <div className="container mx-auto px-4">
+      <div id="our-impact" className="container mx-auto px-4">
         <div className="text-center mb-10 lg:mb-12">
           <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
             Our Impact in Bihar

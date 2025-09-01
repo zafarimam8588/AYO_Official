@@ -2,12 +2,11 @@
 import { Request, Response } from "express";
 import EmailService from "../services/emailService";
 import { AccountDeletionRequest } from "../models/AccountDeleteModal";
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import User from "../models/UserModal";
 import Member from "../models/ProfileModel";
 import OTP from "../models/OTPModel";
-import Payment from "../models/PaymentModal";
-import { IUser } from "../types";
+import { IMemberProfile, IUser } from "../types";
 import { generateMembershipId } from "../utils/membershipHelper";
 
 export const getAllMembers = async (
@@ -19,17 +18,22 @@ export const getAllMembers = async (
 
     const query: any = {};
 
+    // Fix 1: Use correct field name
     if (status) {
-      query.status = status;
+      query.memberStatus = status; // Changed from 'status' to 'memberStatus'
     }
 
+    // Fix 2: Use correct field paths for populated data
     if (search) {
       query.$or = [
-        { "personalInfo.fullName": { $regex: search, $options: "i" } },
-        { email: { $regex: search, $options: "i" } },
-        { membershipId: { $regex: search, $options: "i" } },
+        { "userId.fullName": { $regex: search, $options: "i" } }, // Populated field
+        { "userId.email": { $regex: search, $options: "i" } }, // Populated field
+        { membershipId: { $regex: search, $options: "i" } }, // Direct field
       ];
     }
+
+    // Debug: Log the constructed query
+    console.log("Query being executed:", JSON.stringify(query, null, 2));
 
     const skip = (Number(page) - 1) * Number(limit);
 
@@ -40,6 +44,8 @@ export const getAllMembers = async (
       .populate("userId", "fullName email");
 
     const total = await Member.countDocuments(query);
+
+    console.log(`Found ${members.length} members out of ${total} total`);
 
     res.status(200).json({
       success: true,
@@ -60,6 +66,99 @@ export const getAllMembers = async (
       success: false,
       message: "Failed to retrieve members",
       error: error.message,
+    });
+  }
+};
+
+// Define populated member interface using your existing types
+interface PopulatedMember
+  extends Omit<IMemberProfile, "userId" | "approvedBy"> {
+  userId: IUser;
+  approvedBy?: IUser;
+}
+
+export const getMemberById = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { memberId } = req.params;
+
+    // Validate memberId parameter
+    if (!memberId) {
+      res.status(400).json({
+        success: false,
+        message: "Member ID is required",
+      });
+      return;
+    }
+
+    // Find member by ID and populate user information
+    const member = await Member.findById(memberId)
+      .populate<{ userId: IUser }>(
+        "userId",
+        "fullName email role isVerified isProfileComplete"
+      )
+      .populate<{ approvedBy: IUser }>("approvedBy", "fullName");
+
+    if (!member) {
+      res.status(404).json({
+        success: false,
+        message: "Member not found",
+      });
+      return;
+    }
+
+    // Check if user data exists
+    if (!member.userId) {
+      res.status(404).json({
+        success: false,
+        message: "Associated user not found",
+      });
+      return;
+    }
+
+    // Now TypeScript knows userId and approvedBy are populated
+    const populatedMember = member as PopulatedMember;
+
+    // Construct response data using your types
+    const responseData = {
+      user: {
+        id: populatedMember.userId._id,
+        fullName: populatedMember.userId.fullName,
+        email: populatedMember.userId.email,
+        role: populatedMember.userId.role,
+        isVerified: populatedMember.userId.isVerified,
+        isProfileComplete: populatedMember.userId.isProfileComplete,
+      },
+      profile: {
+        address: populatedMember.address || null,
+        phoneNumber: populatedMember.phoneNumber || null,
+        dateOfBirth: populatedMember.dateOfBirth || null,
+        gender: populatedMember.gender || null,
+        whyJoin: populatedMember.whyJoin || null,
+        memberStatus: populatedMember.memberStatus,
+        membershipId: populatedMember.membershipId || null,
+        approvedBy: populatedMember.approvedBy?.fullName || null,
+        approvedAt: populatedMember.approvedAt || null,
+        rejectionReason: populatedMember.rejectionReason || null,
+      },
+    };
+
+    res.status(200).json({
+      success: true,
+      message: "Member retrieved successfully",
+      data: responseData,
+    });
+  } catch (error: any) {
+    console.error("Get member by ID error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to retrieve member",
+      error:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Internal server error",
     });
   }
 };
@@ -222,12 +321,12 @@ export const rejectMember = async (
         memberStatus: "rejected",
         rejectionReason,
         approvedBy: user._id,
-        approvedAt: new Date(), // Track when it was processed
+        approvedAt: new Date(),
       },
       { new: true }
     )
-      .populate("userId", "email fullName profilePic") // Populate user details
-      .populate("approvedBy", "fullName email"); // Populate admin details
+      .populate("userId", "email fullName profilePic")
+      .populate("approvedBy", "fullName email");
 
     if (!member) {
       res.status(404).json({
@@ -290,55 +389,35 @@ export const rejectMember = async (
   }
 };
 
-// This is not working as expect
+// Get Dashboard Stats
 export const getDashboardStats = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const totalMembers = await Member.countDocuments({ status: "approved" });
-    const pendingMembers = await Member.countDocuments({ status: "pending" });
-    const rejectedMembers = await Member.countDocuments({ status: "rejected" });
-    const totalApplications = await Member.countDocuments();
+    // Execute only the count queries we need (7 queries instead of 9)
+    const [
+      totalMembers,
+      pendingMembers,
+      rejectedMembers,
+      totalApplications,
+      totalUsers,
+      verifiedUsers,
+      unverifiedUsers,
+    ] = await Promise.all([
+      // Member statistics
+      Member.countDocuments({ memberStatus: "approved" }),
+      Member.countDocuments({ memberStatus: "pending" }),
+      Member.countDocuments({ memberStatus: "rejected" }),
+      Member.countDocuments(), // All member applications
 
-    // Get monthly registration stats
-    const sixMonthsAgo = new Date();
-    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-
-    const monthlyStats = await Member.aggregate([
-      {
-        $match: {
-          createdAt: { $gte: sixMonthsAgo },
-        },
-      },
-      {
-        $group: {
-          _id: {
-            year: { $year: "$createdAt" },
-            month: { $month: "$createdAt" },
-          },
-          count: { $sum: 1 },
-          approved: {
-            $sum: { $cond: [{ $eq: ["$status", "approved"] }, 1, 0] },
-          },
-        },
-      },
-      {
-        $sort: { "_id.year": 1, "_id.month": 1 },
-      },
+      // User statistics
+      User.countDocuments(), // All users
+      User.countDocuments({ isVerified: true }),
+      User.countDocuments({ isVerified: false }),
     ]);
 
-    // Get payment stats
-    const totalDonations = await Payment.aggregate([
-      { $match: { status: "completed" } },
-      { $group: { _id: null, total: { $sum: "$amount" } } },
-    ]);
-
-    const recentMembers = await Member.find({ status: "approved" })
-      .sort({ approvedAt: -1 })
-      .limit(5)
-      .select("personalInfo.fullName email membershipId approvedAt");
-
+    console.log(pendingMembers);
     res.status(200).json({
       success: true,
       message: "Dashboard stats retrieved successfully",
@@ -348,10 +427,18 @@ export const getDashboardStats = async (
           pendingMembers,
           rejectedMembers,
           totalApplications,
-          totalDonations: totalDonations[0]?.total || 0,
+          totalUsers,
+          verifiedUsers,
+          unverifiedUsers,
         },
-        monthlyStats,
-        recentMembers,
+        // Simplified response - only sending counts
+        members: {
+          total: totalMembers,
+        },
+        users: {
+          total: totalUsers,
+        },
+        lastUpdated: new Date().toISOString(),
       },
     });
   } catch (error: any) {
@@ -359,7 +446,10 @@ export const getDashboardStats = async (
     res.status(500).json({
       success: false,
       message: "Failed to retrieve dashboard stats",
-      error: error.message,
+      error:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Internal server error",
     });
   }
 };
@@ -451,6 +541,165 @@ export const getPendingDeletionRequests = async (
     res.status(500).json({
       success: false,
       message: "Failed to approve account deletion",
+    });
+  }
+};
+
+export const getAllUsers = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { page = 1, limit = 10, search, role } = req.query;
+
+    const query: any = {};
+
+    if (role) {
+      query.role = role;
+    }
+
+    if (search) {
+      query.$or = [
+        { fullName: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    const skip = (Number(page) - 1) * Number(limit);
+
+    const users = await User.find(
+      query,
+      "fullName email role isVerified createdAt updatedAt isProfileComplete"
+    )
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(Number(limit));
+    console.log(users);
+
+    const total = await User.countDocuments(query);
+
+    res.status(200).json({
+      success: true,
+      message: "Users retrieved successfully",
+      data: {
+        users,
+        pagination: {
+          current: Number(page),
+          total: Math.ceil(total / Number(limit)),
+          count: users.length,
+          totalUsers: total,
+        },
+      },
+    });
+  } catch (error: any) {
+    console.error("Get all users error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to retrieve users",
+      error: error.message,
+    });
+  }
+};
+
+export const DeleteUser = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const adminUser = req.user as IUser;
+    if (!adminUser || adminUser.role !== "admin") {
+      res.status(403).json({
+        success: false,
+        message: "Admin access required",
+      });
+      return;
+    }
+
+    const { userId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      res.status(400).json({
+        success: false,
+        message: "Invalid user ID format",
+      });
+      return;
+    }
+
+    // Find user first to get details
+    const user = await User.findById(userId);
+    if (!user) {
+      res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+      return;
+    }
+
+    // Prevent admin from revoking themselves
+    if (user._id.toString() === adminUser._id.toString()) {
+      res.status(400).json({
+        success: false,
+        message: "Cannot revoke your own account",
+      });
+      return;
+    }
+
+    // Prevent revoking other admins (optional security measure)
+    if (user.role === "admin") {
+      res.status(400).json({
+        success: false,
+        message: "Cannot revoke admin accounts",
+      });
+      return;
+    }
+
+    // Use transaction to ensure data integrity
+    const session = await mongoose.startSession();
+
+    try {
+      await session.withTransaction(async () => {
+        // Delete member profile if exists
+        await Member.findOneAndDelete({ userId }, { session });
+
+        // TODO: Delete other related data here
+        // - Delete payments/donations
+        // - Delete user logs/activities
+        // - Delete uploaded files/documents
+
+        // Finally delete the user
+        await User.findByIdAndDelete(userId, { session });
+      });
+
+      await session.commitTransaction();
+
+      res.status(200).json({
+        success: true,
+        message: "User and all related data have been permanently deleted",
+        data: {
+          deletedUser: {
+            id: user._id,
+            fullName: user.fullName,
+            email: user.email,
+            deletedAt: new Date(),
+            deletedBy: adminUser.fullName,
+          },
+        },
+      });
+    } catch (transactionError) {
+      await session.abortTransaction();
+      throw transactionError;
+    } finally {
+      session.endSession();
+    }
+  } catch (error: any) {
+    console.error("Revoke user error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to revoke user",
+      error:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Internal server error",
     });
   }
 };
