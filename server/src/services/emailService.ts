@@ -273,6 +273,205 @@ class EmailService {
     await this.transporter.sendMail(mailOptions);
   }
 
+  // Generic sendEmail method
+  async sendEmail(
+    to: string,
+    subject: string,
+    htmlContent: string
+  ): Promise<void> {
+    const mailOptions = {
+      from: `"Azad Youth Organization" <${process.env.MAIL_USER}>`,
+      to,
+      subject,
+      html: htmlContent,
+    };
+
+    await this.transporter.sendMail(mailOptions);
+  }
+
+  // Newsletter email to subscribers
+  async sendNewsletterToSubscriber(
+    email: string,
+    subject: string,
+    message: string
+  ): Promise<void> {
+    const mailOptions = {
+      from: `"Azad Youth Organisation" <${process.env.MAIL_USER}>`,
+      to: email,
+      subject: subject,
+      html: `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <meta http-equiv="X-UA-Compatible" content="IE=edge">
+          <title>${subject}</title>
+          <style>
+            /* Reset styles */
+            body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+            table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+            img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+            body { margin: 0; padding: 0; width: 100% !important; height: 100% !important; }
+            
+            /* Responsive styles */
+            @media only screen and (max-width: 600px) {
+              .email-container { width: 100% !important; }
+              .header-title { font-size: 24px !important; padding: 30px 20px !important; }
+              .header-subtitle { font-size: 13px !important; }
+              .content-padding { padding: 25px 20px !important; }
+              .subject-title { font-size: 22px !important; }
+              .message-text { font-size: 15px !important; }
+              .cta-button { padding: 12px 30px !important; font-size: 14px !important; display: block !important; }
+              .footer-padding { padding: 20px 15px !important; }
+            }
+          </style>
+        </head>
+        <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f5f5f5;">
+          
+          <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 0; padding: 0;">
+            <tr>
+              <td style="padding: 20px 0;">
+                
+                <!-- Main Container -->
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 650px; margin: 0 auto;" class="email-container">
+                  
+                  <!-- Header with gradient -->
+                  <tr>
+                    <td style="background: linear-gradient(135deg, #ff9933 0%, #138808 100%); padding: 40px 30px; text-align: center;" class="header-title">
+                      <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 600; letter-spacing: 0.5px;">
+                        Azad Youth Organisation
+                      </h1>
+                      <p style="color: rgba(255, 255, 255, 0.95); margin: 10px 0 0 0; font-size: 15px; font-weight: 300;" class="header-subtitle">
+                        Empowering Bihar's Youth | Building Better Communities
+                      </p>
+                    </td>
+                  </tr>
+
+                  <!-- Main Content -->
+                  <tr>
+                    <td style="background-color: #ffffff; padding: 40px 35px;" class="content-padding">
+                      
+                      <!-- Subject/Title -->
+                      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                        <tr>
+                          <td style="padding-bottom: 30px;">
+                            <h2 style="color: #2c3e50; margin: 0 0 20px 0; font-size: 26px; font-weight: 600; line-height: 1.3;" class="subject-title">
+                              ${subject}
+                            </h2>
+                            <div style="width: 60px; height: 3px; background: linear-gradient(90deg, #ff9933, #138808); border-radius: 2px;"></div>
+                          </td>
+                        </tr>
+                      </table>
+
+                      <!-- Message Body -->
+                      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                        <tr>
+                          <td style="color: #4a5568; line-height: 1.8; font-size: 16px; padding-bottom: 35px;" class="message-text">
+                            ${message
+                              .split("\n")
+                              .map(
+                                (paragraph) =>
+                                  `<p style="margin: 0 0 18px 0;">${paragraph}</p>`
+                              )
+                              .join("")}
+                          </td>
+                        </tr>
+                      </table>
+
+                      <!-- Call to Action -->
+                      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                        <tr>
+                          <td style="text-align: center; padding: 10px 0 40px 0;">
+                            <a href="${
+                              process.env.FRONTEND_URL
+                            }" class="cta-button"
+                               style="background: linear-gradient(135deg, #ff9933, #138808); 
+                                      color: #ffffff; padding: 14px 40px; text-decoration: none; 
+                                      border-radius: 30px; display: inline-block; font-weight: 600; 
+                                      font-size: 15px; box-shadow: 0 4px 15px rgba(255, 153, 51, 0.25);">
+                              Visit Our Website
+                            </a>
+                          </td>
+                        </tr>
+                      </table>
+
+                      <!-- Social Connect Section -->
+                      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                        <tr>
+                          <td style="background: linear-gradient(135deg, #fff5eb 0%, #e8f5e8 100%); 
+                                     border-radius: 12px; padding: 25px; text-align: center;">
+                            <p style="color: #2c3e50; margin: 0 0 15px 0; font-size: 15px; font-weight: 600;">
+                              🤝 Stay Connected With Us
+                            </p>
+                            <p style="color: #64748b; margin: 0; font-size: 14px; line-height: 1.6;">
+                              Follow our journey and be part of the change we're creating together
+                            </p>
+                          </td>
+                        </tr>
+                      </table>
+
+                    </td>
+                  </tr>
+
+                  <!-- Footer -->
+                  <tr>
+                    <td style="background: #f8fafc; padding: 30px 35px; border-top: 1px solid #e2e8f0;" class="footer-padding">
+                      
+                      <!-- Unsubscribe Info -->
+                      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                        <tr>
+                          <td style="text-align: center; padding-bottom: 20px;">
+                            <p style="color: #64748b; margin: 0 0 8px 0; font-size: 13px; line-height: 1.6;">
+                              You're receiving this email because you subscribed to updates from Azad Youth Organisation.
+                            </p>
+                            <a href="${
+                              process.env.FRONTEND_URL
+                            }/unsubscribe" style="color: #94a3b8; font-size: 12px; text-decoration: underline;">
+                              Unsubscribe from future emails
+                            </a>
+                          </td>
+                        </tr>
+                      </table>
+
+                      <!-- Divider -->
+                      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                        <tr>
+                          <td style="border-top: 1px solid #e2e8f0; padding: 20px 0;"></td>
+                        </tr>
+                      </table>
+
+                      <!-- Contact & Copyright -->
+                      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                        <tr>
+                          <td style="text-align: center;">
+                            <p style="color: #94a3b8; margin: 0 0 8px 0; font-size: 12px;">
+                              📧 contact@azadyouth.org | 📱 +91 98765 43210
+                            </p>
+                            <p style="color: #cbd5e1; margin: 0; font-size: 11px;">
+                              © ${new Date().getFullYear()} Azad Youth Organisation. All rights reserved.
+                            </p>
+                          </td>
+                        </tr>
+                      </table>
+
+                    </td>
+                  </tr>
+
+                </table>
+                
+              </td>
+            </tr>
+          </table>
+
+        </body>
+        </html>
+      `,
+    };
+
+    await this.transporter.sendMail(mailOptions);
+  }
+
   async sendDonationThankYou(
     donorEmail: string,
     donorName: string,

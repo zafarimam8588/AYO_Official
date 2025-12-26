@@ -5,6 +5,7 @@ import { CiTwitter, CiLinkedin, CiYoutube } from "react-icons/ci";
 import { FaInstagram } from "react-icons/fa";
 import { HashLink } from "react-router-hash-link";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 const Footer = () => {
   const [copied, setCopied] = useState(false);
@@ -253,7 +254,15 @@ const Footer = () => {
                 <button
                   key={name}
                   type="button"
-                  onClick={() => alert(`${name} link coming soon!`)}
+                  onClick={() =>
+                    toast(`${name} link coming soon!`, {
+                      icon: "🔗",
+                      style: {
+                        background: "#3b82f6",
+                        color: "white",
+                      },
+                    })
+                  }
                   className={`p-3 rounded-full bg-gray-100 text-gray-600 hover:text-white transition-all duration-300 transform hover:scale-110 ${color}`}
                   aria-label={name}
                 >

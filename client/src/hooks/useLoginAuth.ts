@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { authService } from "@/services/authService";
 import type { LoginFormValues } from "@/types/auth";
+import toast from "react-hot-toast";
 
 export const useLoginAuth = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -17,7 +18,13 @@ export const useLoginAuth = () => {
         const user = JSON.parse(rawUser);
         if (user) {
           navigate("/dashboard");
-          alert("You already logged in");
+          toast("You already logged in", {
+            icon: "✅",
+            style: {
+              background: "#e0f2fe",
+              color: "#0369a1",
+            },
+          });
           return true;
         }
       } catch (error) {
@@ -42,7 +49,7 @@ export const useLoginAuth = () => {
         navigate("/dashboard");
       } catch (error: any) {
         const message = error.message || "Login failed";
-        alert(message);
+        toast.error(message);
         console.error(error);
       } finally {
         setIsSubmitting(false);
@@ -58,7 +65,7 @@ export const useLoginAuth = () => {
       window.location.href = authURL;
     } catch (error: any) {
       console.error("Google authentication error:", error);
-      alert(error.message || "Failed to initiate Google authentication");
+      toast.error(error.message || "Failed to initiate Google authentication");
     }
   }, []);
 

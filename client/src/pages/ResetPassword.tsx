@@ -3,6 +3,7 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { Key, ArrowLeft, Heart, Eye, EyeOff, Lock, Shield } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 // TypeScript interfaces
 interface ResetPasswordFormValues {
@@ -54,17 +55,17 @@ const ResetPassword = () => {
       );
 
       if (data.success) {
-        alert(data.message || "Password reset successfully!");
+        toast.success(data.message || "Password reset successfully!");
         navigate("/login");
       } else {
-        alert(data.message || "Failed to reset password");
+        toast.error(data.message || "Failed to reset password");
       }
     } catch (err) {
       const message =
         (err as any)?.response?.data?.message ||
         (err as any)?.response?.data?.error ||
         "Failed to reset password. Please try again.";
-      alert(message);
+      toast.error(message);
       console.error("Reset password error:", err);
     }
   };

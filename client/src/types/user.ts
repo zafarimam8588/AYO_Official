@@ -6,6 +6,7 @@ export interface UserData {
   isVerified: boolean;
   createdAt: string;
   isProfileComplete: boolean;
+  profilePic?: string;
 }
 
 export interface UsersResponse {

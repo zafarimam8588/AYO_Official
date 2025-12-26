@@ -5,7 +5,7 @@ import { BookOpen, Heart, Users } from "lucide-react";
 const OurProgramSection = () => {
   return (
     <div
-      className="py-20 relative"
+      className="py-20 relative section-animate"
       style={{
         background:
           "linear-gradient(135deg, rgba(255, 153, 51, 0.03) 0%, rgba(255, 255, 255, 0.8) 50%, rgba(19, 136, 8, 0.03) 100%)",
@@ -60,20 +60,24 @@ const OurProgramSection = () => {
               educational resources to ensure every child in Bihar has access to
               quality education.
             </p>
-            <div className="space-y-2 mb-6">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-slate-600">Learning Centers</span>
-                <span className="font-bold text-orange-600">150+</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-slate-600">Teachers Trained</span>
-                <span className="font-bold text-orange-600">800+</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-slate-600">
-                  Students Enrolled
+            <div className="space-y-3 mb-6 text-left">
+              <div className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-orange-500 mt-2 flex-shrink-0"></div>
+                <span className="text-sm text-slate-700">
+                  Community Learning Centers
                 </span>
-                <span className="font-bold text-orange-600">15,000+</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-orange-500 mt-2 flex-shrink-0"></div>
+                <span className="text-sm text-slate-700">
+                  Professional Teacher Training
+                </span>
+              </div>
+              <div className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-orange-500 mt-2 flex-shrink-0"></div>
+                <span className="text-sm text-slate-700">
+                  Widespread Student Enrollment
+                </span>
               </div>
             </div>
             <Button
@@ -106,18 +110,24 @@ const OurProgramSection = () => {
               programs bringing essential medical services to underserved
               communities across Bihar.
             </p>
-            <div className="space-y-2 mb-6">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-slate-600">Mobile Clinics</span>
-                <span className="font-bold text-green-600">25+</span>
+            <div className="space-y-3 mb-6 text-left">
+              <div className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-green-500 mt-2 flex-shrink-0"></div>
+                <span className="text-sm text-slate-700">
+                  Mobile Health Clinics
+                </span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-slate-600">Medical Camps</span>
-                <span className="font-bold text-green-600">200+</span>
+              <div className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-green-500 mt-2 flex-shrink-0"></div>
+                <span className="text-sm text-slate-700">
+                  Regular Medical Camps
+                </span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-slate-600">Patients Treated</span>
-                <span className="font-bold text-green-600">50,000+</span>
+              <div className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-green-500 mt-2 flex-shrink-0"></div>
+                <span className="text-sm text-slate-700">
+                  Extensive Patient Care
+                </span>
               </div>
             </div>
             <Button
@@ -150,18 +160,24 @@ const OurProgramSection = () => {
               placement assistance creating sustainable employment opportunities
               for Bihar's youth.
             </p>
-            <div className="space-y-2 mb-6">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-slate-600">Training Centers</span>
-                <span className="font-bold text-slate-600">50+</span>
+            <div className="space-y-3 mb-6 text-left">
+              <div className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-slate-500 mt-2 flex-shrink-0"></div>
+                <span className="text-sm text-slate-700">
+                  Vocational Training Centers
+                </span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-slate-600">Youth Trained</span>
-                <span className="font-bold text-slate-600">8,000+</span>
+              <div className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-slate-500 mt-2 flex-shrink-0"></div>
+                <span className="text-sm text-slate-700">
+                  Youth Skill Development
+                </span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-slate-600">Jobs Placed</span>
-                <span className="font-bold text-slate-600">3,500+</span>
+              <div className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-slate-500 mt-2 flex-shrink-0"></div>
+                <span className="text-sm text-slate-700">
+                  Job Placement Support
+                </span>
               </div>
             </div>
             <Button

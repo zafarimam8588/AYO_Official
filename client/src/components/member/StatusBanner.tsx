@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { CheckCircle, Clock, XCircle, AlertCircle } from "lucide-react";
 import { getStatusConfig } from "@/utils/memberUtil";
 import type { MemberProfile } from "@/types";
@@ -15,7 +14,7 @@ export const StatusBanner = ({
   const config = getStatusConfig(
     profile.memberStatus,
     isAdmin,
-    profile.rejectionReason
+    profile.rejectionReason ?? undefined
   );
 
   const getIcon = () => {
@@ -32,9 +31,7 @@ export const StatusBanner = ({
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
+    <div
       className={`bg-gradient-to-r ${config.bg} text-white p-4 sm:p-6 rounded-2xl shadow-lg border-l-4 ${config.borderColor} hover:shadow-xl transition-shadow duration-300`}
     >
       <div className="flex items-start space-x-4">
@@ -46,6 +43,6 @@ export const StatusBanner = ({
           </p>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };

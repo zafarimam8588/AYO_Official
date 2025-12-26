@@ -44,8 +44,12 @@ export const googleAuthCallback = async (
 
     console.log(" User authenticated:", user.email);
 
-    // Generate JWT token
-    const token = generateToken(user._id);
+    // Generate token
+    const token = generateToken({
+      userId: user._id.toString(),
+      fullName: user.fullName,
+      email: user.email,
+    });
     console.log("JWT token generated");
 
     const userData = {

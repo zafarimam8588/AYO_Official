@@ -106,3 +106,27 @@ export interface IAccountDeletionRequest extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface ISubscribedEmail extends Document {
+  email: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IPicture extends Document {
+  _id: Types.ObjectId;
+  pageToDisplay: string;
+  imageDescription: string;
+  imageUrl: string;
+  uploadedBy?: Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface JwtPayload {
+  userId: string;
+  fullName: string;
+  email: string;
+  iat?: number;
+  exp?: number;
+}

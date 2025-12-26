@@ -1,11 +1,11 @@
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Heart, Mail, Phone, Users } from "lucide-react";
+import { Mail, Phone } from "lucide-react";
+import { SupportOurMissionBtn, VolunteerNowBtn } from "../misc/Buttons";
 
 const ReadyToMakeDifference = () => {
   return (
     <>
       <div
-        className="py-2 relative"
+        className="py-2 relative section-animate"
         style={{
           background:
             "linear-gradient(135deg, rgba(255, 153, 51, 0.05) 0%, rgba(255, 255, 255, 0.9) 50%, rgba(19, 136, 8, 0.05) 100%)",
@@ -31,23 +31,8 @@ const ReadyToMakeDifference = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-            <Button
-              size="lg"
-              className="bg-gradient-to-r from-orange-500 to-green-600 hover:from-orange-600 hover:to-green-700 text-white px-8 py-3 text-lg font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-300"
-            >
-              <Heart className="h-5 w-5 mr-2" />
-              Support Our Mission
-              <ArrowRight className="h-5 w-5 ml-2" />
-            </Button>
-
-            <Button
-              size="lg"
-              variant="outline"
-              className="border border-slate-600 text-slate-700 hover:bg-slate-600 hover:text-white px-8 py-3 text-lg font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-300 bg-white/80"
-            >
-              <Users className="h-5 w-5 mr-2" />
-              Volunteer With Us
-            </Button>
+            <SupportOurMissionBtn />
+            <VolunteerNowBtn />
           </div>
 
           {/* Contact Info */}

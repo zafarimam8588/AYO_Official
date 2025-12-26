@@ -19,6 +19,9 @@ import authRoutes from "./routes/authRoutes";
 import memberRoutes from "./routes/memberRoutes";
 import accountDeletionRoutes from "./routes/accountDeletionRoute";
 import adminRoutes from "./routes/adminRoutes";
+import subscribedEmailRoute from "./routes/subscribedEmailRoute";
+import pictureRoutes from "./routes/pictureRoutes";
+import contactMessageRoutes from "./routes/contactMessageRoutes";
 
 // ╔══════════════════════════════════════════════════════════════════╗
 // ║                      ENVIRONMENT CONFIG                          ║
@@ -147,6 +150,15 @@ app.use("/api/account-deletion", accountDeletionRoutes);
 
 // 👑 Admin panel routes
 app.use("/api/admin", adminRoutes);
+
+// 📧 Email subscription routes
+app.use("/api/email", subscribedEmailRoute);
+
+// 🖼️  Picture upload and management routes
+app.use("/api/pictures", pictureRoutes);
+
+// 💬 Contact message routes
+app.use("/api/contact-messages", contactMessageRoutes);
 
 // ╔══════════════════════════════════════════════════════════════════╗
 // ║                       ERROR HANDLING                             ║

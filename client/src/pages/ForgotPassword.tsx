@@ -2,6 +2,7 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { Mail, ArrowLeft, Key, Heart, Send } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 // TypeScript interfaces
 interface ForgotPasswordFormValues {
@@ -37,18 +38,18 @@ const ForgotPasswordPage = () => {
       );
 
       if (data.success) {
-        alert(data.message || "Password reset OTP sent to your email!");
+        toast.success(data.message || "Password reset OTP sent to your email!");
         // Redirect to reset password page with email
         navigate("/reset-password", { state: { email: form.email } });
       } else {
-        alert(data.message || "Failed to send reset OTP");
+        toast.error(data.message || "Failed to send reset OTP");
       }
     } catch (err) {
       const message =
         (err as any)?.response?.data?.message ||
         (err as any)?.response?.data?.error ||
         "Failed to send reset OTP. Please try again.";
-      alert(message);
+      toast.error(message);
       console.error("Forgot password error:", err);
     }
   };

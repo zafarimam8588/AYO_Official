@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { Send } from "lucide-react";
 import type { MemberProfile } from "@/types";
 
@@ -21,11 +20,7 @@ export const UserActionPanel = ({
     profile.memberStatus !== "pending";
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-green-400 hover:shadow-xl transition-shadow duration-300"
-    >
+    <div className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-green-400 hover:shadow-xl transition-shadow duration-300">
       <h2 className="text-xl font-semibold text-gray-800 mb-6">Actions</h2>
 
       <div className="mb-6">
@@ -76,6 +71,6 @@ export const UserActionPanel = ({
           You are now an approved member 🎉
         </p>
       )}
-    </motion.div>
+    </div>
   );
 };

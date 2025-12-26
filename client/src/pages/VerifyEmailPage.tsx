@@ -2,6 +2,7 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { Mail, Shield, ArrowLeft, Heart } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 interface VerifyEmailFormValues {
   verificationCode: string;
@@ -64,7 +65,7 @@ const VerifyEmailPage = () => {
       const message =
         (err as any)?.response?.data?.message ??
         "Verification failed. Please try again.";
-      alert(message);
+      toast.error(message);
     }
   };
 
@@ -79,18 +80,18 @@ const VerifyEmailPage = () => {
       );
 
       if (data.success) {
-        alert(
+        toast.success(
           data.message || "OTP sent successfully! Please check your email."
         );
       } else {
-        alert(data.message || "Failed to send OTP. Please try again.");
+        toast.error(data.message || "Failed to send OTP. Please try again.");
       }
     } catch (err) {
       const message =
         (err as any)?.response?.data?.message ||
         (err as any)?.response?.data?.error ||
         "Failed to send OTP. Please check your connection and try again.";
-      alert(message);
+      toast.error(message);
       console.error("Resend OTP error:", err);
     }
   };

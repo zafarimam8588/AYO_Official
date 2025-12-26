@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import {
   User,
   Phone,
@@ -28,11 +27,7 @@ export const ProfileInformation = ({
   isAdmin = false,
 }: ProfileInformationProps) => {
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-indigo-400 hover:shadow-xl transition-shadow duration-300"
-    >
+    <div className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-indigo-400 hover:shadow-xl transition-shadow duration-300">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
         <h2 className="text-2xl font-semibold text-gray-800 mb-4 sm:mb-0">
           Profile Information
@@ -117,6 +112,6 @@ export const ProfileInformation = ({
           Complete all fields to enable "Submit Member Request".
         </p>
       )}
-    </motion.div>
+    </div>
   );
 };

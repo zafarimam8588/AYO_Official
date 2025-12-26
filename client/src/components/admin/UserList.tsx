@@ -1,10 +1,12 @@
+import { useState } from "react";
 import { UserCheck } from "lucide-react";
 import type { UserData } from "@/types";
+import { DeleteUserModal } from "./DeleteUserModal";
 
 interface UsersListProps {
   users: UserData[];
   onUserClick: (userId: string) => void;
-  onDeleteUser: (userId: string) => void;
+  onDeleteUser: (userId: string) => Promise<void>;
   loading: boolean;
 }
 
@@ -14,6 +16,34 @@ export const UsersList = ({
   onDeleteUser,
   loading,
 }: UsersListProps) => {
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteClick = (user: UserData) => {
+    setSelectedUser(user);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!selectedUser) return;
+
+    setIsDeleting(true);
+    try {
+      await onDeleteUser(selectedUser._id);
+      setShowDeleteModal(false);
+      setSelectedUser(null);
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setShowDeleteModal(false);
+    setSelectedUser(null);
+  };
   if (users.length === 0 && !loading) {
     return (
       <div className="text-center py-12">
@@ -57,7 +87,7 @@ export const UsersList = ({
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  onDeleteUser(user._id);
+                  handleDeleteClick(user);
                 }}
                 className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-medium transition-colors duration-200 cursor-pointer"
               >
@@ -67,6 +97,15 @@ export const UsersList = ({
           </div>
         </div>
       ))}
+
+      {/* Delete User Modal */}
+      <DeleteUserModal
+        isOpen={showDeleteModal}
+        onClose={handleDeleteCancel}
+        onConfirm={handleDeleteConfirm}
+        user={selectedUser}
+        isDeleting={isDeleting}
+      />
     </div>
   );
 };

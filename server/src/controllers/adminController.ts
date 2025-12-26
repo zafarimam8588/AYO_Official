@@ -6,6 +6,7 @@ import mongoose, { Types } from "mongoose";
 import User from "../models/UserModal";
 import Member from "../models/ProfileModel";
 import OTP from "../models/OTPModel";
+import SubscribedEmail from "../models/SubscribedEmailModal";
 import { IMemberProfile, IUser } from "../types";
 import { generateMembershipId } from "../utils/membershipHelper";
 
@@ -395,7 +396,7 @@ export const getDashboardStats = async (
   res: Response
 ): Promise<void> => {
   try {
-    // Execute only the count queries we need (7 queries instead of 9)
+    // Execute only the count queries we need (8 queries instead of 7)
     const [
       totalMembers,
       pendingMembers,
@@ -404,6 +405,7 @@ export const getDashboardStats = async (
       totalUsers,
       verifiedUsers,
       unverifiedUsers,
+      totalSubscribedEmails,
     ] = await Promise.all([
       // Member statistics
       Member.countDocuments({ memberStatus: "approved" }),
@@ -415,6 +417,9 @@ export const getDashboardStats = async (
       User.countDocuments(), // All users
       User.countDocuments({ isVerified: true }),
       User.countDocuments({ isVerified: false }),
+
+      // Subscribed emails statistics
+      SubscribedEmail.countDocuments(), // All subscribed emails
     ]);
 
     console.log(pendingMembers);
@@ -430,6 +435,7 @@ export const getDashboardStats = async (
           totalUsers,
           verifiedUsers,
           unverifiedUsers,
+          totalSubscribedEmails,
         },
         // Simplified response - only sending counts
         members: {
@@ -437,6 +443,9 @@ export const getDashboardStats = async (
         },
         users: {
           total: totalUsers,
+        },
+        emails: {
+          total: totalSubscribedEmails,
         },
         lastUpdated: new Date().toISOString(),
       },

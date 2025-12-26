@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { DetailCard } from "./DetailCard";
 import { formatDate } from "@/utils/memberUtil";
 import type { MemberProfile } from "@/types";
@@ -9,11 +8,7 @@ interface MembershipDetailsProps {
 
 export const MembershipDetails = ({ profile }: MembershipDetailsProps) => {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-purple-400 hover:shadow-xl transition-shadow duration-300"
-    >
+    <div className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-purple-400 hover:shadow-xl transition-shadow duration-300">
       <h2 className="text-xl font-semibold text-gray-800 mb-6">
         Membership Details
       </h2>
@@ -59,6 +54,6 @@ export const MembershipDetails = ({ profile }: MembershipDetailsProps) => {
           <p className="text-red-700 break-words">{profile.rejectionReason}</p>
         </div>
       )}
-    </motion.div>
+    </div>
   );
 };

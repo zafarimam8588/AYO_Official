@@ -1,78 +1,81 @@
 import { Heart } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, EffectFade, Pagination } from "swiper/modules";
+import { useState, useEffect } from "react";
+import { getPicturesByPage } from "@/services/pictureService";
+
+// Import Swiper styles
+import "swiper/swiper-bundle.css";
 
 const HeroSection = () => {
-  const heroScrollRef = useRef(null);
+  const [heroImages, setHeroImages] = useState<
+    Array<{ src: string; alt: string }>
+  >([]);
 
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  // Hero poster images - high quality, full screen
-  const heroImages = [
-    {
-      src: "https://images.pexels.com/photos/8422085/pexels-photo-8422085.jpeg",
-      alt: "Children learning in Bihar classroom - Education empowerment",
-    },
-    {
-      src: "https://images.pexels.com/photos/5212317/pexels-photo-5212317.jpeg",
-      alt: "Healthcare program reaching rural Bihar villages",
-    },
-    {
-      src: "https://images.pexels.com/photos/8923034/pexels-photo-8923034.jpeg",
-      alt: "Skill development training for youth in Bihar",
-    },
-    {
-      src: "https://images.pexels.com/photos/5212320/pexels-photo-5212320.jpeg",
-      alt: "Community development activities transforming lives",
-    },
-    {
-      src: "https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg",
-      alt: "Women empowerment program creating opportunities",
-    },
-  ];
-
-  // FIXED: Hero auto-scroll effect - seamless forward loop
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroImages.length);
-    }, 3000);
+    const fetchAboutHeroImages = async () => {
+      try {
+        const response = await getPicturesByPage("about");
+        if (response.success && response.data && response.data.length > 0) {
+          const fetchedImages = response.data.map((pic) => ({
+            src: pic.imageUrl,
+            alt: pic.imageDescription,
+          }));
+          setHeroImages(fetchedImages);
+        }
+      } catch (error) {
+        console.error("Error fetching about hero images:", error);
+        // No images will be shown
+      }
+    };
 
-    return () => clearInterval(timer);
-  }, [heroImages.length]);
+    fetchAboutHeroImages();
+  }, []);
 
-  // FIXED: Apply the slide transition with viewport units
-  useEffect(() => {
-    const heroContainer = heroScrollRef.current as unknown as HTMLDivElement; // Type assertion
-    if (!heroContainer) return;
-
-    heroContainer.style.transform = `translateX(-${currentSlide * 100}vw)`;
-    heroContainer.style.transition = "transform 1s ease-in-out";
-  }, [currentSlide]);
   return (
     <div className="relative h-screen w-full overflow-hidden">
-      {/* FIXED: Properly working auto-scroll slider */}
-      <div
-        ref={heroScrollRef}
-        className="flex h-full"
-        style={{
-          width: `${heroImages.length * 100}vw`,
-          willChange: "transform",
+      {/* Swiper Slider */}
+      <Swiper
+        modules={[Autoplay, EffectFade, Pagination]}
+        effect="fade"
+        fadeEffect={{ crossFade: true }}
+        autoplay={{
+          delay: 3000,
+          disableOnInteraction: false,
         }}
+        loop={true}
+        pagination={{
+          clickable: true,
+          dynamicBullets: false,
+        }}
+        speed={1000}
+        className="hero-swiper h-full w-full"
       >
-        {heroImages.map((image, index) => (
-          <div key={index} className="relative flex-shrink-0 h-full w-screen">
-            <img
-              src={image.src}
-              alt={image.alt}
-              className="w-full h-full object-cover"
-              loading={index === 0 ? "eager" : "lazy"}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-slate-900/30 to-transparent"></div>
-          </div>
-        ))}
-      </div>
+        {heroImages.length > 0 ? (
+          heroImages.map((image, index) => (
+            <SwiperSlide key={index}>
+              <div className="relative h-full w-full">
+                <img
+                  src={image.src}
+                  alt={image.alt}
+                  className="w-full h-full object-cover"
+                  loading={index === 0 ? "eager" : "lazy"}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-slate-900/30 to-transparent"></div>
+              </div>
+            </SwiperSlide>
+          ))
+        ) : (
+          <SwiperSlide>
+            <div className="relative h-full w-full bg-gradient-to-br from-orange-100 to-green-100 flex items-center justify-center">
+              <p className="text-slate-600 text-lg">Loading content...</p>
+            </div>
+          </SwiperSlide>
+        )}
+      </Swiper>
 
       {/* Overlay content */}
-      <div className="absolute inset-0 flex items-center justify-center text-center px-4 z-10">
+      <div className="absolute inset-0 flex items-center justify-center text-center px-4 z-10 pointer-events-none">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-center gap-3 mb-6">
             <Heart className="h-10 w-10 sm:h-12 sm:w-12 text-orange-400 animate-pulse" />
@@ -118,17 +121,37 @@ const HeroSection = () => {
         </div>
       </div>
 
-      {/* Image indicator dots */}
-      <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 z-10 flex gap-2">
-        {heroImages.map((_, index) => (
-          <div
-            key={index}
-            className={`w-2 h-2 rounded-full transition-all duration-300 ${
-              currentSlide === index ? "bg-white w-6" : "bg-white/50"
-            }`}
-          ></div>
-        ))}
-      </div>
+      {/* Custom Swiper Styles */}
+      <style>{`
+        .hero-swiper {
+          width: 100%;
+          height: 100%;
+        }
+        
+        .hero-swiper .swiper-pagination {
+          bottom: 5rem !important;
+        }
+        
+        .hero-swiper .swiper-pagination-bullet {
+          width: 8px;
+          height: 8px;
+          background: rgba(255, 255, 255, 0.5);
+          opacity: 1;
+          transition: all 0.3s ease;
+        }
+        
+        .hero-swiper .swiper-pagination-bullet-active {
+          width: 24px;
+          border-radius: 4px;
+          background: white;
+        }
+        
+        @media (max-width: 640px) {
+          .hero-swiper .swiper-pagination {
+            bottom: 4rem !important;
+          }
+        }
+      `}</style>
     </div>
   );
 };

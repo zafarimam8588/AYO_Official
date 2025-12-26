@@ -23,9 +23,9 @@ const HeroSection = () => {
           </h1>
         </div>
         <p className="text-lg sm:text-xl md:text-2xl text-slate-700 max-w-3xl mx-auto leading-relaxed">
-          Connect with Azad Youth Organisation. We're here to answer your
-          questions and help you get involved in transforming Bihar's
-          communities.
+          Connect with Azad Youth Organization. Whether you want to join us,
+          volunteer, or collaborate on our initiatives, we'd love to hear from
+          you. Let's work together to empower youth and build a better tomorrow.
         </p>
       </div>
     </div>

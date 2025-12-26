@@ -1,4 +1,3 @@
-import React from "react";
 import {
   BookOpen,
   Users,
@@ -289,10 +288,10 @@ const ProgramsPage = () => {
               Every contribution makes a difference.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-lg mx-auto">
-              <button className="bg-orange-500/80 backdrop-blur-sm text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold hover:bg-orange-600/80 transition-all duration-300 shadow-md hover:shadow-lg text-sm sm:text-base">
+              <button className="bg-orange-500/80 backdrop-blur-sm text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold hover:bg-orange-600/80 transition-all duration-300 shadow-md hover:shadow-lg text-sm sm:text-base cursor-pointer">
                 Get Involved
               </button>
-              <button className="border-2 border-orange-300/60 bg-white/40 backdrop-blur-sm text-gray-700 px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold hover:bg-orange-50/60 hover:text-orange-600 transition-all duration-300 text-sm sm:text-base">
+              <button className="border-2 border-orange-300/60 bg-white/40 backdrop-blur-sm text-gray-700 px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold hover:bg-orange-50/60 hover:text-orange-600 transition-all duration-300 text-sm sm:text-base cursor-pointer">
                 Learn More
               </button>
             </div>

@@ -18,6 +18,7 @@ export interface StoredUser {
   role: string;
   isVerified: boolean;
   isProfileComplete: boolean;
+  profilePic?: string;
 }
 
 // Add these interfaces to your existing auth.ts file

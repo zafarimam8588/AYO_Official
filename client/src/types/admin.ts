@@ -10,11 +10,15 @@ export interface DashboardStatsResponse {
       totalUsers: number;
       verifiedUsers: number;
       unverifiedUsers: number;
+      totalSubscribedEmails: number;
     };
     members: {
       total: number;
     };
     users: {
+      total: number;
+    };
+    emails: {
       total: number;
     };
     lastUpdated: string;

@@ -93,11 +93,11 @@ class MemberService {
     }
   }
 
-  async approveMember(token: string, memberId: string) {
+  async approveMember(token: string, memberId: string, message?: string) {
     try {
       const { data } = await axios.post<ActionResponse>(
         `${BASE_URL}/api/admin/members/${memberId}/approve`,
-        {},
+        message ? { approvalMessage: message } : {},
         { headers: this.getAuthHeaders(token) }
       );
 

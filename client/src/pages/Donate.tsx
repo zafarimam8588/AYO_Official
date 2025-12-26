@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Heart,
   Mail,
@@ -6,247 +5,385 @@ import {
   Construction,
   ArrowLeft,
   Clock,
-  Users,
   Target,
   CheckCircle,
+  Sparkles,
+  Shield,
+  Award,
+  Zap,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 const DonatePage = () => {
-  const navigate = useNavigate();
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-green-50 overflow-x-hidden">
-      {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-orange-500 via-orange-300 to-green-500 py-16 sm:py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-white/10"></div>
-        <div className="relative w-full max-w-4xl mx-auto px-4 sm:px-6 text-center">
-          <div className="flex justify-center mb-6 sm:mb-8">
-            <div className="p-4 bg-white rounded-full shadow-xl">
-              <Heart className="w-12 h-12 sm:w-16 sm:h-16 text-orange-600" />
+    <div className="min-h-screen bg-gray-50 overflow-x-hidden">
+      {/* Hero Section with Fancy Background Pattern */}
+      <div className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
+        {/* Animated Background Pattern */}
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+          {/* Geometric Pattern */}
+          <div
+            className="absolute inset-0 opacity-30"
+            style={{
+              backgroundImage: `
+                radial-gradient(circle at 25% 25%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(147, 51, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 25%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 25% 75%, rgba(139, 92, 246, 0.1) 0%, transparent 50%)
+              `,
+            }}
+          />
+
+          {/* Floating Dots Pattern */}
+          <div
+            className="absolute inset-0 opacity-20"
+            style={{
+              backgroundImage: `
+                radial-gradient(circle at 1px 1px, rgba(99, 102, 241, 0.3) 1px, transparent 0)
+              `,
+              backgroundSize: "30px 30px",
+            }}
+          />
+
+          {/* Diagonal Lines */}
+          <div
+            className="absolute inset-0 opacity-10"
+            style={{
+              backgroundImage: `
+                linear-gradient(45deg, rgba(99, 102, 241, 0.1) 1px, transparent 1px),
+                linear-gradient(-45deg, rgba(147, 51, 234, 0.1) 1px, transparent 1px)
+              `,
+              backgroundSize: "20px 20px",
+            }}
+          />
+        </div>
+
+        {/* Floating Elements */}
+        <div className="absolute top-20 left-10 w-20 h-20 bg-gradient-to-br from-indigo-200 to-purple-200 rounded-full opacity-60 blur-xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-10 w-32 h-32 bg-gradient-to-br from-blue-200 to-indigo-200 rounded-full opacity-40 blur-2xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-20 w-16 h-16 bg-gradient-to-br from-purple-200 to-pink-200 rounded-full opacity-50 blur-xl animate-pulse delay-500"></div>
+
+        {/* Content */}
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center">
+          <div className="mb-8">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-2xl shadow-lg border border-gray-100 mb-6">
+              <Heart className="w-10 h-10 text-indigo-600" />
+            </div>
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full text-sm font-medium text-gray-600 mb-6">
+              <Sparkles className="w-4 h-4 text-indigo-500" />
+              Empowering Communities
             </div>
           </div>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-800 mb-4 sm:mb-6 break-words">
-            Support Our Mission
+
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-gray-900 mb-6 leading-tight">
+            Support Our
+            <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
+              {" "}
+              Mission
+            </span>
           </h1>
-          <p className="text-lg sm:text-xl lg:text-2xl text-gray-700 max-w-3xl mx-auto mb-6 sm:mb-8 leading-relaxed">
-            Help{" "}
-            <strong className="text-orange-700">Azad Youth Organisation</strong>{" "}
-            empower the next generation and create lasting change in communities
-            across India.
+
+          <p className="text-xl sm:text-2xl text-gray-600 max-w-3xl mx-auto mb-8 leading-relaxed font-light">
+            Join{" "}
+            <strong className="font-semibold text-gray-800">
+              Azad Youth Organisation
+            </strong>{" "}
+            in creating lasting change through youth empowerment and community
+            development across India.
           </p>
-        </div>
-      </div>
 
-      {/* Under Construction Section */}
-      <div className="py-16 sm:py-20">
-        <div className="w-full max-w-4xl mx-auto px-4 sm:px-6">
-          <div className="bg-white rounded-3xl shadow-xl border-l-8 border-orange-500 p-8 sm:p-12 text-center">
-            {/* Construction Icon */}
-            <div className="flex justify-center mb-8">
-              <div className="p-6 bg-gradient-to-br from-orange-100 to-green-100 rounded-full">
-                <Construction className="w-16 h-16 sm:w-20 sm:h-20 text-orange-600" />
-              </div>
-            </div>
-
-            {/* Main Message */}
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-6 break-words">
-              Page Under Development
-            </h2>
-            <p className="text-lg sm:text-xl text-gray-600 mb-8 leading-relaxed break-words">
-              We're working hard to build a seamless donation experience for
-              you. Our secure donation portal will be available soon!
-            </p>
-
-            {/* Features Coming Soon */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
-              <div className="bg-orange-50 rounded-xl p-6 border-l-4 border-orange-500">
-                <Target className="w-8 h-8 text-orange-600 mx-auto mb-4" />
-                <h3 className="font-semibold text-gray-800 mb-2">
-                  Secure Payments
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Multiple payment options with bank-level security
-                </p>
-              </div>
-
-              <div className="bg-green-50 rounded-xl p-6 border-l-4 border-green-500">
-                <Users className="w-8 h-8 text-green-600 mx-auto mb-4" />
-                <h3 className="font-semibold text-gray-800 mb-2">
-                  Impact Tracking
-                </h3>
-                <p className="text-sm text-gray-600">
-                  See exactly how your donation creates change
-                </p>
-              </div>
-
-              <div className="bg-orange-50 rounded-xl p-6 border-l-4 border-orange-500">
-                <CheckCircle className="w-8 h-8 text-orange-600 mx-auto mb-4" />
-                <h3 className="font-semibold text-gray-800 mb-2">
-                  Community Impact
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Driving positive change through local partnerships
-                </p>
-              </div>
-            </div>
-
-            {/* Expected Launch */}
-            <div className="bg-gradient-to-r from-orange-100 via-white to-green-100 rounded-2xl p-6 sm:p-8 mb-8">
-              <div className="flex items-center justify-center gap-3 mb-4">
-                <Clock className="w-6 h-6 text-orange-600" />
-                <h3 className="text-xl font-bold text-gray-800">
-                  Expected Launch
-                </h3>
-              </div>
-              <p className="text-lg text-gray-700 font-medium">
-                Coming Soon - October 2025
-              </p>
-              <p className="text-gray-600 mt-2">
-                We're putting the finishing touches on our donation platform
-              </p>
-            </div>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <button className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 cursor-pointer">
+              <Heart className="w-5 h-5" />
+              Start Donating
+            </button>
+            <button className="inline-flex items-center gap-2 px-8 py-4 bg-white/80 backdrop-blur-sm text-gray-700 rounded-xl font-semibold border border-gray-200 hover:bg-white hover:shadow-lg transition-all duration-300 cursor-pointer">
+              Learn More
+              <ArrowLeft className="w-5 h-5 rotate-180" />
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Alternative Ways to Donate */}
-      <div className="py-16 bg-gradient-to-r from-green-50 to-orange-50 overflow-hidden">
-        <div className="w-full max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-6 break-words">
-              Want to Donate Now?
+      {/* Features Section */}
+      <div className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 rounded-full text-sm font-medium text-indigo-600 mb-6">
+              <Construction className="w-4 h-4" />
+              Coming Soon
+            </div>
+            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
+              Donation Platform
+              <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                {" "}
+                In Development
+              </span>
             </h2>
-            <p className="text-lg sm:text-xl text-gray-600 break-words">
-              We'd love to hear from you! Here are ways to support us right
-              away:
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              We're crafting a seamless, secure donation experience that will
+              make supporting our mission effortless and impactful.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Contact Card 1 */}
-            <div className="bg-white rounded-2xl shadow-lg p-8 border-l-4 border-orange-500 hover:shadow-xl transition-shadow duration-300">
-              <div className="flex items-center mb-6">
-                <div className="p-3 bg-orange-100 rounded-full mr-4">
-                  <Mail className="w-8 h-8 text-orange-600" />
-                </div>
-                <h3 className="text-2xl font-bold text-orange-700">
-                  Email Our Team
-                </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+            <div className="group p-8 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl border border-indigo-100 hover:shadow-lg transition-all duration-300">
+              <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                <Shield className="w-6 h-6 text-indigo-600" />
               </div>
-              <p className="text-gray-600 mb-6 leading-relaxed">
-                Send us your donation inquiry and we'll guide you through the
-                process personally. Our team responds within 24 hours.
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                Bank-Grade Security
+              </h3>
+              <p className="text-gray-600">
+                Advanced encryption and security protocols to protect your
+                donations and personal information.
               </p>
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-500" />
-                  <span className="text-gray-700">
-                    Personalized donation guidance
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-500" />
-                  <span className="text-gray-700">
-                    Multiple payment options
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-500" />
-                  <span className="text-gray-700">Instant tax receipt</span>
-                </div>
-              </div>
-              <a
-                href="mailto:donate@azadyouthorg.org"
-                className="inline-block mt-6 bg-orange-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-orange-600 transition-colors duration-300"
-              >
-                donate@azadyouthorg.org
-              </a>
             </div>
 
-            {/* Contact Card 2 */}
-            <div className="bg-white rounded-2xl shadow-lg p-8 border-l-4 border-green-500 hover:shadow-xl transition-shadow duration-300">
-              <div className="flex items-center mb-6">
-                <div className="p-3 bg-green-100 rounded-full mr-4">
-                  <Phone className="w-8 h-8 text-green-600" />
-                </div>
-                <h3 className="text-2xl font-bold text-green-700">
-                  Call Us Directly
-                </h3>
+            <div className="group p-8 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-2xl border border-purple-100 hover:shadow-lg transition-all duration-300">
+              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                <Target className="w-6 h-6 text-purple-600" />
               </div>
-              <p className="text-gray-600 mb-6 leading-relaxed">
-                Speak with our donation specialists who can help you choose the
-                best way to support our programs and maximize your impact.
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                Impact Tracking
+              </h3>
+              <p className="text-gray-600">
+                Real-time updates on how your contribution is making a
+                difference in communities.
               </p>
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-500" />
-                  <span className="text-gray-700">Direct consultation</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-500" />
-                  <span className="text-gray-700">
-                    Program-specific donations
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-500" />
-                  <span className="text-gray-700">
-                    Corporate partnership options
-                  </span>
-                </div>
-              </div>
-              <a
-                href="tel:+919876543210"
-                className="inline-block mt-6 bg-green-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-green-600 transition-colors duration-300"
-              >
-                +91 98765 43210
-              </a>
             </div>
+
+            <div className="group p-8 bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl border border-blue-100 hover:shadow-lg transition-all duration-300">
+              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                <Zap className="w-6 h-6 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                Instant Processing
+              </h3>
+              <p className="text-gray-600">
+                Quick and seamless donation processing with instant receipts and
+                confirmations.
+              </p>
+            </div>
+          </div>
+
+          {/* Launch Timeline */}
+          <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-3xl p-8 sm:p-12 text-center text-white">
+            <div className="flex items-center justify-center gap-3 mb-6">
+              <Clock className="w-8 h-8" />
+              <h3 className="text-2xl sm:text-3xl font-bold">
+                Expected Launch
+              </h3>
+            </div>
+            <p className="text-xl sm:text-2xl font-light mb-4">October 2025</p>
+            <p className="text-indigo-100 text-lg max-w-2xl mx-auto">
+              Our team is putting the finishing touches on a world-class
+              donation platform that will revolutionize how you support our
+              mission.
+            </p>
           </div>
         </div>
       </div>
 
+      {/* Contact Section */}
+      <div className="py-20 bg-gradient-to-br from-gray-50 to-indigo-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
+              Ready to Make an
+              <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                {" "}
+                Impact?
+              </span>
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Connect with our team today and discover how your contribution can
+              transform lives and communities.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            {/* Email Contact */}
+            <div className="group relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-3xl blur-xl opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
+              <div className="relative bg-white rounded-3xl p-8 sm:p-10 shadow-lg border border-gray-100 group-hover:shadow-xl transition-all duration-300">
+                <div className="flex items-center mb-6">
+                  <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mr-4">
+                    <Mail className="w-7 h-7 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900">
+                    Email Our Team
+                  </h3>
+                </div>
+
+                <p className="text-gray-600 mb-8 text-lg leading-relaxed">
+                  Get personalized guidance on donation options, impact reports,
+                  and how your contribution creates meaningful change.
+                </p>
+
+                <div className="space-y-4 mb-8">
+                  {[
+                    "Personalized donation consultation",
+                    "Multiple secure payment options",
+                    "Instant tax-deductible receipts",
+                    "Detailed impact tracking reports",
+                  ].map((feature, index) => (
+                    <div key={index} className="flex items-center gap-3">
+                      <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center">
+                        <CheckCircle className="w-3 h-3 text-green-600" />
+                      </div>
+                      <span className="text-gray-700">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <a
+                  href="mailto:donate@azadyouthorg.org"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300"
+                >
+                  <Mail className="w-5 h-5" />
+                  donate@azadyouthorg.org
+                </a>
+              </div>
+            </div>
+
+            {/* Phone Contact */}
+            <div className="group relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-3xl blur-xl opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
+              <div className="relative bg-white rounded-3xl p-8 sm:p-10 shadow-lg border border-gray-100 group-hover:shadow-xl transition-all duration-300">
+                <div className="flex items-center mb-6">
+                  <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl flex items-center justify-center mr-4">
+                    <Phone className="w-7 h-7 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900">
+                    Call Directly
+                  </h3>
+                </div>
+
+                <p className="text-gray-600 mb-8 text-lg leading-relaxed">
+                  Speak with our donation specialists who understand our
+                  programs and can help maximize your charitable impact.
+                </p>
+
+                <div className="space-y-4 mb-8">
+                  {[
+                    "Direct expert consultation",
+                    "Program-specific donations",
+                    "Corporate partnership opportunities",
+                    "Legacy and planned giving options",
+                  ].map((feature, index) => (
+                    <div key={index} className="flex items-center gap-3">
+                      <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center">
+                        <CheckCircle className="w-3 h-3 text-green-600" />
+                      </div>
+                      <span className="text-gray-700">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <a
+                  href="tel:+919876543210"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-semibold hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300"
+                >
+                  <Phone className="w-5 h-5" />
+                  +91 98765 43210
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       {/* Impact Preview */}
-      <div className="py-16 bg-white overflow-hidden">
-        <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-8 break-words">
-            Your Impact Matters
-          </h2>
-          <p className="text-lg text-gray-600 mb-12 break-words">
-            Every donation helps us create meaningful change in young lives
-            across India
-          </p>
+      <div className="py-20 bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
+              Your Impact
+              <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                {" "}
+                Amplified
+              </span>
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Every contribution creates ripple effects of positive change
+              across communities and generations.
+            </p>
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-orange-600">₹500</span>
+            {[
+              {
+                amount: "₹500",
+                title: "Educational Foundation",
+                description:
+                  "Provides learning materials and resources for 5 students for one month",
+                color: "from-indigo-500 to-blue-500",
+                bgColor: "from-indigo-50 to-blue-50",
+              },
+              {
+                amount: "₹2,000",
+                title: "Skill Development",
+                description:
+                  "Sponsors complete skill training program for one participant",
+                color: "from-purple-500 to-indigo-500",
+                bgColor: "from-purple-50 to-indigo-50",
+              },
+              {
+                amount: "₹10,000",
+                title: "Leadership Program",
+                description:
+                  "Funds comprehensive leadership development workshop for 20 youth",
+                color: "from-blue-500 to-purple-500",
+                bgColor: "from-blue-50 to-purple-50",
+              },
+            ].map((impact, index) => (
+              <div key={index} className="group text-center">
+                <div
+                  className={`w-20 h-20 bg-gradient-to-br ${impact.bgColor} rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300`}
+                >
+                  <span
+                    className={`text-2xl font-bold bg-gradient-to-r ${impact.color} bg-clip-text text-transparent`}
+                  >
+                    {impact.amount}
+                  </span>
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  {impact.title}
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  {impact.description}
+                </p>
               </div>
-              <h3 className="font-semibold text-gray-800 mb-2">Provides</h3>
-              <p className="text-gray-600 text-sm">
-                Educational materials for 5 students
-              </p>
-            </div>
+            ))}
+          </div>
 
-            <div className="text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-green-600">₹2K</span>
-              </div>
-              <h3 className="font-semibold text-gray-800 mb-2">Sponsors</h3>
-              <p className="text-gray-600 text-sm">
-                One month of skill training program
-              </p>
+          {/* Call to Action */}
+          <div className="mt-16 text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-full text-sm font-medium text-indigo-600 mb-6">
+              <Award className="w-4 h-4" />
+              Join the Movement
             </div>
-
-            <div className="text-center">
-              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-orange-600">₹10K</span>
-              </div>
-              <h3 className="font-semibold text-gray-800 mb-2">Funds</h3>
-              <p className="text-gray-600 text-sm">
-                Complete leadership development workshop
-              </p>
+            <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
+              Ready to Transform Lives?
+            </h3>
+            <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+              Your support today becomes tomorrow's success stories. Connect
+              with us to start your impact journey.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <a
+                href="mailto:donate@azadyouthorg.org"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+              >
+                <Mail className="w-5 h-5" />
+                Start Conversation
+              </a>
+              <a
+                href="tel:+919876543210"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-white text-gray-700 rounded-xl font-semibold border-2 border-gray-200 hover:border-indigo-300 hover:shadow-lg transition-all duration-300"
+              >
+                <Phone className="w-5 h-5" />
+                Call Now
+              </a>
             </div>
           </div>
         </div>

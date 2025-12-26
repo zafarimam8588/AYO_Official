@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { motion } from "framer-motion";
 
 import { useAuth } from "@/hooks/useAuth";
 import { useMemberProfile } from "@/hooks/useMemberProfile";
@@ -75,15 +74,15 @@ const SharedMemberProfile: React.FC<SharedMemberDashboardProps> = ({
     navigate("/dashboard");
   };
 
-  const handleApproveMember = () => {
+  const handleApproveMember = (message?: string) => {
     if (memberId) {
-      approveMember(memberId);
+      approveMember(memberId, message);
     }
   };
 
-  const handleRejectMember = () => {
+  const handleRejectMember = (reason: string) => {
     if (memberId) {
-      rejectMember(memberId);
+      rejectMember(memberId, reason);
     }
   };
 
@@ -98,11 +97,7 @@ const SharedMemberProfile: React.FC<SharedMemberDashboardProps> = ({
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-green-50">
       <div className="relative z-10 container mx-auto px-4 py-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="max-w-6xl mx-auto space-y-6"
-        >
+        <div className="max-w-6xl mx-auto space-y-6">
           <SharedMemberHeader
             isAdmin={isAdmin}
             currentUser={currentUser!}
@@ -141,6 +136,7 @@ const SharedMemberProfile: React.FC<SharedMemberDashboardProps> = ({
                   onApprove={handleApproveMember}
                   onReject={handleRejectMember}
                   submitting={submitting}
+                  memberName={user?.fullName}
                 />
               ) : (
                 <UserActionPanel
@@ -156,7 +152,7 @@ const SharedMemberProfile: React.FC<SharedMemberDashboardProps> = ({
           {profile.memberStatus !== "not_submitted" && (
             <MembershipDetails profile={profile} />
           )}
-        </motion.div>
+        </div>
       </div>
     </div>
   );

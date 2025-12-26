@@ -121,5 +121,3 @@ class AuthService {
 }
 
 export const authService = new AuthService();
-
-// Add these methods to your existing AuthService class

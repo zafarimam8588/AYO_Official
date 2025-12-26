@@ -275,7 +275,11 @@ export const verifyEmail = async (
     await EmailService.sendWelcomeEmail(user);
 
     // Generate token
-    const token = generateToken(user._id);
+    const token = generateToken({
+      userId: user._id.toString(),
+      fullName: user.fullName,
+      email: user.email,
+    });
 
     res.status(200).json({
       success: true,
@@ -353,7 +357,11 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     }
 
     // Generate token
-    const token = generateToken(user._id);
+    const token = generateToken({
+      userId: user._id.toString(),
+      fullName: user.fullName,
+      email: user.email,
+    });
 
     res.cookie("authToken", token, {
       httpOnly: true, // Prevents XSS attacks

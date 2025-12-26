@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { useRef, useEffect } from "react";
+import { User } from "lucide-react";
 
 const TestimonialSection = () => {
   const scrollContainerRef = useRef(null);
@@ -10,7 +11,7 @@ const TestimonialSection = () => {
       role: "Mother, Patna District",
       quote:
         "My daughter can now study in the learning center just 2 kilometers from our village. AYO has given us hope that she will have a better future than we could ever imagine.",
-      image: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg",
+      image: "", // Image will come from backend or database
       color: "orange",
     },
     {
@@ -18,8 +19,7 @@ const TestimonialSection = () => {
       role: "Entrepreneur, Muzaffarpur",
       quote:
         "The skill development program helped me start my own tailoring business. Now I can support my family and even employ other women from my village.",
-      image:
-        "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg",
+      image: "", // Image will come from backend or database
       color: "green",
     },
     {
@@ -27,8 +27,7 @@ const TestimonialSection = () => {
       role: "Village Head, Gaya",
       quote:
         "The mobile health clinic visits our village every month. For the first time, we have access to quality healthcare without traveling to the city.",
-      image:
-        "https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg",
+      image: "", // Image will come from backend or database
       color: "slate",
     },
     {
@@ -36,8 +35,7 @@ const TestimonialSection = () => {
       role: "Teacher, Bhojpur District",
       quote:
         "After the teacher training program, I feel more confident in my classroom. The new teaching methods have made learning so much more engaging for my students.",
-      image:
-        "https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg",
+      image: "", // Image will come from backend or database
       color: "orange",
     },
     {
@@ -45,8 +43,7 @@ const TestimonialSection = () => {
       role: "Young Farmer, Nalanda",
       quote:
         "The agricultural training helped me adopt modern farming techniques. My crop yield has increased by 40% and my family's income has doubled.",
-      image:
-        "https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg",
+      image: "", // Image will come from backend or database
       color: "green",
     },
     {
@@ -54,8 +51,7 @@ const TestimonialSection = () => {
       role: "Self-Help Group Leader, Vaishali",
       quote:
         "Through the women empowerment program, our self-help group now runs a successful food processing unit. We've become financially independent.",
-      image:
-        "https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg",
+      image: "", // Image will come from backend or database
       color: "slate",
     },
     {
@@ -63,8 +59,7 @@ const TestimonialSection = () => {
       role: "Youth Leader, Begusarai",
       quote:
         "The leadership development program transformed me from a shy village boy to someone who can speak confidently and organize community events.",
-      image:
-        "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg",
+      image: "", // Image will come from backend or database
       color: "orange",
     },
     {
@@ -72,8 +67,7 @@ const TestimonialSection = () => {
       role: "Healthcare Worker, Saran",
       quote:
         "The healthcare training equipped me with skills to serve my community better. Now I can provide basic medical care to families in remote areas.",
-      image:
-        "https://images.pexels.com/photos/1181424/pexels-photo-1181424.jpeg",
+      image: "", // Image will come from backend or database
       color: "green",
     },
   ];
@@ -170,7 +164,7 @@ const TestimonialSection = () => {
 
   return (
     <div
-      className=" bg-white relative"
+      className=" bg-white relative section-animate"
       style={{
         backgroundImage: `
           linear-gradient(45deg, rgba(255, 153, 51, 0.01) 1px, transparent 1px),
@@ -226,11 +220,27 @@ const TestimonialSection = () => {
 
                   <div className="flex items-center gap-4">
                     <div className="flex-shrink-0">
-                      <img
-                        src={testimonial.image}
-                        alt={`${testimonial.name} from ${testimonial.role}`}
-                        className={`w-12 h-12 rounded-full border-2 ${colorClasses.borderColor} shadow-sm object-cover`}
-                      />
+                      {testimonial.image ? (
+                        <img
+                          src={testimonial.image}
+                          alt={`${testimonial.name} from ${testimonial.role}`}
+                          className={`w-12 h-12 rounded-full border-2 ${colorClasses.borderColor} shadow-sm object-cover`}
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = "none";
+                            const parent = target.parentElement;
+                            if (parent) {
+                              parent.innerHTML = `<div class="w-12 h-12 rounded-full border-2 ${colorClasses.borderColor} bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center"><svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></div>`;
+                            }
+                          }}
+                        />
+                      ) : (
+                        <div
+                          className={`w-12 h-12 rounded-full border-2 ${colorClasses.borderColor} bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center`}
+                        >
+                          <User className="w-6 h-6 text-blue-600" />
+                        </div>
+                      )}
                     </div>
                     <div className="min-w-0">
                       <h4 className="font-semibold text-slate-900 text-base truncate">

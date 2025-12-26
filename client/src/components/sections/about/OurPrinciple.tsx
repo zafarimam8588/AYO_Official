@@ -44,10 +44,10 @@ const OurPrinciple = () => {
               Our Mission
             </h3>
             <p className="text-slate-700 text-sm lg:text-base leading-relaxed">
-              To empower Bihar's youth through sustainable programs in
-              education, healthcare, and skill development, creating lasting
-              positive change that breaks the cycle of poverty in rural
-              communities.
+              To empower youth and inspire them to create positive social
+              change. We focus on civic awareness and patriotism, leadership
+              development, education empowerment, sustainable environmental
+              development, and promoting social harmony among youth.
             </p>
           </Card>
 
@@ -68,9 +68,10 @@ const OurPrinciple = () => {
               Our Vision
             </h3>
             <p className="text-slate-700 text-sm lg:text-base leading-relaxed">
-              A Bihar where every young person has equal access to
-              opportunities, quality education, and healthcare needed to build a
-              dignified and prosperous life for themselves and their families.
+              A mature democracy where youth are aware of their rights and
+              responsibilities, equipped with leadership skills and moral
+              values, and actively participate in building an inclusive society
+              that celebrates diversity and sustainable development.
             </p>
           </Card>
 
@@ -91,9 +92,10 @@ const OurPrinciple = () => {
               Our Values
             </h3>
             <p className="text-slate-700 text-sm lg:text-base leading-relaxed">
-              Integrity, compassion, sustainability, and community partnership
-              guide our work. We believe in transparency, cultural respect, and
-              empowering local leadership in Bihar.
+              Integrity, patriotism, scientific thinking, and community service
+              guide our work. We believe in transparent operations, women's
+              empowerment, environmental protection, and inspiring youth to
+              bring positive changes in society.
             </p>
           </Card>
         </div>

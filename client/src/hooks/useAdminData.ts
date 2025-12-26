@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { adminService } from "@/services/adminService";
 import type { Member, UserData } from "@/types";
+import toast from "react-hot-toast";
 
 export const useAdminData = (token: string | null) => {
   const [dashboardStats, setDashboardStats] = useState({
@@ -12,6 +13,7 @@ export const useAdminData = (token: string | null) => {
       totalUsers: 0,
       verifiedUsers: 0,
       unverifiedUsers: 0,
+      totalSubscribedEmails: 0,
     },
   });
 
@@ -27,7 +29,12 @@ export const useAdminData = (token: string | null) => {
     setStatsLoading(true);
     try {
       const data = await adminService.getDashboardStats(token);
-      setDashboardStats(data);
+      setDashboardStats({
+        overview: {
+          ...data.overview,
+          totalSubscribedEmails: data.overview.totalSubscribedEmails || 0,
+        },
+      });
     } catch (error) {
       console.error("Failed to fetch dashboard stats:", error);
     } finally {
@@ -75,32 +82,32 @@ export const useAdminData = (token: string | null) => {
   }, [token]);
 
   const approveMember = useCallback(
-    async (memberId: string) => {
-      if (!window.confirm("Are you sure you want to approve this member?"))
-        return;
-
+    async (memberId: string, message?: string) => {
       try {
-        await adminService.approveMember(token!, memberId);
+        await adminService.approveMember(token!, memberId, message);
         await Promise.all([fetchPendingMembers(), fetchDashboardStats()]);
-        alert("Member approved successfully!");
+        toast.success("Member approved successfully!");
       } catch (error: any) {
-        alert(error.message || "Failed to approve member. Please try again.");
+        toast.error(
+          error.message || "Failed to approve member. Please try again."
+        );
       }
     },
     [token, fetchPendingMembers, fetchDashboardStats]
   );
 
   const rejectMember = useCallback(
-    async (memberId: string) => {
-      const reason = window.prompt("Please enter a reason for rejection:");
+    async (memberId: string, reason: string) => {
       if (!reason || reason.trim().length === 0) return;
 
       try {
         await adminService.rejectMember(token!, memberId, reason.trim());
         await Promise.all([fetchPendingMembers(), fetchDashboardStats()]);
-        alert("Member rejected successfully!");
+        toast.success("Member rejected successfully!");
       } catch (error: any) {
-        alert(error.message || "Failed to reject member. Please try again.");
+        toast.error(
+          error.message || "Failed to reject member. Please try again."
+        );
       }
     },
     [token, fetchPendingMembers, fetchDashboardStats]
@@ -108,19 +115,15 @@ export const useAdminData = (token: string | null) => {
 
   const deleteUser = useCallback(
     async (userId: string) => {
-      if (
-        !window.confirm(
-          "Are you sure you want to revoke this user? This action cannot be undone."
-        )
-      )
-        return;
-
       try {
         await adminService.deleteUser(token!, userId);
         await Promise.all([fetchUsers(), fetchDashboardStats()]);
-        alert("User revoked successfully!");
+        toast.success("User deleted successfully!");
       } catch (error: any) {
-        alert(error.message || "Failed to revoke user. Please try again.");
+        toast.error(
+          error.message || "Failed to delete user. Please try again."
+        );
+        throw error; // Re-throw to allow component to handle it
       }
     },
     [token, fetchUsers, fetchDashboardStats]

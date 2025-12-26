@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { authService } from "@/services/authService";
 import type { RegisterFormValues } from "@/types/auth";
+import toast from "react-hot-toast";
 
 export const useRegisterAuth = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -45,7 +46,7 @@ export const useRegisterAuth = () => {
         }
       } catch (error: any) {
         const message = error.message || "Registration failed";
-        alert(message);
+        toast.error(message);
         console.error(error);
       } finally {
         setIsSubmitting(false);
@@ -60,7 +61,7 @@ export const useRegisterAuth = () => {
       window.location.href = authURL;
     } catch (error: any) {
       console.error("Google authentication error:", error);
-      alert(error.message || "Failed to initiate Google authentication");
+      toast.error(error.message || "Failed to initiate Google authentication");
     }
   }, []);
 

@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { memberService } from "@/services/memberService";
 import type { MemberData } from "@/types";
+import toast from "react-hot-toast";
 
 export const useMemberProfile = (
   token: string | null,
@@ -53,10 +54,12 @@ export const useMemberProfile = (
       try {
         await memberService.updateProfile(token, profileData);
         await getMemberProfile();
-        alert("Profile updated successfully!");
+        toast.success("Profile updated successfully!");
         setIsEditing(false);
       } catch (error: any) {
-        alert(error.message || "Failed to update profile. Please try again.");
+        toast.error(
+          error.message || "Failed to update profile. Please try again."
+        );
       } finally {
         setSubmitting(false);
       }
@@ -71,27 +74,29 @@ export const useMemberProfile = (
     try {
       await memberService.submitMemberRequest(token);
       await getMemberProfile();
-      alert("Member request submitted successfully!");
+      toast.success("Member request submitted successfully!");
     } catch (error: any) {
-      alert(error.message || "Failed to submit request. Please try again.");
+      toast.error(
+        error.message || "Failed to submit request. Please try again."
+      );
     } finally {
       setSubmitting(false);
     }
   }, [token, getMemberProfile]);
 
   const approveMember = useCallback(
-    async (memberId: string) => {
-      if (!window.confirm("Are you sure you want to approve this member?"))
-        return;
+    async (memberId: string, message?: string) => {
       if (!token) return;
 
       setSubmitting(true);
       try {
-        await memberService.approveMember(token, memberId);
-        alert("Member approved successfully!");
+        await memberService.approveMember(token, memberId, message);
+        toast.success("Member approved successfully!");
         await getSpecificMemberProfile(memberId);
       } catch (error: any) {
-        alert(error.message || "Failed to approve member. Please try again.");
+        toast.error(
+          error.message || "Failed to approve member. Please try again."
+        );
       } finally {
         setSubmitting(false);
       }
@@ -100,18 +105,19 @@ export const useMemberProfile = (
   );
 
   const rejectMember = useCallback(
-    async (memberId: string) => {
-      const reason = window.prompt("Please enter a reason for rejection:");
+    async (memberId: string, reason: string) => {
       if (!reason || reason.trim().length === 0) return;
       if (!token) return;
 
       setSubmitting(true);
       try {
         await memberService.rejectMember(token, memberId, reason.trim());
-        alert("Member rejected successfully!");
+        toast.success("Member rejected successfully!");
         await getSpecificMemberProfile(memberId);
       } catch (error: any) {
-        alert(error.message || "Failed to reject member. Please try again.");
+        toast.error(
+          error.message || "Failed to reject member. Please try again."
+        );
       } finally {
         setSubmitting(false);
       }

@@ -1,41 +1,75 @@
 import { CheckCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { getPicturesByPage } from "@/services/pictureService";
 
 const AboutSection = () => {
-  const images = [
-    {
-      src: "https://images.pexels.com/photos/5212317/pexels-photo-5212317.jpeg",
-      alt: "Healthcare program in Bihar villages",
-      border: "border-orange-200/50",
-    },
-    {
-      src: "https://images.pexels.com/photos/8923034/pexels-photo-8923034.jpeg",
-      alt: "Skill development training",
-      border: "border-green-200/50",
-    },
-    {
-      src: "https://images.pexels.com/photos/8422085/pexels-photo-8422085.jpeg",
-      alt: "Children education program",
-      border: "border-orange-200/50",
-    },
-    {
-      src: "https://images.pexels.com/photos/5212320/pexels-photo-5212320.jpeg",
-      alt: "Community development activities",
-      border: "border-green-200/50",
-    },
-  ];
+  const [images, setImages] = useState<
+    Array<{ src: string; alt: string; border: string }>
+  >([]);
+
+  const [backgroundImage, setBackgroundImage] = useState<string>("");
+
+  useEffect(() => {
+    const fetchAboutImages = async () => {
+      try {
+        const response = await getPicturesByPage("about");
+        if (response.success && response.data && response.data.length > 0) {
+          // First image for background
+          if (response.data[0]?.imageUrl) {
+            setBackgroundImage(response.data[0].imageUrl);
+          }
+
+          // Images 2-5 for the grid (skip first background image)
+          const aboutImages = response.data.slice(1, 5).map((pic, index) => ({
+            src: pic.imageUrl,
+            alt: pic.imageDescription,
+            border:
+              index % 2 === 0 ? "border-orange-200/50" : "border-green-200/50",
+          }));
+
+          // Use images from backend
+          if (aboutImages.length > 0) {
+            // Fill remaining slots with default images if needed
+            while (aboutImages.length < 4) {
+              const defaultImage = images[aboutImages.length];
+              aboutImages.push(defaultImage);
+            }
+            setImages(aboutImages);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching about images:", error);
+        // Keep default images and pattern on error
+      }
+    };
+
+    fetchAboutImages();
+  }, []);
 
   return (
     <div
-      className="py-16 bg-white relative"
-      style={{
-        backgroundImage: `
-          linear-gradient(90deg, rgba(255, 153, 51, 0.015) 1px, transparent 1px),
-          linear-gradient(0deg, rgba(19, 136, 8, 0.015) 1px, transparent 1px),
-          linear-gradient(45deg, rgba(255, 153, 51, 0.008) 1px, transparent 1px),
-          linear-gradient(-45deg, rgba(19, 136, 8, 0.008) 1px, transparent 1px)
-        `,
-        backgroundSize: "80px 80px, 80px 80px, 120px 120px, 120px 120px",
-      }}
+      className="py-16 bg-white relative section-animate"
+      style={
+        backgroundImage
+          ? {
+              backgroundImage: `
+                linear-gradient(to right, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.92)),
+                url(${backgroundImage})
+              `,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+            }
+          : {
+              backgroundImage: `
+                linear-gradient(90deg, rgba(255, 153, 51, 0.015) 1px, transparent 1px),
+                linear-gradient(0deg, rgba(19, 136, 8, 0.015) 1px, transparent 1px),
+                linear-gradient(45deg, rgba(255, 153, 51, 0.008) 1px, transparent 1px),
+                linear-gradient(-45deg, rgba(19, 136, 8, 0.008) 1px, transparent 1px)
+              `,
+              backgroundSize: "80px 80px, 80px 80px, 120px 120px, 120px 120px",
+            }
+      }
     >
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -98,20 +132,19 @@ const AboutSection = () => {
             </div>
 
             <h2 className="text-4xl font-bold leading-tight">
-              <span className="text-slate-800">
-                Empowering Bihar's Youth for
-              </span>
+              <span className="text-slate-800">Empowering Youth, Building</span>
               <span className="block bg-gradient-to-r from-orange-600 to-green-600 bg-clip-text text-transparent">
-                Over a Decade
+                A Better Tomorrow
               </span>
             </h2>
 
             <p className="text-lg text-slate-700 leading-relaxed">
-              Azad Youth Organisation was founded with a vision to transform
-              Bihar through youth empowerment. From humble beginnings in rural
-              villages, we've grown into a movement that spans across districts,
-              creating opportunities and building hope in communities that need
-              it most.
+              Azad Youth Organization is a non-profit dedicated to empowering
+              youth and bringing positive change in society through education,
+              health, environment, and social justice. We believe that youth are
+              the future of our nation, and we are committed to inspiring them
+              to create a mature democracy where everyone is aware of their
+              rights and responsibilities.
             </p>
 
             {/* Stats Row for Mobile */}
@@ -143,10 +176,11 @@ const AboutSection = () => {
                 <CheckCircle className="h-6 w-6 text-orange-500 mt-1 flex-shrink-0 group-hover:scale-110 transition-transform duration-300" />
                 <div>
                   <h4 className="font-semibold text-slate-900 group-hover:text-orange-600 transition-colors duration-300">
-                    Community-Centered Approach
+                    Civic Awareness & Patriotism
                   </h4>
                   <p className="text-slate-600 text-sm">
-                    Programs designed with local communities for maximum impact
+                    Spreading awareness about democratic values and inspiring
+                    love for the nation
                   </p>
                 </div>
               </div>
@@ -155,10 +189,11 @@ const AboutSection = () => {
                 <CheckCircle className="h-6 w-6 text-green-500 mt-1 flex-shrink-0 group-hover:scale-110 transition-transform duration-300" />
                 <div>
                   <h4 className="font-semibold text-slate-900 group-hover:text-green-600 transition-colors duration-300">
-                    Sustainable Development
+                    Leadership Development
                   </h4>
                   <p className="text-slate-600 text-sm">
-                    Long-term solutions creating lasting positive change
+                    Building future leaders with moral values and scientific
+                    thinking
                   </p>
                 </div>
               </div>
@@ -167,10 +202,11 @@ const AboutSection = () => {
                 <CheckCircle className="h-6 w-6 text-orange-500 mt-1 flex-shrink-0 group-hover:scale-110 transition-transform duration-300" />
                 <div>
                   <h4 className="font-semibold text-slate-900 group-hover:text-orange-600 transition-colors duration-300">
-                    Transparent Operations
+                    Education Empowerment
                   </h4>
                   <p className="text-slate-600 text-sm">
-                    Open reporting on all activities and fund utilization
+                    Scholarship programs and awareness initiatives to promote
+                    higher education
                   </p>
                 </div>
               </div>
@@ -179,10 +215,11 @@ const AboutSection = () => {
                 <CheckCircle className="h-6 w-6 text-green-500 mt-1 flex-shrink-0 group-hover:scale-110 transition-transform duration-300" />
                 <div>
                   <h4 className="font-semibold text-slate-900 group-hover:text-green-600 transition-colors duration-300">
-                    Youth-Led Initiatives
+                    Sustainable Environment
                   </h4>
                   <p className="text-slate-600 text-sm">
-                    Empowering young leaders to drive community change
+                    Tree plantation drives and environmental protection
+                    initiatives
                   </p>
                 </div>
               </div>
@@ -192,8 +229,9 @@ const AboutSection = () => {
             <div className="pt-4">
               <div className="bg-gradient-to-r from-orange-500/10 to-green-500/10 p-4 rounded-2xl border border-orange-200/30">
                 <p className="text-slate-700 text-sm italic text-center">
-                  "Every small step towards empowerment creates ripples of
-                  change across Bihar's communities."
+                  "We believe that youth are the future of the nation. We are
+                  committed to empowering them and inspiring them to bring
+                  positive changes in society."
                 </p>
               </div>
             </div>
