@@ -1,8 +1,14 @@
+import dotenv from "dotenv";
+// ╔══════════════════════════════════════════════════════════════════╗
+// ║                      ENVIRONMENT CONFIG                          ║
+// ╚══════════════════════════════════════════════════════════════════╝
+// Load environment variables FIRST before any other imports
+dotenv.config();
+
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
-import dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
 import passport from "passport";
 
@@ -22,11 +28,6 @@ import adminRoutes from "./routes/adminRoutes";
 import subscribedEmailRoute from "./routes/subscribedEmailRoute";
 import pictureRoutes from "./routes/pictureRoutes";
 import contactMessageRoutes from "./routes/contactMessageRoutes";
-
-// ╔══════════════════════════════════════════════════════════════════╗
-// ║                      ENVIRONMENT CONFIG                          ║
-// ╚══════════════════════════════════════════════════════════════════╝
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;

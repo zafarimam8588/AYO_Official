@@ -1,7 +1,5 @@
 import mongoose from "mongoose";
-import dotenv from "dotenv";
-
-dotenv.config();
+// dotenv is already loaded in index.ts, no need to reload here
 
 const connectDB = async (): Promise<void> => {
   try {
