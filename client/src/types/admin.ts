@@ -11,6 +11,7 @@ export interface DashboardStatsResponse {
       verifiedUsers: number;
       unverifiedUsers: number;
       totalSubscribedEmails: number;
+      totalArchivedUsers: number;
     };
     members: {
       total: number;

@@ -1,8 +1,9 @@
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import type {
   MemberResponse,
   ActionResponse,
   ProfileUpdateData,
+  AxiosErrorResponse,
 } from "@/types";
 
 const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
@@ -28,7 +29,7 @@ class MemberService {
 
       return data.data;
     } catch (err) {
-      const error = err as AxiosError<{ message?: string }>;
+      const error = err as AxiosErrorResponse<{ message?: string }>;
       throw new Error(
         error.response?.data?.message ||
           error.message ||
@@ -50,7 +51,7 @@ class MemberService {
 
       return data.data;
     } catch (err) {
-      const error = err as AxiosError<{ message?: string }>;
+      const error = err as AxiosErrorResponse<{ message?: string }>;
       throw new Error(
         error.response?.data?.message ||
           error.message ||
@@ -73,7 +74,7 @@ class MemberService {
 
       return data;
     } catch (err) {
-      const error = err as AxiosError<{ message?: string }>;
+      const error = err as AxiosErrorResponse<{ message?: string }>;
       throw new Error(
         error.response?.data?.message ||
           error.message ||
@@ -96,7 +97,7 @@ class MemberService {
 
       return data;
     } catch (err) {
-      const error = err as AxiosError<{ message?: string }>;
+      const error = err as AxiosErrorResponse<{ message?: string }>;
       throw new Error(
         error.response?.data?.message ||
           error.message ||
@@ -119,7 +120,7 @@ class MemberService {
 
       return data;
     } catch (err) {
-      const error = err as AxiosError<{ message?: string }>;
+      const error = err as AxiosErrorResponse<{ message?: string }>;
       throw new Error(
         error.response?.data?.message ||
           error.message ||
@@ -142,7 +143,7 @@ class MemberService {
 
       return data;
     } catch (err) {
-      const error = err as AxiosError<{ message?: string }>;
+      const error = err as AxiosErrorResponse<{ message?: string }>;
       throw new Error(
         error.response?.data?.message ||
           error.message ||
