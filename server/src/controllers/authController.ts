@@ -57,11 +57,19 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     const existingUser = await User.findOne({ email: email.toLowerCase() });
 
     if (existingUser) {
-      res.status(400).json({
-        success: false,
-        message: "A user with this email or Google account already exists",
-      });
-      return;
+      // If user exists but is NOT verified, delete and allow re-registration
+      if (!existingUser.isVerified && !existingUser.googleId) {
+        await User.deleteOne({ _id: existingUser._id });
+        // Also clean up any existing OTPs for this email
+        await deleteOTPsForEmail(email, "email-verification");
+      } else {
+        // User is verified or is a Google user - block registration
+        res.status(400).json({
+          success: false,
+          message: "A user with this email or Google account already exists",
+        });
+        return;
+      }
     }
 
     // For regular registration, send OTP BEFORE creating user
