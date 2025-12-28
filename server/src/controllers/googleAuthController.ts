@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+
 import { generateToken } from "../utils/generateToken";
 
 export const getGoogleAuthURL = async (
@@ -19,7 +20,7 @@ export const getGoogleAuthURL = async (
       success: true,
       data: { authURL },
     });
-  } catch (error: any) {
+  } catch {
     res.status(500).json({
       success: false,
       message: "Failed to generate auth URL",
@@ -32,17 +33,12 @@ export const googleAuthCallback = async (
   res: Response
 ): Promise<void> => {
   try {
-    console.log("🎯 Google auth callback triggered");
-
     const user = req.user as any;
 
     if (!user) {
-      console.error("No user found in callback");
       res.redirect(`${process.env.FRONTEND_URL}/login?error=auth_failed`);
       return;
     }
-
-    console.log(" User authenticated:", user.email);
 
     // Generate token
     const token = generateToken({
@@ -50,7 +46,6 @@ export const googleAuthCallback = async (
       fullName: user.fullName,
       email: user.email,
     });
-    console.log("JWT token generated");
 
     const userData = {
       id: user._id,
@@ -62,16 +57,21 @@ export const googleAuthCallback = async (
       profilePic: user.profilePic,
     };
 
-    // Redirect to frontend with success data
-    // You can encode the data in URL params or use a temporary token approach
+    // Set JWT as httpOnly secure cookie (more secure than URL params)
+    res.cookie("authToken", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+
+    // Encode user data for frontend (token is now in cookie)
     const encodedUserData = encodeURIComponent(JSON.stringify(userData));
-    const encodedToken = encodeURIComponent(token);
 
     res.redirect(
-      `${process.env.FRONTEND_URL}/auth/callback?success=true&user=${encodedUserData}&token=${encodedToken}`
+      `${process.env.FRONTEND_URL}/auth/callback?success=true&user=${encodedUserData}`
     );
-  } catch (error: any) {
-    console.error("Google auth callback error:", error);
+  } catch {
     res.redirect(`${process.env.FRONTEND_URL}/login?error=server_error`);
   }
 };

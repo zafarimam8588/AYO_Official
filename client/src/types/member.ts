@@ -60,3 +60,16 @@ export interface MembersResponse {
 export interface SharedMemberDashboardProps {
   isAdmin?: boolean;
 }
+
+export interface ProfileUpdateData {
+  phoneNumber: string;
+  dateOfBirth: string;
+  gender: string;
+  whyJoin: string;
+  address: {
+    street: string;
+    city: string;
+    state: string;
+    pincode: string;
+  };
+}

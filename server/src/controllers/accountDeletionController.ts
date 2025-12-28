@@ -1,5 +1,6 @@
-import { AccountDeletionRequest } from "../models/AccountDeleteModal";
 import { Request, Response } from "express";
+
+import { AccountDeletionRequest } from "../models/AccountDeleteModal";
 import { IUser } from "../types";
 
 export const requestAccountDeletion = async (

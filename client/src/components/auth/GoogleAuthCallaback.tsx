@@ -1,7 +1,17 @@
 // components/AuthCallback.tsx
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { type User } from "../../types/index";
+import { type StoredUser } from "../../types/index";
+
+// Helper to get cookie value by name
+const getCookie = (name: string): string | null => {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    return parts.pop()?.split(";").shift() || null;
+  }
+  return null;
+};
 
 const GoogleAuthCallback = () => {
   const navigate = useNavigate();
@@ -10,31 +20,35 @@ const GoogleAuthCallback = () => {
   const handleAuthCallback = () => {
     const success = searchParams.get("success");
     const user = searchParams.get("user");
-    const token = searchParams.get("token");
     const error = searchParams.get("error");
 
-    if (success === "true" && user && token) {
+    // Token is now in httpOnly cookie (set by server)
+    // We get it from cookie for localStorage sync
+    const authToken = getCookie("authToken");
+
+    if (success === "true" && user) {
       try {
         // Parse user data
-        const userData: User = JSON.parse(decodeURIComponent(user));
-        const authToken = decodeURIComponent(token);
+        const userData: StoredUser = JSON.parse(decodeURIComponent(user));
 
-        // Store token and user data
-        localStorage.setItem("authToken", authToken);
+        // Store token (from cookie) and user data in localStorage
+        if (authToken) {
+          localStorage.setItem("authToken", authToken);
+        }
         localStorage.setItem("user", JSON.stringify(userData));
+
+        // Dispatch custom event to notify App.tsx of auth change
+        window.dispatchEvent(new CustomEvent("authChange"));
 
         // Redirect to originally intended page or dashboard
         const redirectPath =
           localStorage.getItem("redirectAfterAuth") || "/dashboard";
         localStorage.removeItem("redirectAfterAuth");
-        console.log(redirectPath);
         navigate(redirectPath, { replace: true });
-      } catch (parseError) {
-        console.error("Failed to parse auth data:", parseError);
+      } catch {
         navigate("/login?error=parse_error", { replace: true });
       }
     } else if (error) {
-      console.error("Authentication error:", error);
       navigate(`/login?error=${error}`, { replace: true });
     }
   };

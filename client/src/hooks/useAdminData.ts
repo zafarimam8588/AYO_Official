@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { adminService } from "@/services/adminService";
-import type { Member, UserData } from "@/types";
+import type { Member, UserData, ArchivedUser } from "@/types";
 import toast from "react-hot-toast";
 
 export const useAdminData = (token: string | null) => {
@@ -14,17 +14,21 @@ export const useAdminData = (token: string | null) => {
       verifiedUsers: 0,
       unverifiedUsers: 0,
       totalSubscribedEmails: 0,
+      totalArchivedUsers: 0,
     },
   });
 
   const [members, setMembers] = useState<Member[]>([]);
   const [users, setUsers] = useState<UserData[]>([]);
+  const [archivedUsers, setArchivedUsers] = useState<ArchivedUser[]>([]);
   const [pendingMembers, setPendingMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(false);
   const [statsLoading, setStatsLoading] = useState(true);
 
   const fetchDashboardStats = useCallback(async () => {
-    if (!token) return;
+    if (!token) {
+      return;
+    }
 
     setStatsLoading(true);
     try {
@@ -33,17 +37,21 @@ export const useAdminData = (token: string | null) => {
         overview: {
           ...data.overview,
           totalSubscribedEmails: data.overview.totalSubscribedEmails || 0,
+          totalArchivedUsers: data.overview.totalArchivedUsers || 0,
         },
       });
     } catch (error) {
       console.error("Failed to fetch dashboard stats:", error);
+      toast.error("Failed to load dashboard stats");
     } finally {
       setStatsLoading(false);
     }
   }, [token]);
 
   const fetchAllMembers = useCallback(async () => {
-    if (!token) return;
+    if (!token) {
+      return;
+    }
 
     setLoading(true);
     try {
@@ -51,13 +59,16 @@ export const useAdminData = (token: string | null) => {
       setMembers(data);
     } catch (error) {
       console.error("Failed to fetch members:", error);
+      toast.error("Failed to load members");
     } finally {
       setLoading(false);
     }
   }, [token]);
 
   const fetchUsers = useCallback(async () => {
-    if (!token) return;
+    if (!token) {
+      return;
+    }
 
     setLoading(true);
     try {
@@ -65,19 +76,23 @@ export const useAdminData = (token: string | null) => {
       setUsers(data);
     } catch (error) {
       console.error("Failed to fetch users:", error);
+      toast.error("Failed to load users");
     } finally {
       setLoading(false);
     }
   }, [token]);
 
   const fetchPendingMembers = useCallback(async () => {
-    if (!token) return;
+    if (!token) {
+      return;
+    }
 
     try {
       const data = await adminService.getPendingMembers(token);
       setPendingMembers(data);
     } catch (error) {
       console.error("Failed to fetch pending members:", error);
+      toast.error("Failed to load pending members");
     }
   }, [token]);
 
@@ -98,7 +113,9 @@ export const useAdminData = (token: string | null) => {
 
   const rejectMember = useCallback(
     async (memberId: string, reason: string) => {
-      if (!reason || reason.trim().length === 0) return;
+      if (!reason || reason.trim().length === 0) {
+        return;
+      }
 
       try {
         await adminService.rejectMember(token!, memberId, reason.trim());
@@ -113,15 +130,15 @@ export const useAdminData = (token: string | null) => {
     [token, fetchPendingMembers, fetchDashboardStats]
   );
 
-  const deleteUser = useCallback(
-    async (userId: string) => {
+  const archiveUser = useCallback(
+    async (userId: string, archiveReason?: string) => {
       try {
-        await adminService.deleteUser(token!, userId);
+        await adminService.archiveUser(token!, userId, archiveReason);
         await Promise.all([fetchUsers(), fetchDashboardStats()]);
-        toast.success("User deleted successfully!");
+        toast.success("User archived successfully!");
       } catch (error: any) {
         toast.error(
-          error.message || "Failed to delete user. Please try again."
+          error.message || "Failed to archive user. Please try again."
         );
         throw error; // Re-throw to allow component to handle it
       }
@@ -129,19 +146,38 @@ export const useAdminData = (token: string | null) => {
     [token, fetchUsers, fetchDashboardStats]
   );
 
+  const fetchArchivedUsers = useCallback(async () => {
+    if (!token) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const data = await adminService.getArchivedUsers(token);
+      setArchivedUsers(data);
+    } catch (error) {
+      console.error("Failed to fetch archived users:", error);
+      toast.error("Failed to load archived users");
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
   return {
     dashboardStats,
     members,
     users,
+    archivedUsers,
     pendingMembers,
     loading,
     statsLoading,
     fetchDashboardStats,
     fetchAllMembers,
     fetchUsers,
+    fetchArchivedUsers,
     fetchPendingMembers,
     approveMember,
     rejectMember,
-    deleteUser,
+    archiveUser,
   };
 };

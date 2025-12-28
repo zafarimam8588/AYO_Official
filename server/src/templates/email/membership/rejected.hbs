@@ -1,0 +1,66 @@
+{{!-- Membership Rejection Email Template --}}
+
+<!-- Greeting -->
+<h2 style="color: #333333; margin: 0 0 20px 0; font-size: 22px; font-weight: 600;">
+  Dear {{name}},
+</h2>
+
+<!-- Thank You Message -->
+<p style="color: #666666; line-height: 1.8; margin: 0 0 20px 0; font-size: 16px;">
+  Thank you for your interest in becoming a member of Azad Youth Organisation.
+  We sincerely appreciate the time and effort you put into your application.
+</p>
+
+<!-- Decision Message -->
+<p style="color: #666666; line-height: 1.8; margin: 0 0 25px 0; font-size: 16px;">
+  After careful review by our membership committee, we are unable to approve
+  your membership application at this time.
+</p>
+
+{{#if hasReason}}
+<!-- Feedback Section -->
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 25px 0;">
+  <tr>
+    <td style="background: #FFF3CD; border: 1px solid #FFEAA7; border-radius: 8px; padding: 20px;">
+      <h4 style="color: #856404; margin: 0 0 10px 0; font-size: 16px; font-weight: 600;">
+        &#x1F4CB; Feedback from Review Committee:
+      </h4>
+      <p style="color: #856404; margin: 0; line-height: 1.6; font-size: 15px;">
+        {{reason}}
+      </p>
+    </td>
+  </tr>
+</table>
+{{/if}}
+
+<!-- Still Make a Difference Section -->
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 25px 0;">
+  <tr>
+    <td style="background: #E3F2FD; border-radius: 10px; padding: 20px;">
+      <h3 style="color: #1976D2; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">
+        &#x1F91D; You Can Still Make a Difference!
+      </h3>
+      <p style="color: #666666; margin: 0 0 15px 0; font-size: 15px; line-height: 1.6;">
+        Don't let this discourage you! There are many ways to support our mission:
+      </p>
+      <ul style="color: #666666; margin: 0; padding-left: 20px; line-height: 2;">
+        <li><strong style="color: #1976D2;">Volunteer:</strong> Join our events and community programs</li>
+        <li><strong style="color: #1976D2;">Donate:</strong> Support our initiatives financially</li>
+        <li><strong style="color: #1976D2;">Spread Awareness:</strong> Share our work in your network</li>
+        <li><strong style="color: #1976D2;">Reapply:</strong> Address the feedback and apply again after 3 months</li>
+      </ul>
+    </td>
+  </tr>
+</table>
+
+<!-- Encouraging Message -->
+<p style="color: #666666; line-height: 1.8; margin: 25px 0 0 0; font-size: 16px; text-align: center;">
+  We value your commitment to social change and hope you'll continue
+  supporting our mission in other meaningful ways.
+</p>
+
+<!-- Signature -->
+<p style="color: #666666; line-height: 1.8; margin: 30px 0 0 0; font-size: 16px; text-align: center;">
+  With appreciation,<br>
+  <strong style="color: #138808;">Team Azad Youth Organisation</strong>
+</p>

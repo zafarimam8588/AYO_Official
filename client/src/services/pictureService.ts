@@ -1,9 +1,15 @@
 import axios from "axios";
 import type {
   PictureFormData,
+  PictureUpdateData,
   PicturesResponse,
   PictureResponse,
   PictureStatsResponse,
+  CategorizedGalleryResponse,
+  SlotExistsResponse,
+  NextNumberResponse,
+  PageName,
+  GalleryCategory,
 } from "@/types";
 
 const API_URL = `${import.meta.env.VITE_BACKEND_BASE_URL}/api/pictures`;
@@ -17,7 +23,7 @@ const getAuthToken = (): string | null => {
 // Helper function to get auth headers
 const getAuthHeaders = () => {
   const token = getAuthToken();
-  const headers: any = {};
+  const headers: Record<string, string> = {};
 
   if (token) {
     headers.Authorization = `Bearer ${token}`;
@@ -29,36 +35,43 @@ const getAuthHeaders = () => {
 // Upload a new picture with progress tracking
 export const uploadPicture = async (
   formData: PictureFormData,
-  onUploadProgress?: (progressEvent: any) => void
+  onUploadProgress?: (progressEvent: { percentCompleted: number }) => void
 ): Promise<PictureResponse> => {
   const data = new FormData();
-  data.append("pageToDisplay", formData.pageToDisplay);
-  data.append("positionOnPage", formData.positionOnPage.toString());
-  data.append("imageDescription", formData.imageDescription);
+  data.append("page", formData.page);
+  data.append("imageNumber", formData.imageNumber.toString());
   data.append("image", formData.image);
+
+  if (formData.category) {
+    data.append("category", formData.category);
+  }
 
   const token = getAuthToken();
   if (!token) {
     throw new Error("No authentication token found. Please login first.");
   }
 
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    withCredentials: true,
+    onUploadProgress: onUploadProgress
+      ? (progressEvent: { loaded: number; total?: number }) => {
+          if (progressEvent.total) {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            onUploadProgress({ percentCompleted });
+          }
+        }
+      : undefined,
+  };
+
   const response = await axios.post<PictureResponse>(
     `${API_URL}/upload`,
     data,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      withCredentials: true,
-      onUploadProgress: (progressEvent: any) => {
-        if (onUploadProgress && progressEvent.total) {
-          const percentCompleted = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-          );
-          onUploadProgress({ percentCompleted, ...progressEvent });
-        }
-      },
-    } as any
+    config
   );
 
   return response.data;
@@ -66,12 +79,28 @@ export const uploadPicture = async (
 
 // Get all pictures with optional filtering
 export const getAllPictures = async (params?: {
-  page?: number;
+  pageNum?: number;
   limit?: number;
-  pageToDisplay?: string;
+  pageName?: PageName;
+  category?: GalleryCategory;
 }): Promise<PicturesResponse> => {
+  const queryParams: Record<string, string | number> = {};
+
+  if (params?.pageNum) {
+    queryParams.page = params.pageNum;
+  }
+  if (params?.limit) {
+    queryParams.limit = params.limit;
+  }
+  if (params?.pageName) {
+    queryParams.pageName = params.pageName;
+  }
+  if (params?.category) {
+    queryParams.category = params.category;
+  }
+
   const response = await axios.get<PicturesResponse>(API_URL, {
-    params,
+    params: queryParams,
     headers: getAuthHeaders(),
     withCredentials: true,
   });
@@ -81,10 +110,10 @@ export const getAllPictures = async (params?: {
 
 // Get pictures by page
 export const getPicturesByPage = async (
-  pageToDisplay: string
+  page: PageName
 ): Promise<PicturesResponse> => {
   const response = await axios.get<PicturesResponse>(
-    `${API_URL}/page/${pageToDisplay}`,
+    `${API_URL}/page/${page}`,
     {
       headers: getAuthHeaders(),
       withCredentials: true,
@@ -104,10 +133,57 @@ export const getPictureById = async (id: string): Promise<PictureResponse> => {
   return response.data;
 };
 
-// Update picture details
+// Check if image slot exists
+export const getImageBySlot = async (
+  page: PageName,
+  imageNumber: number,
+  category?: GalleryCategory
+): Promise<SlotExistsResponse> => {
+  const params: Record<string, string | number> = {
+    page,
+    imageNumber,
+  };
+
+  if (category) {
+    params.category = category;
+  }
+
+  const response = await axios.get<SlotExistsResponse>(`${API_URL}/slot`, {
+    params,
+    headers: getAuthHeaders(),
+    withCredentials: true,
+  });
+
+  return response.data;
+};
+
+// Get next available image number for a page/category
+export const getNextImageNumber = async (
+  page: PageName,
+  category?: GalleryCategory
+): Promise<NextNumberResponse> => {
+  const params: Record<string, string> = { page };
+
+  if (category) {
+    params.category = category;
+  }
+
+  const response = await axios.get<NextNumberResponse>(
+    `${API_URL}/next-number`,
+    {
+      params,
+      headers: getAuthHeaders(),
+      withCredentials: true,
+    }
+  );
+
+  return response.data;
+};
+
+// Update picture details (move to different slot)
 export const updatePicture = async (
   id: string,
-  data: { pageToDisplay?: string; imageDescription?: string }
+  data: PictureUpdateData
 ): Promise<PictureResponse> => {
   const response = await axios.put<PictureResponse>(`${API_URL}/${id}`, data, {
     headers: getAuthHeaders(),
@@ -140,6 +216,60 @@ export const getPictureStats = async (): Promise<PictureStatsResponse> => {
       headers: getAuthHeaders(),
       withCredentials: true,
     }
+  );
+
+  return response.data;
+};
+
+// Get gallery pictures grouped by category
+export const getCategorizedGallery =
+  async (): Promise<CategorizedGalleryResponse> => {
+    const response = await axios.get<CategorizedGalleryResponse>(
+      `${API_URL}/gallery/categorized`,
+      {
+        headers: getAuthHeaders(),
+        withCredentials: true,
+      }
+    );
+
+    return response.data;
+  };
+
+// Replace picture image (keep slot, upload new image)
+export const replacePictureImage = async (
+  id: string,
+  image: File,
+  onUploadProgress?: (progressEvent: { percentCompleted: number }) => void
+): Promise<PictureResponse> => {
+  const data = new FormData();
+  data.append("image", image);
+
+  const token = getAuthToken();
+  if (!token) {
+    throw new Error("No authentication token found. Please login first.");
+  }
+
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    withCredentials: true,
+    onUploadProgress: onUploadProgress
+      ? (progressEvent: { loaded: number; total?: number }) => {
+          if (progressEvent.total) {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            onUploadProgress({ percentCompleted });
+          }
+        }
+      : undefined,
+  };
+
+  const response = await axios.put<PictureResponse>(
+    `${API_URL}/${id}/replace`,
+    data,
+    config
   );
 
   return response.data;

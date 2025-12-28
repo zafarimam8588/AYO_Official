@@ -1,50 +1,49 @@
 import mongoose, { Document, Schema } from "mongoose";
 
+import {
+  GALLERY_CATEGORIES,
+  PAGE_OPTIONS,
+  type GalleryCategory,
+  type PageOption,
+} from "../constants/pictureConstants";
+
+export type { GalleryCategory, PageOption };
+
 export interface IPicture extends Document {
-  pageToDisplay: string;
-  positionOnPage: number;
-  imageDescription: string;
+  page: PageOption;
+  category?: GalleryCategory;
+  imageNumber: number;
   imageUrl: string;
   cloudinaryPublicId?: string;
-  uploadedBy?: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
 
 const PictureSchema: Schema = new Schema(
   {
-    pageToDisplay: {
+    page: {
       type: String,
-      required: [true, "Page to display is required"],
-      default: "gallery",
-      enum: [
-        "home",
-        "about",
-        "programs",
-        "gallery",
-        "contact",
-        "donate",
-        "team",
-        "partnership",
-        "events",
-        "achievements",
-        "testimonials",
-        "other",
-      ],
+      required: [true, "Page is required"],
+      enum: {
+        values: PAGE_OPTIONS,
+        message: "Invalid page option",
+      },
       index: true,
     },
-    positionOnPage: {
-      type: Number,
-      required: [true, "Position on page is required"],
-      default: 1,
-      min: [1, "Position must be at least 1"],
-      max: [100, "Position cannot exceed 100"],
-    },
-    imageDescription: {
+    category: {
       type: String,
-      required: [true, "Image description is required"],
-      trim: true,
-      maxlength: [500, "Description cannot exceed 500 characters"],
+      enum: {
+        values: GALLERY_CATEGORIES,
+        message: "Invalid gallery category",
+      },
+      index: true,
+      // Category is only used for gallery page
+    },
+    imageNumber: {
+      type: Number,
+      required: [true, "Image number is required"],
+      min: [1, "Image number must be at least 1"],
+      // No upper limit
     },
     imageUrl: {
       type: String,
@@ -53,18 +52,20 @@ const PictureSchema: Schema = new Schema(
     cloudinaryPublicId: {
       type: String,
     },
-    uploadedBy: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-    },
   },
   {
     timestamps: true,
   }
 );
 
-// Index for faster queries
-PictureSchema.index({ pageToDisplay: 1, positionOnPage: 1 });
-PictureSchema.index({ pageToDisplay: 1, createdAt: -1 });
+// Unique compound index for page + category + imageNumber
+// This ensures no duplicate slots
+PictureSchema.index({ page: 1, category: 1, imageNumber: 1 }, { unique: true });
+
+// Index for faster page queries with ordering
+PictureSchema.index({ page: 1, imageNumber: 1 });
+
+// Index for gallery category queries
+PictureSchema.index({ page: 1, category: 1, imageNumber: 1 });
 
 export default mongoose.model<IPicture>("Picture", PictureSchema);

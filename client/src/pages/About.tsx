@@ -4,50 +4,90 @@ import HeroSection from "@/components/sections/about/HeroSection";
 import ImpactStastisticSection from "@/components/sections/about/ImpactStastisticSection";
 import OurPrinciple from "@/components/sections/about/OurPrinciple";
 import OurStorySection from "@/components/sections/about/OurStorySection";
-import JoinOurMission from "@/components/sections/home/JoinOurMission";
+import { UnifiedCTASection } from "@/components/common";
+import { Users, Heart } from "lucide-react";
 import OurProgramSection from "@/components/sections/home/OurProgramSection";
+
+// Gradient divider component for smooth section transitions
+const SectionDivider = ({
+  variant = "default",
+}: {
+  variant?:
+    | "saffron-to-white"
+    | "white-to-green"
+    | "green-to-dark"
+    | "dark-to-light"
+    | "default";
+}) => {
+  const gradients = {
+    "saffron-to-white": "from-saffron-50/40 via-white to-white",
+    "white-to-green": "from-white via-india-green-50/20 to-india-green-50/40",
+    "green-to-dark": "from-india-green-50/30 via-slate-200 to-slate-800",
+    "dark-to-light": "from-slate-800 via-slate-200 to-white",
+    default: "from-transparent via-saffron-50/20 to-transparent",
+  };
+
+  return (
+    <div
+      className={`h-16 lg:h-20 bg-gradient-to-b ${gradients[variant]}`}
+      aria-hidden="true"
+    />
+  );
+};
 
 export default function AboutUsPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-green-50 relative overflow-x-hidden">
-      {/* ===================
-          FIXED FULL SCREEN HERO POSTER SECTION
-          =================== */}
+    <div className="min-h-screen bg-white relative overflow-x-hidden">
+      {/* Hero Section with full-screen slider */}
       <HeroSection />
-      {/* ===================
-          OUR STORY SECTION (REDUCED SPACING)
-          =================== */}
+
+      {/* Gradient transition from hero */}
+      <SectionDivider variant="saffron-to-white" />
+
+      {/* Our Story */}
       <OurStorySection />
 
-      {/* ===================
-          MISSION, VISION, VALUES SECTION (REDUCED SPACING)
-          =================== */}
+      {/* Mission, Vision, Values */}
       <OurPrinciple />
 
-      {/* ===================
-          IMPACT STATISTICS SECTION (REDUCED SPACING)
-          =================== */}
+      {/* Gradient to dark section */}
+      <SectionDivider variant="green-to-dark" />
+
+      {/* Impact Statistics */}
       <ImpactStastisticSection />
 
-      {/* ===================
-          SMOOTH AUTO-SCROLLING IMAGES GALLERY SECTION
-          =================== */}
+      {/* Gradient from dark to light */}
+      <SectionDivider variant="dark-to-light" />
+
+      {/* Image Gallery */}
       <ScrollingImageSection />
 
-      {/* ===================
-          NEW: TEAM & BOARD SECTION WITH TABS
-          =================== */}
+      {/* Team Section */}
       <Team />
 
-      {/* ===================
-          PROGRAMS SECTION (REDUCED SPACING)
-          =================== */}
+      {/* Programs Section */}
       <OurProgramSection />
 
-      {/* ===================
-          CALL TO ACTION SECTION
-          =================== */}
-      <JoinOurMission />
+      {/* CTA Section */}
+      <UnifiedCTASection
+        title={
+          <>
+            Ready to <span className="text-saffron-400">Make</span> a{" "}
+            <span className="text-india-green-400">Difference</span>?
+          </>
+        }
+        subtitle="Join thousands of volunteers and donors who are transforming Bihar's future through education, healthcare, and sustainable development."
+        primaryAction={{
+          label: "Become a Volunteer",
+          href: "/register",
+          icon: Users,
+        }}
+        secondaryAction={{
+          label: "Support Our Cause",
+          href: "/donate",
+          icon: Heart,
+        }}
+      />
     </div>
   );
 }

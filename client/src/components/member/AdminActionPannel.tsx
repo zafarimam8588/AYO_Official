@@ -45,22 +45,22 @@ export const AdminActionPanel = ({
 
   return (
     <>
-      <div className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-blue-400 hover:shadow-xl transition-shadow duration-300">
-        <h2 className="text-xl font-semibold text-gray-800 mb-6">
+      <div className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-saffron-400 hover:shadow-xl transition-shadow duration-300">
+        <h2 className="text-xl font-semibold text-slate-800 mb-6">
           Admin Actions
         </h2>
 
         <div className="space-y-4">
           <div className="mb-6">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-600">Status</span>
+              <span className="text-sm font-medium text-slate-600">Status</span>
               <span
                 className={`px-3 py-1 rounded-full text-sm font-medium ${
                   profile.memberStatus === "approved"
-                    ? "bg-green-100 text-green-700"
+                    ? "bg-india-green-100 text-india-green-700"
                     : profile.memberStatus === "pending"
-                    ? "bg-orange-100 text-orange-700"
-                    : "bg-red-100 text-red-700"
+                      ? "bg-saffron-100 text-saffron-700"
+                      : "bg-red-100 text-red-700"
                 }`}
               >
                 {profile.memberStatus.toUpperCase()}
@@ -72,7 +72,7 @@ export const AdminActionPanel = ({
             <button
               onClick={handleApproveClick}
               disabled={submitting}
-              className="w-full flex items-center justify-center space-x-2 py-3 px-4 rounded-lg font-medium transition-all duration-200 bg-green-500 text-white hover:bg-green-600 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              className="w-full flex items-center justify-center space-x-2 py-3 px-4 rounded-lg font-medium transition-all duration-200 bg-india-green-500 text-white hover:bg-india-green-600 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               {submitting ? (
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />
@@ -103,7 +103,7 @@ export const AdminActionPanel = ({
           )}
 
           {profile.memberStatus === "approved" && (
-            <p className="text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg p-3">
+            <p className="text-sm text-india-green-700 bg-india-green-50 border border-india-green-200 rounded-lg p-3">
               Member status: Approved
             </p>
           )}

@@ -1,5 +1,9 @@
-import axios from "axios";
-import type { MemberResponse, ActionResponse } from "@/types";
+import axios, { AxiosError } from "axios";
+import type {
+  MemberResponse,
+  ActionResponse,
+  ProfileUpdateData,
+} from "@/types";
 
 const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
 
@@ -23,10 +27,11 @@ class MemberService {
       }
 
       return data.data;
-    } catch (err: any) {
+    } catch (err) {
+      const error = err as AxiosError<{ message?: string }>;
       throw new Error(
-        err.response?.data?.message ||
-          err.message ||
+        error.response?.data?.message ||
+          error.message ||
           "Failed to load member data"
       );
     }
@@ -44,16 +49,17 @@ class MemberService {
       }
 
       return data.data;
-    } catch (err: any) {
+    } catch (err) {
+      const error = err as AxiosError<{ message?: string }>;
       throw new Error(
-        err.response?.data?.message ||
-          err.message ||
+        error.response?.data?.message ||
+          error.message ||
           "Failed to load member data"
       );
     }
   }
 
-  async updateProfile(token: string, profileData: any) {
+  async updateProfile(token: string, profileData: ProfileUpdateData) {
     try {
       const { data } = await axios.put<ActionResponse>(
         `${BASE_URL}/api/member/profile`,
@@ -66,9 +72,12 @@ class MemberService {
       }
 
       return data;
-    } catch (err: any) {
+    } catch (err) {
+      const error = err as AxiosError<{ message?: string }>;
       throw new Error(
-        err.response?.data?.message || err.message || "Failed to update profile"
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to update profile"
       );
     }
   }
@@ -86,9 +95,12 @@ class MemberService {
       }
 
       return data;
-    } catch (err: any) {
+    } catch (err) {
+      const error = err as AxiosError<{ message?: string }>;
       throw new Error(
-        err.response?.data?.message || err.message || "Failed to submit request"
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to submit request"
       );
     }
   }
@@ -106,9 +118,12 @@ class MemberService {
       }
 
       return data;
-    } catch (err: any) {
+    } catch (err) {
+      const error = err as AxiosError<{ message?: string }>;
       throw new Error(
-        err.response?.data?.message || err.message || "Failed to approve member"
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to approve member"
       );
     }
   }
@@ -126,9 +141,12 @@ class MemberService {
       }
 
       return data;
-    } catch (err: any) {
+    } catch (err) {
+      const error = err as AxiosError<{ message?: string }>;
       throw new Error(
-        err.response?.data?.message || err.message || "Failed to reject member"
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to reject member"
       );
     }
   }

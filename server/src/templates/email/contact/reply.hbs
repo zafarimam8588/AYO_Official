@@ -1,0 +1,71 @@
+{{!-- Contact Reply Email Template --}}
+
+<!-- Greeting -->
+<p style="color: #666666; line-height: 1.8; margin: 0 0 20px 0; font-size: 16px;">
+  Thank you for reaching out to Azad Youth Organisation. We have reviewed your message and here is our response:
+</p>
+
+<!-- Original Message Section -->
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 25px 0;">
+  <tr>
+    <td style="background: #F3F4F6; border-left: 4px solid #94A3B8; padding: 20px; border-radius: 0 8px 8px 0;">
+      <h4 style="color: #64748B; margin: 0 0 10px 0; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+        &#x1F4E9; Your Original Message:
+      </h4>
+      <p style="color: #666666; margin: 0 0 10px 0; font-size: 14px;">
+        <strong>Subject:</strong> {{originalSubject}}
+      </p>
+      <p style="color: #666666; margin: 0; font-size: 14px; line-height: 1.6; font-style: italic;">
+        "{{originalMessage}}"
+      </p>
+    </td>
+  </tr>
+</table>
+
+<!-- Reply Section -->
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 25px 0;">
+  <tr>
+    <td style="background: #FFF5EB; border-left: 4px solid #FF9933; padding: 20px; border-radius: 0 8px 8px 0;">
+      <h4 style="color: #FF9933; margin: 0 0 15px 0; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+        &#x1F4AC; Our Response:
+      </h4>
+      <div style="color: #333333; font-size: 15px; line-height: 1.8;">
+        {{{replyContent}}}
+      </div>
+    </td>
+  </tr>
+</table>
+
+<!-- Further Assistance -->
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 25px 0;">
+  <tr>
+    <td style="background: #E8F5E8; border-radius: 10px; padding: 20px; text-align: center;">
+      <p style="color: #138808; margin: 0 0 10px 0; font-size: 15px; font-weight: 600;">
+        &#x1F4DE; Need Further Assistance?
+      </p>
+      <p style="color: #666666; margin: 0; font-size: 14px; line-height: 1.6;">
+        Feel free to reply to this email or contact us at<br>
+        <a href="mailto:{{contact.email}}" style="color: #138808; text-decoration: none; font-weight: 500;">{{contact.email}}</a>
+        &nbsp;|&nbsp;
+        <span style="color: #666666;">{{contact.phone}}</span>
+      </p>
+    </td>
+  </tr>
+</table>
+
+<!-- Visit Website CTA -->
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 30px auto;">
+  <tr>
+    <td style="border-radius: 30px; background: linear-gradient(135deg, #FF9933, #138808); box-shadow: 0 4px 15px rgba(255, 153, 51, 0.25);">
+      <a href="{{frontendUrl}}" target="_blank" style="display: inline-block; padding: 14px 40px; color: #FFFFFF; text-decoration: none; font-weight: 600; font-size: 15px; border-radius: 30px;">
+        &#x1F310; Visit Our Website
+      </a>
+    </td>
+  </tr>
+</table>
+
+<!-- Signature -->
+<p style="color: #666666; line-height: 1.8; margin: 25px 0 0 0; font-size: 16px;">
+  Warm regards,<br>
+  <strong style="color: #138808;">Team Azad Youth Organisation</strong>
+</p>

@@ -1,5 +1,26 @@
 import nodemailer, { Transporter } from "nodemailer";
-import { IUser } from "../types";
+
+import { OTP_CONFIG } from "../models/OTPModel";
+import {
+  sanitizeName,
+  sanitizeSubject,
+  sanitizeMessageBody,
+  sanitizeOTP,
+  sanitizeMembershipId,
+  sanitizeAmount,
+} from "../utils/emailValidator";
+
+import emailQueueService, {
+  EmailJob,
+  EmailPriority,
+} from "./emailQueueService";
+import templateService from "./templateService";
+
+// Email configuration
+const EMAIL_CONFIG = {
+  useQueue: process.env.EMAIL_QUEUE_ENABLED !== "false",
+  secure: process.env.MAIL_SECURE === "true",
+};
 
 class EmailService {
   private transporter: Transporter;
@@ -8,121 +29,175 @@ class EmailService {
     this.transporter = nodemailer.createTransport({
       host: process.env.MAIL_HOST,
       port: Number(process.env.MAIL_PORT),
-      secure: false,
+      secure: EMAIL_CONFIG.secure,
       auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,
       },
     });
+
+    // Configure queue to use our send function
+    emailQueueService.setSendEmailFunction(this.processQueuedEmail.bind(this));
   }
 
+  /**
+   * Start the email queue worker
+   */
+  startQueueWorker(): void {
+    if (EMAIL_CONFIG.useQueue) {
+      emailQueueService.startWorker();
+    }
+  }
+
+  /**
+   * Stop the email queue worker
+   */
+  stopQueueWorker(): void {
+    emailQueueService.stopWorker();
+  }
+
+  /**
+   * Process a queued email job
+   */
+  private async processQueuedEmail(job: EmailJob): Promise<void> {
+    const { html, text } = await templateService.compileWithPlainText(
+      job.templateName,
+      job.templateData
+    );
+
+    await this.sendRaw({
+      to: job.to,
+      subject: job.subject,
+      html,
+      text,
+    });
+  }
+
+  /**
+   * Send email directly (bypassing queue)
+   */
+  private async sendRaw(options: {
+    to: string;
+    subject: string;
+    html: string;
+    text?: string;
+  }): Promise<void> {
+    const mailOptions = {
+      from: `"Azad Youth Organisation" <${process.env.EMAIL_USER}>`,
+      to: options.to,
+      subject: options.subject,
+      html: options.html,
+      text: options.text,
+    };
+
+    await this.transporter.sendMail(mailOptions);
+  }
+
+  /**
+   * Queue an email for sending
+   */
+  private async queueEmail(options: {
+    to: string;
+    subject: string;
+    templateName: string;
+    templateData: Record<string, unknown>;
+    priority?: EmailPriority;
+    tags?: string[];
+  }): Promise<string> {
+    return emailQueueService.enqueue({
+      to: options.to,
+      subject: options.subject,
+      templateName: options.templateName,
+      templateData: options.templateData,
+      priority: options.priority || "normal",
+      maxAttempts: 3,
+      tags: options.tags,
+    });
+  }
+
+  /**
+   * Send an email (using queue or directly based on config)
+   */
+  private async sendEmailInternal(options: {
+    to: string;
+    subject: string;
+    templateName: string;
+    templateData: Record<string, unknown>;
+    priority?: EmailPriority;
+    sendImmediately?: boolean;
+    tags?: string[];
+  }): Promise<void> {
+    // High priority emails (like OTP) should be sent immediately
+    const shouldSendImmediately =
+      options.sendImmediately ||
+      options.priority === "high" ||
+      !EMAIL_CONFIG.useQueue;
+
+    if (shouldSendImmediately) {
+      const { html, text } = await templateService.compileWithPlainText(
+        options.templateName,
+        options.templateData
+      );
+
+      await this.sendRaw({
+        to: options.to,
+        subject: options.subject,
+        html,
+        text,
+      });
+    } else {
+      await this.queueEmail({
+        to: options.to,
+        subject: options.subject,
+        templateName: options.templateName,
+        templateData: options.templateData,
+        priority: options.priority,
+        tags: options.tags,
+      });
+    }
+  }
+
+  /**
+   * Send OTP email for verification or password reset
+   */
   async sendOTPEmail(
     email: string,
     otp: string,
     type: "email-verification" | "password-reset"
   ): Promise<void> {
-    const subject =
-      type === "email-verification"
-        ? "Verify Your Email - AYO"
-        : "Reset Your Password - AYO";
-    const title =
-      type === "email-verification"
-        ? "Verify Your Email"
-        : "Reset Your Password";
-    const message =
-      type === "email-verification"
-        ? "Please use the following OTP to verify your email address and complete your registration:"
-        : "Please use the following OTP to reset your password:";
+    const isVerification = type === "email-verification";
+    const sanitizedOTP = sanitizeOTP(otp);
 
-    const mailOptions = {
-      from: `"Azad Youth Organisation" <${process.env.EMAIL_USER}>`,
+    const subject = isVerification
+      ? "Verify Your Email - AYO"
+      : "Reset Your Password - AYO";
+
+    await this.sendEmailInternal({
       to: email,
       subject,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background: linear-gradient(135deg, #FF9933, #FFFFFF, #138808); padding: 20px; text-align: center;">
-            <h1 style="color: #333; margin: 0;">${title}</h1>
-          </div>
-          <div style="padding: 30px; background: #f9f9f9; text-align: center;">
-            <p style="color: #666; line-height: 1.6; margin-bottom: 30px;">
-              ${message}
-            </p>
-            <div style="background: white; border: 3px solid #138808; 
-                        padding: 25px; margin: 25px 0; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-              <h2 style="color: #138808; font-size: 42px; margin: 0; letter-spacing: 10px; font-weight: bold;">
-                ${otp}
-              </h2>
-            </div>
-            <div style="background: #fff3cd; border: 1px solid #ffeaa7; 
-                        border-radius: 8px; padding: 15px; margin: 20px 0;">
-              <p style="color: #856404; margin: 0; font-size: 14px;">
-                ⏰ This OTP will expire in <strong>10 minutes</strong>
-              </p>
-            </div>
-            <p style="color: #666; line-height: 1.6; margin-top: 30px;">
-              If you didn't request this verification, please ignore this email or contact our support team.
-            </p>
-            <p style="color: #999; font-size: 12px; margin-top: 20px;">
-              This is an automated message from Azad Youth Organisation. Please do not reply to this email.
-            </p>
-          </div>
-        </div>
-      `,
-    };
-
-    await this.transporter.sendMail(mailOptions);
+      templateName: "auth/otp",
+      templateData: {
+        otp: sanitizedOTP,
+        type,
+        isVerification,
+        expiryMinutes: OTP_CONFIG.expiryMinutes,
+        title: isVerification ? "Verify Your Email" : "Reset Your Password",
+        preheader: isVerification
+          ? `Your verification code is ${sanitizedOTP}. Valid for ${OTP_CONFIG.expiryMinutes} minutes.`
+          : `Your password reset code is ${sanitizedOTP}. Valid for ${OTP_CONFIG.expiryMinutes} minutes.`,
+        message: isVerification
+          ? "Please use the following OTP to verify your email address and complete your registration:"
+          : "Please use the following OTP to reset your password:",
+      },
+      priority: "high", // OTPs should be sent immediately
+      sendImmediately: true,
+      tags: ["otp", type],
+    });
   }
 
-  async sendWelcomeEmail(user: IUser): Promise<void> {
-    const mailOptions = {
-      from: `"Azad Youth Organisation" <${process.env.EMAIL_USER}>`,
-      to: user.email,
-      subject: "Welcome to Azad Youth Organisation - Application Received",
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background: linear-gradient(135deg, #FF9933, #FFFFFF, #138808); padding: 20px; text-align: center;">
-            <h1 style="color: #333; margin: 0;">Welcome to AYO!</h1>
-          </div>
-          <div style="padding: 30px; background: #f9f9f9;">
-            <h2 style="color: #333;">Hello ${user.fullName},</h2>
-            <p style="color: #666; line-height: 1.6;">
-              Thank you for applying to become a member of Azad Youth Organisation! 
-              We're excited about your interest in joining our mission to empower Bihar's youth.
-            </p>
-            <div style="background: white; border-left: 4px solid #138808; padding: 20px; margin: 20px 0;">
-              <h3 style="color: #138808; margin: 0 0 10px 0;">What's Next?</h3>
-              <ul style="color: #666; margin: 0; padding-left: 20px;">
-                <li>Our team will review your application within 2-3 business days</li>
-                <li>You'll receive an email notification about the status</li>
-                <li>If approved, you'll get your unique membership ID</li>
-              </ul>
-            </div>
-            <p style="color: #666; line-height: 1.6;">
-              Your application status: <strong style="color: #FF9933;">Under Review</strong>
-            </p>
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="${process.env.FRONTEND_URL}/dashboard" 
-                 style="background: linear-gradient(135deg, #FF9933, #138808); 
-                        color: white; padding: 12px 30px; text-decoration: none; 
-                        border-radius: 25px; display: inline-block;">
-                Check Application Status
-              </a>
-            </div>
-            <p style="color: #666; line-height: 1.6;">
-              Together, we can create lasting positive change in Bihar's communities.
-            </p>
-            <p style="color: #666; line-height: 1.6;">
-              Best regards,<br>
-              <strong>Team Azad Youth Organisation</strong>
-            </p>
-          </div>
-        </div>
-      `,
-    };
-
-    await this.transporter.sendMail(mailOptions);
-  }
-
+  /**
+   * Send membership approval email
+   */
   async sendMembershipApprovalEmail(
     userEmail: string,
     memberData: {
@@ -132,148 +207,148 @@ class EmailService {
       approvedBy: string;
     }
   ): Promise<void> {
-    const mailOptions = {
-      from: `"Azad Youth Organisation" <${process.env.EMAIL_USER}>`,
-      to: userEmail,
-      subject: "🎉 Membership Approved - Welcome to AYO Family!",
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background: linear-gradient(135deg, #FF9933, #FFFFFF, #138808); padding: 25px; text-align: center;">
-            <h1 style="color: #333; margin: 0; font-size: 28px;">🎉 Membership Approved!</h1>
-          </div>
-          <div style="padding: 30px; background: #f9f9f9;">
-            <h2 style="color: #333;">Congratulations ${
-              memberData.fullName
-            }!</h2>
-            <p style="color: #666; line-height: 1.6; font-size: 16px;">
-              We're thrilled to inform you that your membership application has been <strong style="color: #138808;">approved</strong>! 
-              Welcome to the Azad Youth Organisation family.
-            </p>
-            
-            <div style="background: white; border: 2px solid #138808; 
-                        border-radius: 15px; padding: 25px; margin: 25px 0; text-align: center;">
-              <h3 style="color: #138808; margin: 0 0 15px 0; font-size: 20px;">🆔 Your Membership Details</h3>
-              <div style="background: linear-gradient(135deg, #FF9933, #138808); 
-                          color: white; padding: 15px; border-radius: 10px; margin: 10px 0;">
-                <p style="margin: 5px 0; font-size: 18px;"><strong>Membership ID:</strong> ${
-                  memberData.membershipId
-                }</p>
-                <p style="margin: 5px 0;"><strong>Status:</strong> ✅ Active Member</p>
-                <p style="margin: 5px 0;"><strong>Approved Date:</strong> ${memberData.approvedAt.toLocaleDateString(
-                  "en-IN"
-                )}</p>
-                <p style="margin: 5px 0;"><strong>Approved By:</strong> ${
-                  memberData.approvedBy
-                }</p>
-              </div>
-            </div>
-  
-            <p style="color: #666; line-height: 1.6;">
-              Your journey as an AYO member starts now! You can access your member dashboard 
-              to explore available opportunities and start making a difference in Bihar's communities.
-            </p>
-  
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="${process.env.FRONTEND_URL}/member/dashboard" 
-                 style="background: linear-gradient(135deg, #FF9933, #138808); 
-                        color: white; padding: 15px 35px; text-decoration: none; 
-                        border-radius: 25px; display: inline-block; font-weight: bold; font-size: 16px;
-                        box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-                🚀 Access Member Dashboard
-              </a>
-            </div>
-  
-            <div style="background: #fff3cd; border-radius: 10px; padding: 15px; margin: 20px 0;">
-              <p style="color: #856404; margin: 0; font-size: 14px; text-align: center;">
-                💡 <strong>Next Steps:</strong> Check your member dashboard for upcoming volunteer opportunities and events!
-              </p>
-            </div>
-  
-            <p style="color: #666; line-height: 1.6; text-align: center; margin-top: 30px;">
-              Thank you for choosing to make a difference with us!<br>
-              <strong>Together, we transform Bihar! 🏆</strong>
-            </p>
-  
-            <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
-            
-            <p style="color: #999; font-size: 12px; text-align: center;">
-              Azad Youth Organisation | Empowering Bihar's Youth | Building Better Communities<br>
-              📧 contact@azadyouth.org | 📱 +91 98765 43210
-            </p>
-          </div>
-        </div>
-      `,
-    };
+    const sanitizedName = sanitizeName(memberData.fullName);
+    const sanitizedMembershipId = sanitizeMembershipId(memberData.membershipId);
+    const sanitizedApprovedBy = sanitizeName(memberData.approvedBy);
 
-    await this.transporter.sendMail(mailOptions);
+    await this.sendEmailInternal({
+      to: userEmail,
+      subject: "Membership Approved - Welcome to AYO Family!",
+      templateName: "membership/approved",
+      templateData: {
+        fullName: sanitizedName,
+        membershipId: sanitizedMembershipId,
+        approvedAt: memberData.approvedAt,
+        approvedBy: sanitizedApprovedBy,
+        preheader: `Congratulations ${sanitizedName}! Your membership has been approved.`,
+      },
+      priority: "normal",
+      tags: ["membership", "approved"],
+    });
   }
 
+  /**
+   * Send membership rejection email
+   */
   async sendMembershipRejectionEmail(
     email: string,
     name: string,
     reason?: string
   ): Promise<void> {
-    const mailOptions = {
-      from: `"Azad Youth Organisation" <${process.env.EMAIL_USER}>`,
+    const sanitizedName = sanitizeName(name);
+    const sanitizedReason = reason
+      ? sanitizeMessageBody(reason, { maxLength: 1000 })
+      : undefined;
+
+    await this.sendEmailInternal({
       to: email,
       subject: "Membership Application Update - AYO",
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background: linear-gradient(135deg, #FF9933, #FFFFFF, #138808); padding: 20px; text-align: center;">
-            <h1 style="color: #333; margin: 0;">Membership Application Update</h1>
-          </div>
-          <div style="padding: 30px; background: #f9f9f9;">
-            <h2 style="color: #333;">Dear ${name},</h2>
-            <p style="color: #666; line-height: 1.6;">
-              Thank you for your interest in becoming a member of Azad Youth Organisation. 
-              We sincerely appreciate the time and effort you put into your application.
-            </p>
-            <p style="color: #666; line-height: 1.6;">
-              After careful review by our membership committee, we are unable to approve 
-              your membership application at this time.
-            </p>
-            
-            ${
-              reason
-                ? `
-              <div style="background: #fff3cd; border: 1px solid #ffeaa7; 
-                          border-radius: 8px; padding: 20px; margin: 25px 0;">
-                <h4 style="color: #856404; margin: 0 0 10px 0;">📋 Feedback from Review Committee:</h4>
-                <p style="color: #856404; margin: 0; line-height: 1.6;">${reason}</p>
-              </div>
-            `
-                : ""
-            }
-
-            <div style="background: #e3f2fd; border-radius: 10px; padding: 20px; margin: 25px 0;">
-              <h3 style="color: #1976d2; margin: 0 0 15px 0;">🤝 You Can Still Make a Difference!</h3>
-              <p style="color: #666; margin: 0 0 10px 0;">Don't let this discourage you! There are many ways to support our mission:</p>
-              <ul style="color: #666; margin: 0; padding-left: 20px; line-height: 1.8;">
-                <li><strong>Volunteer:</strong> Join our events and community programs</li>
-                <li><strong>Donate:</strong> Support our initiatives financially</li>
-                <li><strong>Spread Awareness:</strong> Share our work in your network</li>
-                <li><strong>Reapply:</strong> Address the feedback and apply again after 3 months</li>
-              </ul>
-            </div>
-
-            <p style="color: #666; line-height: 1.6; text-align: center;">
-              We value your commitment to social change and hope you'll continue 
-              supporting our mission in other meaningful ways.
-            </p>
-            
-            <p style="color: #666; line-height: 1.6; text-align: center; margin-top: 30px;">
-              With appreciation,<br>
-              <strong>Team Azad Youth Organisation</strong>
-            </p>
-          </div>
-        </div>
-      `,
-    };
-
-    await this.transporter.sendMail(mailOptions);
+      templateName: "membership/rejected",
+      templateData: {
+        name: sanitizedName,
+        reason: sanitizedReason,
+        hasReason: !!sanitizedReason,
+        preheader: `Dear ${sanitizedName}, we have an update on your membership application.`,
+      },
+      priority: "normal",
+      tags: ["membership", "rejected"],
+    });
   }
 
-  // Generic sendEmail method
+  /**
+   * Send newsletter to subscriber
+   */
+  async sendNewsletterToSubscriber(
+    email: string,
+    subject: string,
+    message: string
+  ): Promise<void> {
+    const sanitizedSubject = sanitizeSubject(subject);
+    const sanitizedMessage = sanitizeMessageBody(message, {
+      maxLength: 10000,
+      allowLineBreaks: true,
+    });
+
+    await this.sendEmailInternal({
+      to: email,
+      subject: sanitizedSubject,
+      templateName: "newsletter/newsletter",
+      templateData: {
+        subject: sanitizedSubject,
+        message: sanitizedMessage,
+        preheader: sanitizedMessage.substring(0, 100) + "...",
+        showUnsubscribe: true,
+      },
+      priority: "low",
+      tags: ["newsletter"],
+    });
+  }
+
+  /**
+   * Send donation thank you email
+   */
+  async sendDonationThankYou(
+    donorEmail: string,
+    donorName: string,
+    amount: number,
+    isAnonymous: boolean
+  ): Promise<void> {
+    const displayName = isAnonymous
+      ? "Generous Donor"
+      : sanitizeName(donorName);
+
+    await this.sendEmailInternal({
+      to: donorEmail,
+      subject: "Thank You for Your Generous Donation - AYO",
+      templateName: "donation/thank-you",
+      templateData: {
+        donorName: displayName,
+        amount,
+        isAnonymous,
+        preheader: `Thank you for your generous donation of ₹${sanitizeAmount(amount)}!`,
+      },
+      priority: "normal",
+      tags: ["donation", "thank-you"],
+    });
+  }
+
+  /**
+   * Send contact message reply
+   */
+  async sendContactReply(
+    to: string,
+    originalSubject: string,
+    originalMessage: string,
+    replyContent: string
+  ): Promise<void> {
+    const sanitizedOriginalSubject = sanitizeSubject(originalSubject);
+    const sanitizedOriginalMessage = sanitizeMessageBody(originalMessage, {
+      maxLength: 2000,
+    });
+    const sanitizedReply = sanitizeMessageBody(replyContent, {
+      maxLength: 5000,
+      allowLineBreaks: true,
+    });
+
+    await this.sendEmailInternal({
+      to,
+      subject: `Re: ${sanitizedOriginalSubject}`,
+      templateName: "contact/reply",
+      templateData: {
+        originalSubject: sanitizedOriginalSubject,
+        originalMessage: sanitizedOriginalMessage,
+        replyContent: sanitizedReply,
+        preheader: `We have replied to your message: "${sanitizedOriginalSubject}"`,
+      },
+      priority: "normal",
+      tags: ["contact", "reply"],
+    });
+  }
+
+  /**
+   * Generic send email method (for backwards compatibility)
+   * This method accepts raw HTML content
+   */
   async sendEmail(
     to: string,
     subject: string,
@@ -289,282 +364,36 @@ class EmailService {
     await this.transporter.sendMail(mailOptions);
   }
 
-  // Newsletter email to subscribers
-  async sendNewsletterToSubscriber(
-    email: string,
-    subject: string,
-    message: string
-  ): Promise<void> {
-    const mailOptions = {
-      from: `"Azad Youth Organisation" <${process.env.MAIL_USER}>`,
-      to: email,
-      subject: subject,
-      html: `
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <meta http-equiv="X-UA-Compatible" content="IE=edge">
-          <title>${subject}</title>
-          <style>
-            /* Reset styles */
-            body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
-            table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
-            img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
-            body { margin: 0; padding: 0; width: 100% !important; height: 100% !important; }
-            
-            /* Responsive styles */
-            @media only screen and (max-width: 600px) {
-              .email-container { width: 100% !important; }
-              .header-title { font-size: 24px !important; padding: 30px 20px !important; }
-              .header-subtitle { font-size: 13px !important; }
-              .content-padding { padding: 25px 20px !important; }
-              .subject-title { font-size: 22px !important; }
-              .message-text { font-size: 15px !important; }
-              .cta-button { padding: 12px 30px !important; font-size: 14px !important; display: block !important; }
-              .footer-padding { padding: 20px 15px !important; }
-            }
-          </style>
-        </head>
-        <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f5f5f5;">
-          
-          <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 0; padding: 0;">
-            <tr>
-              <td style="padding: 20px 0;">
-                
-                <!-- Main Container -->
-                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 650px; margin: 0 auto;" class="email-container">
-                  
-                  <!-- Header with gradient -->
-                  <tr>
-                    <td style="background: linear-gradient(135deg, #ff9933 0%, #138808 100%); padding: 40px 30px; text-align: center;" class="header-title">
-                      <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 600; letter-spacing: 0.5px;">
-                        Azad Youth Organisation
-                      </h1>
-                      <p style="color: rgba(255, 255, 255, 0.95); margin: 10px 0 0 0; font-size: 15px; font-weight: 300;" class="header-subtitle">
-                        Empowering Bihar's Youth | Building Better Communities
-                      </p>
-                    </td>
-                  </tr>
-
-                  <!-- Main Content -->
-                  <tr>
-                    <td style="background-color: #ffffff; padding: 40px 35px;" class="content-padding">
-                      
-                      <!-- Subject/Title -->
-                      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-                        <tr>
-                          <td style="padding-bottom: 30px;">
-                            <h2 style="color: #2c3e50; margin: 0 0 20px 0; font-size: 26px; font-weight: 600; line-height: 1.3;" class="subject-title">
-                              ${subject}
-                            </h2>
-                            <div style="width: 60px; height: 3px; background: linear-gradient(90deg, #ff9933, #138808); border-radius: 2px;"></div>
-                          </td>
-                        </tr>
-                      </table>
-
-                      <!-- Message Body -->
-                      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-                        <tr>
-                          <td style="color: #4a5568; line-height: 1.8; font-size: 16px; padding-bottom: 35px;" class="message-text">
-                            ${message
-                              .split("\n")
-                              .map(
-                                (paragraph) =>
-                                  `<p style="margin: 0 0 18px 0;">${paragraph}</p>`
-                              )
-                              .join("")}
-                          </td>
-                        </tr>
-                      </table>
-
-                      <!-- Call to Action -->
-                      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-                        <tr>
-                          <td style="text-align: center; padding: 10px 0 40px 0;">
-                            <a href="${
-                              process.env.FRONTEND_URL
-                            }" class="cta-button"
-                               style="background: linear-gradient(135deg, #ff9933, #138808); 
-                                      color: #ffffff; padding: 14px 40px; text-decoration: none; 
-                                      border-radius: 30px; display: inline-block; font-weight: 600; 
-                                      font-size: 15px; box-shadow: 0 4px 15px rgba(255, 153, 51, 0.25);">
-                              Visit Our Website
-                            </a>
-                          </td>
-                        </tr>
-                      </table>
-
-                      <!-- Social Connect Section -->
-                      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-                        <tr>
-                          <td style="background: linear-gradient(135deg, #fff5eb 0%, #e8f5e8 100%); 
-                                     border-radius: 12px; padding: 25px; text-align: center;">
-                            <p style="color: #2c3e50; margin: 0 0 15px 0; font-size: 15px; font-weight: 600;">
-                              🤝 Stay Connected With Us
-                            </p>
-                            <p style="color: #64748b; margin: 0; font-size: 14px; line-height: 1.6;">
-                              Follow our journey and be part of the change we're creating together
-                            </p>
-                          </td>
-                        </tr>
-                      </table>
-
-                    </td>
-                  </tr>
-
-                  <!-- Footer -->
-                  <tr>
-                    <td style="background: #f8fafc; padding: 30px 35px; border-top: 1px solid #e2e8f0;" class="footer-padding">
-                      
-                      <!-- Unsubscribe Info -->
-                      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-                        <tr>
-                          <td style="text-align: center; padding-bottom: 20px;">
-                            <p style="color: #64748b; margin: 0 0 8px 0; font-size: 13px; line-height: 1.6;">
-                              You're receiving this email because you subscribed to updates from Azad Youth Organisation.
-                            </p>
-                            <a href="${
-                              process.env.FRONTEND_URL
-                            }/unsubscribe" style="color: #94a3b8; font-size: 12px; text-decoration: underline;">
-                              Unsubscribe from future emails
-                            </a>
-                          </td>
-                        </tr>
-                      </table>
-
-                      <!-- Divider -->
-                      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-                        <tr>
-                          <td style="border-top: 1px solid #e2e8f0; padding: 20px 0;"></td>
-                        </tr>
-                      </table>
-
-                      <!-- Contact & Copyright -->
-                      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-                        <tr>
-                          <td style="text-align: center;">
-                            <p style="color: #94a3b8; margin: 0 0 8px 0; font-size: 12px;">
-                              📧 contact@azadyouth.org | 📱 +91 98765 43210
-                            </p>
-                            <p style="color: #cbd5e1; margin: 0; font-size: 11px;">
-                              © ${new Date().getFullYear()} Azad Youth Organisation. All rights reserved.
-                            </p>
-                          </td>
-                        </tr>
-                      </table>
-
-                    </td>
-                  </tr>
-
-                </table>
-                
-              </td>
-            </tr>
-          </table>
-
-        </body>
-        </html>
-      `,
-    };
-
-    await this.transporter.sendMail(mailOptions);
+  /**
+   * Get email queue statistics
+   */
+  async getQueueStats() {
+    return emailQueueService.getStats();
   }
 
-  async sendDonationThankYou(
-    donorEmail: string,
-    donorName: string,
-    amount: number,
-    isAnonymous: boolean
-  ): Promise<void> {
-    const mailOptions = {
-      from: `"Azad Youth Organisation" <${process.env.EMAIL_USER}>`,
-      to: donorEmail,
-      subject: "🙏 Thank You for Your Generous Donation - AYO",
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background: linear-gradient(135deg, #FF9933, #FFFFFF, #138808); padding: 25px; text-align: center;">
-            <h1 style="color: #333; margin: 0; font-size: 28px;">🙏 Thank You!</h1>
-          </div>
-          <div style="padding: 30px; background: #f9f9f9;">
-            <h2 style="color: #333;">Dear ${
-              isAnonymous ? "Generous Donor" : donorName
-            },</h2>
-            <p style="color: #666; line-height: 1.6; font-size: 16px;">
-              Your generous donation of <strong style="color: #138808; font-size: 18px;">₹${amount.toLocaleString()}</strong> 
-              has been received with immense gratitude. Your contribution will directly impact the lives of 
-              youth and communities across Bihar.
-            </p>
+  /**
+   * Get failed emails from queue
+   */
+  async getFailedEmails(options?: { limit?: number; since?: Date }) {
+    return emailQueueService.getFailedJobs(options);
+  }
 
-            <div style="background: white; border: 2px solid #138808; 
-                        border-radius: 15px; padding: 25px; margin: 25px 0;">
-              <h3 style="color: #138808; margin: 0 0 15px 0; text-align: center;">🌟 Your Impact</h3>
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                <div style="text-align: center; padding: 15px; background: #f0f8ff; border-radius: 10px;">
-                  <div style="font-size: 24px; margin-bottom: 5px;">📚</div>
-                  <div style="font-size: 12px; color: #666;">Education Support</div>
-                </div>
-                <div style="text-align: center; padding: 15px; background: #f0fff0; border-radius: 10px;">
-                  <div style="font-size: 24px; margin-bottom: 5px;">🏥</div>
-                  <div style="font-size: 12px; color: #666;">Healthcare Access</div>
-                </div>
-              </div>
-              <p style="color: #666; text-align: center; margin: 15px 0 0 0; font-size: 14px;">
-                Your donation helps us provide quality education, healthcare services, 
-                skill development, and women empowerment programs.
-              </p>
-            </div>
+  /**
+   * Retry a failed email
+   */
+  async retryFailedEmail(jobId: string): Promise<boolean> {
+    return emailQueueService.retryFailedJob(jobId);
+  }
 
-            <div style="background: #e8f5e8; border-radius: 10px; padding: 20px; margin: 20px 0;">
-              <h4 style="color: #138808; margin: 0 0 10px 0;">📊 Donation Receipt Details:</h4>
-              <ul style="color: #666; margin: 0; padding-left: 20px; line-height: 1.6;">
-                <li>Amount: ₹${amount.toLocaleString()}</li>
-                <li>Date: ${new Date().toLocaleDateString("en-IN")}</li>
-                <li>Transaction ID: Will be sent separately</li>
-                <li>Tax Benefits: As per 80G guidelines</li>
-              </ul>
-            </div>
-
-            <p style="color: #666; line-height: 1.6;">
-              We'll keep you updated on how your contribution is creating positive change. 
-              Together, we're building a stronger, more empowered Bihar.
-            </p>
-
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="${process.env.FRONTEND_URL}/impact" 
-                 style="background: linear-gradient(135deg, #FF9933, #138808); 
-                        color: white; padding: 15px 35px; text-decoration: none; 
-                        border-radius: 25px; display: inline-block; font-weight: bold;
-                        box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-                📈 See Our Impact Stories
-              </a>
-            </div>
-
-            <div style="text-align: center; margin: 30px 0;">
-              <p style="color: #138808; font-weight: bold; font-size: 18px; margin: 0;">
-                🏆 Together, We Transform Bihar!
-              </p>
-            </div>
-
-            <p style="color: #666; line-height: 1.6; text-align: center;">
-              With heartfelt gratitude,<br>
-              <strong>Team Azad Youth Organisation</strong>
-            </p>
-
-            <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
-            
-            <p style="color: #999; font-size: 12px; text-align: center;">
-              📧 contact@azadyouth.org | 📱 +91 98765 43210<br>
-              123 Gandhi Marg, Patna, Bihar 800001
-            </p>
-          </div>
-        </div>
-      `,
-    };
-
-    await this.transporter.sendMail(mailOptions);
+  /**
+   * Check if queue is enabled
+   */
+  isQueueEnabled(): boolean {
+    return emailQueueService.isEnabled();
   }
 }
 
-export default new EmailService();
+// Singleton instance
+const emailService = new EmailService();
+
+export default emailService;

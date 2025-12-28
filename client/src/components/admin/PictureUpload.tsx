@@ -1,19 +1,19 @@
 import { useState } from "react";
 import { Upload, Image as ImageIcon, X } from "lucide-react";
-import { uploadPicture } from "@/services/pictureService";
-import { PAGE_OPTIONS } from "@/types";
-import type { PictureFormData } from "@/types";
+import { uploadPicture, getNextImageNumber } from "@/services/pictureService";
+import { PAGE_OPTIONS, GALLERY_CATEGORIES } from "@/types";
+import type { PageName, GalleryCategory } from "@/types";
 
 export const PictureUpload = ({ onSuccess }: { onSuccess?: () => void }) => {
   const [formData, setFormData] = useState<{
-    pageToDisplay: string;
-    positionOnPage: number;
-    imageDescription: string;
+    page: PageName;
+    category?: GalleryCategory;
+    imageNumber: number;
     image: File | null;
   }>({
-    pageToDisplay: "gallery",
-    positionOnPage: 1,
-    imageDescription: "",
+    page: "gallery",
+    category: "general",
+    imageNumber: 1,
     image: null,
   });
 
@@ -22,6 +22,7 @@ export const PictureUpload = ({ onSuccess }: { onSuccess?: () => void }) => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [autoAssign, setAutoAssign] = useState(true);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -56,29 +57,38 @@ export const PictureUpload = ({ onSuccess }: { onSuccess?: () => void }) => {
       return;
     }
 
-    if (!formData.imageDescription.trim()) {
-      setError("Please enter image description");
-      return;
-    }
-
-    if (formData.positionOnPage < 1 || formData.positionOnPage > 100) {
-      setError("Position must be between 1 and 100");
-      return;
-    }
-
     try {
       setUploading(true);
       setUploadProgress(0);
 
-      await uploadPicture(formData as PictureFormData, (progressEvent: any) => {
-        setUploadProgress(progressEvent.percentCompleted || 0);
-      });
+      let imageNumber = formData.imageNumber;
+
+      // Auto-assign next number if enabled
+      if (autoAssign) {
+        const response = await getNextImageNumber(
+          formData.page,
+          formData.page === "gallery" ? formData.category : undefined
+        );
+        imageNumber = response.data.nextImageNumber;
+      }
+
+      await uploadPicture(
+        {
+          page: formData.page,
+          category: formData.page === "gallery" ? formData.category : undefined,
+          imageNumber,
+          image: formData.image,
+        },
+        (progressEvent) => {
+          setUploadProgress(progressEvent.percentCompleted);
+        }
+      );
 
       setSuccess("Picture uploaded successfully!");
       setFormData({
-        pageToDisplay: "gallery",
-        positionOnPage: 1,
-        imageDescription: "",
+        page: "gallery",
+        category: "general",
+        imageNumber: 1,
         image: null,
       });
       setPreview("");
@@ -90,8 +100,9 @@ export const PictureUpload = ({ onSuccess }: { onSuccess?: () => void }) => {
 
       // Clear success message after 3 seconds
       setTimeout(() => setSuccess(""), 3000);
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to upload picture");
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      setError(error.response?.data?.message || "Failed to upload picture");
     } finally {
       setUploading(false);
     }
@@ -108,12 +119,16 @@ export const PictureUpload = ({ onSuccess }: { onSuccess?: () => void }) => {
         {/* Page Selection */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Page to Display *
+            Page *
           </label>
           <select
-            value={formData.pageToDisplay}
+            value={formData.page}
             onChange={(e) =>
-              setFormData({ ...formData, pageToDisplay: e.target.value })
+              setFormData({
+                ...formData,
+                page: e.target.value as PageName,
+                category: e.target.value === "gallery" ? "general" : undefined,
+              })
             }
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
             required
@@ -126,49 +141,63 @@ export const PictureUpload = ({ onSuccess }: { onSuccess?: () => void }) => {
           </select>
         </div>
 
-        {/* Position on Page */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Position on Page * (1-100)
-          </label>
-          <input
-            type="number"
-            min="1"
-            max="100"
-            value={formData.positionOnPage}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                positionOnPage: parseInt(e.target.value) || 1,
-              })
-            }
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-            required
-          />
-          <p className="text-xs text-gray-500 mt-1">
-            Lower numbers appear first. Use this to control image order.
-          </p>
-        </div>
+        {/* Category Selection (only for gallery) */}
+        {formData.page === "gallery" && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Category *
+            </label>
+            <select
+              value={formData.category}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  category: e.target.value as GalleryCategory,
+                })
+              }
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              required
+            >
+              {GALLERY_CATEGORIES.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
-        {/* Image Description */}
+        {/* Image Number */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Image Description *
-          </label>
-          <textarea
-            value={formData.imageDescription}
-            onChange={(e) =>
-              setFormData({ ...formData, imageDescription: e.target.value })
-            }
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-            rows={3}
-            maxLength={500}
-            placeholder="Enter a description for this image..."
-            required
-          />
-          <p className="text-xs text-gray-500 mt-1">
-            {formData.imageDescription.length}/500 characters
-          </p>
+          <div className="flex items-center gap-4 mb-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Image Number
+            </label>
+            <label className="flex items-center gap-2 text-sm text-gray-600">
+              <input
+                type="checkbox"
+                checked={autoAssign}
+                onChange={(e) => setAutoAssign(e.target.checked)}
+                className="rounded border-gray-300 text-orange-500 focus:ring-orange-500"
+              />
+              Auto-assign next number
+            </label>
+          </div>
+          {!autoAssign && (
+            <input
+              type="number"
+              min="1"
+              value={formData.imageNumber}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  imageNumber: parseInt(e.target.value) || 1,
+                })
+              }
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              required
+            />
+          )}
         </div>
 
         {/* Image Upload */}

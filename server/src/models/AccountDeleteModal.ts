@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+
 import { IAccountDeletionRequest } from "../types";
 
 const AccountDeletionRequestSchema = new Schema<IAccountDeletionRequest>(

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+
 import { ISubscribedEmail } from "../types";
 
 const SubscribedEmailSchema = new mongoose.Schema<ISubscribedEmail>(

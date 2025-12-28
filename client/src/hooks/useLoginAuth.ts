@@ -46,6 +46,9 @@ export const useLoginAuth = () => {
         localStorage.setItem("authToken", token);
         localStorage.setItem("user", JSON.stringify(user));
 
+        // Dispatch custom event to notify App.tsx of auth change
+        window.dispatchEvent(new CustomEvent("authChange"));
+
         navigate("/dashboard");
       } catch (error: any) {
         const message = error.message || "Login failed";
@@ -60,11 +63,9 @@ export const useLoginAuth = () => {
 
   const loginWithGoogle = useCallback(async () => {
     try {
-      console.log("Initiating Google authentication...");
       const authURL = await authService.getGoogleAuthUrl();
       window.location.href = authURL;
     } catch (error: any) {
-      console.error("Google authentication error:", error);
       toast.error(error.message || "Failed to initiate Google authentication");
     }
   }, []);

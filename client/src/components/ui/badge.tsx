@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
@@ -14,6 +15,15 @@ const badgeVariants = cva(
         destructive:
           "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
         outline: "text-foreground",
+        // Indian Tricolor Theme Variants
+        saffron:
+          "border-transparent bg-saffron-100 text-saffron-700 hover:bg-saffron-200",
+        green:
+          "border-transparent bg-india-green-100 text-india-green-700 hover:bg-india-green-200",
+        gold: "border-transparent bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-800 border-amber-200",
+        warm: "border-warm-200 bg-warm-50 text-warm-500",
+        success: "border-transparent bg-india-green-500 text-white",
+        pending: "border-transparent bg-saffron-500 text-white",
       },
     },
     defaultVariants: {
@@ -23,7 +33,8 @@ const badgeVariants = cva(
 );
 
 export interface BadgeProps
-  extends React.HTMLAttributes<HTMLDivElement>,
+  extends
+    React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof badgeVariants> {}
 
 function Badge({ className, variant, ...props }: BadgeProps) {

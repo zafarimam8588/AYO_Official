@@ -1,0 +1,52 @@
+{{!--
+  Alert Box Component
+  Usage: {{> alertBox type="warning" icon="⏰" message="This OTP will expire in 10 minutes"}}
+  Types: warning, info, success, error
+--}}
+{{#if (eq type "warning")}}
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 20px 0;">
+  <tr>
+    <td style="background: #FFF3CD; border: 1px solid #FFEAA7; border-radius: 8px; padding: 15px;">
+      <p style="color: #856404; margin: 0; font-size: 14px; text-align: center; line-height: 1.5;">
+        {{#if icon}}{{icon}} {{/if}}{{{message}}}
+      </p>
+    </td>
+  </tr>
+</table>
+{{/if}}
+
+{{#if (eq type "info")}}
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 20px 0;">
+  <tr>
+    <td style="background: #E3F2FD; border: 1px solid #1976D2; border-radius: 8px; padding: 15px;">
+      <p style="color: #1976D2; margin: 0; font-size: 14px; text-align: center; line-height: 1.5;">
+        {{#if icon}}{{icon}} {{/if}}{{{message}}}
+      </p>
+    </td>
+  </tr>
+</table>
+{{/if}}
+
+{{#if (eq type "success")}}
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 20px 0;">
+  <tr>
+    <td style="background: #E8F5E8; border: 1px solid #138808; border-radius: 8px; padding: 15px;">
+      <p style="color: #138808; margin: 0; font-size: 14px; text-align: center; line-height: 1.5;">
+        {{#if icon}}{{icon}} {{/if}}{{{message}}}
+      </p>
+    </td>
+  </tr>
+</table>
+{{/if}}
+
+{{#if (eq type "error")}}
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 20px 0;">
+  <tr>
+    <td style="background: #FFEBEE; border: 1px solid #F44336; border-radius: 8px; padding: 15px;">
+      <p style="color: #C62828; margin: 0; font-size: 14px; text-align: center; line-height: 1.5;">
+        {{#if icon}}{{icon}} {{/if}}{{{message}}}
+      </p>
+    </td>
+  </tr>
+</table>
+{{/if}}

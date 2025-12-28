@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+
 import { IMemberProfile } from "../types";
 
 const AddressSchema = new Schema({

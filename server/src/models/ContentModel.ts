@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+
 import { IContent } from "../types";
 
 const ContentSchema = new Schema<IContent>(

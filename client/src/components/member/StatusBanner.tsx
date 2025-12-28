@@ -1,4 +1,10 @@
-import { CheckCircle, Clock, XCircle, AlertCircle } from "lucide-react";
+import {
+  CheckCircle,
+  Clock,
+  XCircle,
+  AlertCircle,
+  Sparkles,
+} from "lucide-react";
 import { getStatusConfig } from "@/utils/memberUtil";
 import type { MemberProfile } from "@/types";
 
@@ -20,25 +26,70 @@ export const StatusBanner = ({
   const getIcon = () => {
     switch (config.icon) {
       case "CheckCircle":
-        return <CheckCircle className="w-6 h-6" />;
+        return <CheckCircle className="w-5 h-5" />;
       case "Clock":
-        return <Clock className="w-6 h-6" />;
+        return <Clock className="w-5 h-5" />;
       case "XCircle":
-        return <XCircle className="w-6 h-6" />;
+        return <XCircle className="w-5 h-5" />;
       default:
-        return <AlertCircle className="w-6 h-6" />;
+        return <AlertCircle className="w-5 h-5" />;
     }
   };
 
+  // Get status-specific styling
+  const getStatusStyles = () => {
+    switch (profile.memberStatus) {
+      case "approved":
+        return {
+          bg: "bg-gradient-to-r from-india-green-500 to-india-green-600",
+          iconBg: "bg-india-green-400/30",
+          decoration: true,
+        };
+      case "pending":
+        return {
+          bg: "bg-gradient-to-r from-saffron-500 to-saffron-600",
+          iconBg: "bg-saffron-400/30",
+          decoration: false,
+        };
+      case "rejected":
+        return {
+          bg: "bg-gradient-to-r from-red-500 to-red-600",
+          iconBg: "bg-red-400/30",
+          decoration: false,
+        };
+      default:
+        return {
+          bg: "bg-gradient-to-r from-gray-500 to-gray-600",
+          iconBg: "bg-gray-400/30",
+          decoration: false,
+        };
+    }
+  };
+
+  const styles = getStatusStyles();
+
   return (
     <div
-      className={`bg-gradient-to-r ${config.bg} text-white p-4 sm:p-6 rounded-2xl shadow-lg border-l-4 ${config.borderColor} hover:shadow-xl transition-shadow duration-300`}
+      className={`relative overflow-hidden ${styles.bg} text-white p-4 sm:p-5 rounded-2xl shadow-lg
+                  hover:shadow-xl transition-all duration-300 animate-on-scroll`}
     >
-      <div className="flex items-start space-x-4">
-        <div className="flex-shrink-0 mt-1">{getIcon()}</div>
-        <div className="flex-1">
-          <h3 className="font-semibold text-lg mb-1">{config.title}</h3>
-          <p className="opacity-90 text-sm sm:text-base leading-relaxed">
+      {/* Decorative elements for approved status */}
+      {styles.decoration && (
+        <>
+          <div className="absolute top-2 right-2 opacity-20">
+            <Sparkles className="w-16 h-16" />
+          </div>
+          <div className="absolute -bottom-2 -left-2 w-24 h-24 bg-white/5 rounded-full blur-xl" />
+        </>
+      )}
+
+      <div className="relative flex items-center gap-4">
+        <div className={`p-2.5 rounded-xl ${styles.iconBg} backdrop-blur-sm`}>
+          {getIcon()}
+        </div>
+        <div className="flex-1 min-w-0">
+          <h3 className="font-semibold text-base sm:text-lg">{config.title}</h3>
+          <p className="text-white/90 text-sm mt-0.5 leading-relaxed">
             {config.msg}
           </p>
         </div>

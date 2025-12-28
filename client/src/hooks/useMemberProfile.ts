@@ -1,11 +1,11 @@
 import { useState, useCallback } from "react";
 import { memberService } from "@/services/memberService";
-import type { MemberData } from "@/types";
+import type { MemberData, ProfileUpdateData } from "@/types";
 import toast from "react-hot-toast";
 
 export const useMemberProfile = (
   token: string | null,
-  isAdmin: boolean = false
+  _isAdmin: boolean = false
 ) => {
   const [memberData, setMemberData] = useState<MemberData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -13,7 +13,9 @@ export const useMemberProfile = (
   const [isEditing, setIsEditing] = useState(false);
 
   const getMemberProfile = useCallback(async () => {
-    if (!token) return;
+    if (!token) {
+      return;
+    }
 
     setLoading(true);
     try {
@@ -21,6 +23,7 @@ export const useMemberProfile = (
       setMemberData(data);
     } catch (error) {
       console.error("Failed to load member data:", error);
+      toast.error("Failed to load profile data");
     } finally {
       setLoading(false);
     }
@@ -28,7 +31,9 @@ export const useMemberProfile = (
 
   const getSpecificMemberProfile = useCallback(
     async (memberId: string) => {
-      if (!token) return;
+      if (!token) {
+        return;
+      }
 
       setLoading(true);
       try {
@@ -39,6 +44,7 @@ export const useMemberProfile = (
         setMemberData(data);
       } catch (error) {
         console.error("Failed to load member data:", error);
+        toast.error("Failed to load member profile");
       } finally {
         setLoading(false);
       }
@@ -47,8 +53,10 @@ export const useMemberProfile = (
   );
 
   const updateProfile = useCallback(
-    async (profileData: any) => {
-      if (!token) return;
+    async (profileData: ProfileUpdateData) => {
+      if (!token) {
+        return;
+      }
 
       setSubmitting(true);
       try {
@@ -56,9 +64,10 @@ export const useMemberProfile = (
         await getMemberProfile();
         toast.success("Profile updated successfully!");
         setIsEditing(false);
-      } catch (error: any) {
+      } catch (error) {
+        const err = error as Error;
         toast.error(
-          error.message || "Failed to update profile. Please try again."
+          err.message || "Failed to update profile. Please try again."
         );
       } finally {
         setSubmitting(false);
@@ -68,17 +77,18 @@ export const useMemberProfile = (
   );
 
   const submitMemberRequest = useCallback(async () => {
-    if (!token) return;
+    if (!token) {
+      return;
+    }
 
     setSubmitting(true);
     try {
       await memberService.submitMemberRequest(token);
       await getMemberProfile();
       toast.success("Member request submitted successfully!");
-    } catch (error: any) {
-      toast.error(
-        error.message || "Failed to submit request. Please try again."
-      );
+    } catch (error) {
+      const err = error as Error;
+      toast.error(err.message || "Failed to submit request. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -86,16 +96,19 @@ export const useMemberProfile = (
 
   const approveMember = useCallback(
     async (memberId: string, message?: string) => {
-      if (!token) return;
+      if (!token) {
+        return;
+      }
 
       setSubmitting(true);
       try {
         await memberService.approveMember(token, memberId, message);
         toast.success("Member approved successfully!");
         await getSpecificMemberProfile(memberId);
-      } catch (error: any) {
+      } catch (error) {
+        const err = error as Error;
         toast.error(
-          error.message || "Failed to approve member. Please try again."
+          err.message || "Failed to approve member. Please try again."
         );
       } finally {
         setSubmitting(false);
@@ -106,17 +119,22 @@ export const useMemberProfile = (
 
   const rejectMember = useCallback(
     async (memberId: string, reason: string) => {
-      if (!reason || reason.trim().length === 0) return;
-      if (!token) return;
+      if (!reason || reason.trim().length === 0) {
+        return;
+      }
+      if (!token) {
+        return;
+      }
 
       setSubmitting(true);
       try {
         await memberService.rejectMember(token, memberId, reason.trim());
         toast.success("Member rejected successfully!");
         await getSpecificMemberProfile(memberId);
-      } catch (error: any) {
+      } catch (error) {
+        const err = error as Error;
         toast.error(
-          error.message || "Failed to reject member. Please try again."
+          err.message || "Failed to reject member. Please try again."
         );
       } finally {
         setSubmitting(false);

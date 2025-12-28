@@ -1,11 +1,12 @@
 // routes/accountDeletionRoutes.ts (Simplified)
 import { Router } from "express";
+
 import { requestAccountDeletion } from "../controllers/accountDeletionController";
-import { isLoggedIn, isAdmin } from "../middleware/authMiddleware";
+import { isLoggedIn } from "../middleware/authMiddleware";
 
 const router = Router();
 
-// Single route for account deletion request
-router.post("/request", isLoggedIn, isAdmin, requestAccountDeletion);
+// Single route for account deletion request (users can request their own deletion)
+router.post("/request", isLoggedIn, requestAccountDeletion);
 
 export default router;

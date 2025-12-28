@@ -5,6 +5,9 @@ import type {
   UsersResponse,
   ActionResponse,
   AxiosErrorResponse,
+  ArchivedUsersResponse,
+  ArchivedUserResponse,
+  ArchivedUser,
 } from "@/types";
 
 const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
@@ -151,16 +154,16 @@ class AdminService {
     }
   }
 
-  async deleteUser(token: string, userId: string) {
+  async archiveUser(token: string, userId: string, archiveReason?: string) {
     try {
       const { data } = await axios.post<ActionResponse>(
-        `${BASE_URL}/api/admin/users/${userId}/delete-user`,
-        {},
+        `${BASE_URL}/api/admin/users/${userId}/archive`,
+        { archiveReason },
         { headers: this.getAuthHeaders(token) }
       );
 
       if (!data.success) {
-        throw new Error(data.message || "Failed to revoke user");
+        throw new Error(data.message || "Failed to archive user");
       }
 
       return data;
@@ -169,7 +172,58 @@ class AdminService {
       throw new Error(
         error.response?.data?.message ||
           error.message ||
-          "Failed to revoke user"
+          "Failed to archive user"
+      );
+    }
+  }
+
+  async getArchivedUsers(
+    token: string,
+    page: number = 1,
+    limit: number = 50
+  ): Promise<ArchivedUser[]> {
+    try {
+      const { data } = await axios.get<ArchivedUsersResponse>(
+        `${BASE_URL}/api/admin/archived-users?page=${page}&limit=${limit}`,
+        { headers: this.getAuthHeaders(token) }
+      );
+
+      if (!data.success) {
+        throw new Error(data.message || "Failed to fetch archived users");
+      }
+
+      return data.data.archivedUsers;
+    } catch (err) {
+      const error = err as AxiosErrorResponse<ArchivedUsersResponse>;
+      throw new Error(
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to fetch archived users"
+      );
+    }
+  }
+
+  async getArchivedUserById(
+    token: string,
+    archivedUserId: string
+  ): Promise<ArchivedUser> {
+    try {
+      const { data } = await axios.get<ArchivedUserResponse>(
+        `${BASE_URL}/api/admin/archived-users/${archivedUserId}`,
+        { headers: this.getAuthHeaders(token) }
+      );
+
+      if (!data.success) {
+        throw new Error(data.message || "Failed to fetch archived user");
+      }
+
+      return data.data;
+    } catch (err) {
+      const error = err as AxiosErrorResponse<ArchivedUserResponse>;
+      throw new Error(
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to fetch archived user"
       );
     }
   }

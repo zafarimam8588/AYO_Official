@@ -1,24 +1,34 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
-  Heart,
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+  SheetTrigger,
+  SheetClose,
+  SheetFooter,
+} from "@/components/ui/sheet";
+import {
   Users,
   Phone,
   Home,
   Menu,
-  X,
   ImageIcon,
   Award,
   Handshake,
+  Heart,
+  X,
 } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { DonateBtn, VolunteerBtn } from "../misc/Buttons";
 
 export default function Navbar() {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState("");
   const [userProfilePic, setUserProfilePic] = useState<string>("");
+  const [sheetOpen, setSheetOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -43,31 +53,36 @@ export default function Navbar() {
   // Function to get current page from URL pathname
   const getCurrentPage = () => {
     const path = location.pathname;
-    if (path === "/" || path === "") return "home";
-    if (path === "/about") return "about";
-    if (path === "/contact") return "contact";
-    if (path === "/gallery") return "gallery";
-    if (path === "/programs") return "programs";
-    if (path === "/partnership") return "partnership";
-    if (path === "/our-team") return "our-team";
+    if (path === "/" || path === "") {
+      return "home";
+    }
+    if (path === "/about") {
+      return "about";
+    }
+    if (path === "/contact") {
+      return "contact";
+    }
+    if (path === "/gallery") {
+      return "gallery";
+    }
+    if (path === "/programs") {
+      return "programs";
+    }
+    if (path === "/partnership") {
+      return "partnership";
+    }
+    if (path === "/our-team") {
+      return "our-team";
+    }
     return "home";
   };
 
   const currentPage = getCurrentPage();
 
-  const toggleDrawer = () => {
-    setIsDrawerOpen((prev) => !prev);
-  };
-
-  const handlePageChange = (page: string) => {
-    setIsDrawerOpen(false);
-    navigate(`/${page === "home" ? "" : page}`);
-  };
-
   // Navigation handlers for buttons
   const handleDonateClick = () => {
     navigate("/donate");
-    setIsDrawerOpen(false);
+    setSheetOpen(false);
   };
 
   const handleMemberClick = () => {
@@ -76,7 +91,7 @@ export default function Navbar() {
     } else {
       navigate("/login");
     }
-    setIsDrawerOpen(false);
+    setSheetOpen(false);
   };
 
   const navItems = [
@@ -91,108 +106,227 @@ export default function Navbar() {
 
   return (
     <>
+      {/* Skip Navigation Link for Accessibility */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-20 focus:left-4 focus:z-[110] focus:px-4 focus:py-2 focus:bg-saffron-600 focus:text-white focus:rounded-md focus:outline-none"
+      >
+        Skip to main content
+      </a>
+
       {/* Main Navigation Bar */}
-      <nav className="bg-white/90 backdrop-blur supports-[backdrop-filter]:backdrop-blur shadow-md fixed top-0 left-0 right-0 z-[100] overflow-x-hidden">
+      <nav
+        role="navigation"
+        aria-label="Main navigation"
+        className="bg-white/90 backdrop-blur-md supports-[backdrop-filter]:backdrop-blur-md shadow-md fixed top-0 left-0 right-0 z-[100] overflow-x-hidden"
+      >
         {/* Thin tricolor top strip */}
-        <div className="h-0.5 bg-gradient-to-r from-orange-500 via-white to-green-600" />
+        <div
+          className="h-0.5 bg-gradient-to-r from-saffron-500 via-white to-india-green-600"
+          aria-hidden="true"
+        />
         <div className="container mx-auto px-3 sm:px-4 max-w-full">
           <div className="flex items-center justify-between h-14 sm:h-16 gap-2 lg:grid lg:grid-cols-3">
             {/* Left Section - Hamburger + Logo */}
             <div className="flex items-center min-w-0 flex-1 lg:flex-initial">
-              {/* Hamburger Menu */}
-              <div className="mr-2 sm:mr-3 flex-shrink-0">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={toggleDrawer}
-                  className="text-orange-600 hover:text-orange-700 hover:bg-orange-50 p-1.5 sm:p-2 rounded-lg"
+              {/* Sheet Component for Mobile Drawer */}
+              <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+                <SheetTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    aria-label="Open navigation menu"
+                    className="mr-2 sm:mr-3 flex-shrink-0 text-saffron-600 hover:text-saffron-700 hover:bg-saffron-50 p-1.5 sm:p-2 rounded-lg transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-saffron-500 focus-visible:ring-offset-2"
+                  >
+                    <Menu className="h-5 w-5 sm:h-6 sm:w-6" />
+                  </Button>
+                </SheetTrigger>
+
+                <SheetContent
+                  side="left"
+                  className="w-80 p-0 border-r-0 overflow-hidden flex flex-col [&>button]:hidden"
                 >
-                  <Menu className="h-5 w-5 sm:h-6 sm:w-6" />
-                </Button>
-              </div>
+                  {/* Sheet Header - Compact with Tricolor Gradient */}
+                  <SheetHeader className="relative overflow-hidden p-0 flex-shrink-0">
+                    {/* Subtle tricolor gradient background */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-saffron-50 via-white to-india-green-50" />
+
+                    {/* Thin tricolor accent line at top */}
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-saffron-400 via-white to-india-green-500" />
+
+                    {/* Content */}
+                    <div className="relative z-10 px-5 py-3 flex items-center justify-between">
+                      <SheetTitle className="text-base font-bold bg-gradient-to-r from-saffron-600 to-india-green-600 bg-clip-text text-transparent">
+                        Azad Youth Organisation
+                      </SheetTitle>
+                      <SheetClose asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          aria-label="Close navigation menu"
+                          className="text-slate-600 hover:bg-black/5 p-2 rounded-lg focus-visible:ring-2 focus-visible:ring-saffron-500 focus-visible:ring-offset-2 transition-all duration-200"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </SheetClose>
+                    </div>
+                    <SheetDescription className="sr-only">
+                      Navigation menu
+                    </SheetDescription>
+                  </SheetHeader>
+
+                  {/* Navigation Links - Scrollable */}
+                  <div className="flex-1 overflow-y-auto p-6 space-y-2">
+                    <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-4">
+                      Navigation
+                    </h3>
+                    <nav aria-label="Mobile navigation">
+                      <ul className="space-y-2" role="list">
+                        {navItems.map((item) => {
+                          const IconComponent = item.icon;
+                          const active = currentPage === item.id;
+                          return (
+                            <li key={item.id}>
+                              <SheetClose asChild>
+                                <Link
+                                  to={`/${item.id === "home" ? "" : item.id}`}
+                                  className={`w-full flex items-center gap-4 p-4 rounded-xl transition-all duration-200 ${
+                                    active
+                                      ? "bg-gradient-to-r from-saffron-50 to-india-green-50 text-saffron-700 shadow-sm border border-saffron-100"
+                                      : "text-slate-800 hover:bg-gradient-to-r hover:from-saffron-50 hover:to-india-green-50 hover:shadow-sm focus-visible:ring-2 focus-visible:ring-saffron-500 focus-visible:ring-offset-2"
+                                  }`}
+                                  aria-current={active ? "page" : undefined}
+                                >
+                                  <div
+                                    className={`p-2 rounded-lg transition-all duration-200 ${
+                                      active
+                                        ? "bg-gradient-to-br from-saffron-500 to-india-green-600"
+                                        : "bg-slate-100"
+                                    }`}
+                                  >
+                                    <IconComponent
+                                      className={`h-5 w-5 transition-colors duration-200 ${
+                                        active
+                                          ? "text-white"
+                                          : "text-saffron-600"
+                                      }`}
+                                    />
+                                  </div>
+                                  <span
+                                    className={`font-medium transition-all duration-200 ${
+                                      active
+                                        ? "bg-gradient-to-r from-saffron-700 to-india-green-700 bg-clip-text text-transparent"
+                                        : ""
+                                    }`}
+                                  >
+                                    {item.label}
+                                  </span>
+                                  {active && (
+                                    <span
+                                      className="ml-auto h-6 w-1 rounded-full bg-gradient-to-b from-saffron-500 to-india-green-600"
+                                      aria-hidden="true"
+                                    />
+                                  )}
+                                </Link>
+                              </SheetClose>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </nav>
+                  </div>
+
+                  {/* Action Buttons - Fixed at bottom */}
+                  <SheetFooter className="flex-shrink-0 p-6 bg-white border-t border-slate-100 flex-col gap-2">
+                    <div
+                      className="h-px w-full bg-gradient-to-r from-saffron-200 via-slate-200 to-india-green-200 mb-3"
+                      aria-hidden="true"
+                    />
+                    <SheetClose asChild>
+                      <div className="w-full">
+                        <VolunteerBtn
+                          classStyle="w-full justify-center"
+                          onClick={handleMemberClick}
+                          isLoggedIn={isLoggedIn}
+                          userName={userName}
+                          profilePic={userProfilePic}
+                        />
+                      </div>
+                    </SheetClose>
+                    <SheetClose asChild>
+                      <div className="w-full">
+                        <DonateBtn
+                          classStyle="w-full justify-center"
+                          onClick={handleDonateClick}
+                        />
+                      </div>
+                    </SheetClose>
+                  </SheetFooter>
+                </SheetContent>
+              </Sheet>
 
               {/* Logo Section */}
-              <div
-                className="flex items-center gap-2 sm:gap-3 max-w-[calc(100vw-200px)] sm:max-w-none lg:max-w-none"
-                onClick={() => navigate("/")}
-                style={{ cursor: "pointer" }}
+              <Link
+                to="/"
+                className="flex items-center max-w-[calc(100vw-200px)] sm:max-w-none lg:max-w-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-saffron-500 focus-visible:ring-offset-2 rounded-lg"
+                aria-label="Azad Youth Organisation - Go to homepage"
               >
-                <div className="bg-gradient-to-br from-orange-500 to-green-600 p-1.5 sm:p-2 rounded-lg sm:rounded-xl shadow-sm flex-shrink-0">
-                  <Heart className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-white" />
-                </div>
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0">
                   {/* Small screens - shorter text */}
-                  <span className="block sm:hidden text-[11px] font-bold bg-gradient-to-r from-orange-600 to-green-600 bg-clip-text text-transparent truncate">
+                  <span className="block sm:hidden text-[11px] font-bold bg-gradient-to-r from-saffron-600 to-india-green-600 bg-clip-text text-transparent truncate">
                     Azad Youth Org.
                   </span>
 
                   {/* Medium screens */}
-                  <span className="hidden sm:block md:hidden text-sm font-bold bg-gradient-to-r from-orange-600 to-green-600 bg-clip-text text-transparent">
+                  <span className="hidden sm:block md:hidden text-sm font-bold bg-gradient-to-r from-saffron-600 to-india-green-600 bg-clip-text text-transparent">
                     Azad Youth Organisation
                   </span>
 
                   {/* Large screens and up */}
-                  <span className="hidden md:block text-base lg:text-xl font-bold bg-gradient-to-r from-orange-600 to-green-600 bg-clip-text text-transparent">
+                  <span className="hidden md:block text-base lg:text-xl font-bold bg-gradient-to-r from-saffron-600 to-india-green-600 bg-clip-text text-transparent">
                     Azad Youth Organisation
                   </span>
 
-                  <p className="text-[8px] sm:text-[10px] md:text-xs text-gray-600 -mt-0.5 leading-tight truncate">
+                  <p className="text-[8px] sm:text-[10px] md:text-xs text-slate-600 -mt-0.5 leading-tight truncate">
                     Building Better Tomorrow
                   </p>
                 </div>
-              </div>
+              </Link>
             </div>
 
             {/* Center Section - Desktop Navigation Links */}
-            <div className="hidden lg:flex items-center justify-center gap-4 xl:gap-6">
-              <Link
-                to="/"
-                className={`relative text-base xl:text-lg font-medium py-2 transition-colors whitespace-nowrap ${
-                  currentPage === "home"
-                    ? "text-orange-600"
-                    : "text-gray-800 hover:text-orange-600"
-                }`}
-              >
-                Home
-                {currentPage === "home" && (
-                  <span className="pointer-events-none absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-gradient-to-r from-orange-500 via-white to-green-600"></span>
-                )}
-              </Link>
-
-              <Link
-                to="/about"
-                className={`relative text-base xl:text-lg font-medium py-2 transition-colors whitespace-nowrap ${
-                  currentPage === "about"
-                    ? "text-orange-600"
-                    : "text-gray-800 hover:text-orange-600"
-                }`}
-              >
-                About
-                {currentPage === "about" && (
-                  <span className="pointer-events-none absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-gradient-to-r from-orange-500 via-white to-green-600"></span>
-                )}
-              </Link>
-
-              <Link
-                to="/contact"
-                className={`relative text-base xl:text-lg font-medium py-2 transition-colors whitespace-nowrap ${
-                  currentPage === "contact"
-                    ? "text-orange-600"
-                    : "text-gray-800 hover:text-orange-600"
-                }`}
-              >
-                Contact
-                {currentPage === "contact" && (
-                  <span className="pointer-events-none absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-gradient-to-r from-orange-500 via-white to-green-600"></span>
-                )}
-              </Link>
+            <div className="hidden lg:flex items-center justify-center gap-6 xl:gap-8">
+              {[
+                { id: "home", label: "Home", path: "/" },
+                { id: "about", label: "About", path: "/about" },
+                { id: "contact", label: "Contact", path: "/contact" },
+              ].map((item) => (
+                <Link
+                  key={item.id}
+                  to={item.path}
+                  className={`relative text-sm xl:text-base font-medium transition-colors duration-200 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-saffron-500 focus-visible:ring-offset-2 rounded-sm ${
+                    currentPage === item.id
+                      ? "text-saffron-600"
+                      : "text-slate-600 hover:text-saffron-600"
+                  }`}
+                  aria-current={currentPage === item.id ? "page" : undefined}
+                >
+                  {item.label}
+                  {currentPage === item.id && (
+                    <span
+                      className="absolute -bottom-1 left-0 right-0 h-0.5 rounded-full bg-saffron-500"
+                      aria-hidden="true"
+                    />
+                  )}
+                </Link>
+              ))}
             </div>
 
             {/* Right Section - Action Buttons */}
             <div className="flex items-center justify-end gap-1.5 sm:gap-2 flex-shrink-0">
               {/* Volunteer/Member Button - Always visible */}
               <VolunteerBtn
-                classStyle="text-[10px] sm:text-xs px-2 sm:px-3 py-1.5 h-7 sm:h-8 lg:text-sm lg:px-4 lg:py-2 lg:h-auto whitespace-nowrap"
+                classStyle="text-[11px] sm:text-xs px-2.5 sm:px-3 py-1.5 h-8 sm:h-9 lg:text-sm lg:px-4 lg:py-2 lg:h-10"
                 onClick={handleMemberClick}
                 isLoggedIn={isLoggedIn}
                 userName={userName}
@@ -210,120 +344,6 @@ export default function Navbar() {
           </div>
         </div>
       </nav>
-
-      {/* Overlay */}
-      {isDrawerOpen && (
-        <div
-          className="fixed inset-0 bg-black/30 backdrop-blur-[1px] z-[90] transition-opacity duration-200"
-          onClick={() => toggleDrawer()}
-        />
-      )}
-
-      {/* Sliding Drawer */}
-      {isDrawerOpen && (
-        <div
-          className={`
-            fixed top-0 left-0 h-full w-80 bg-white backdrop-blur supports-[backdrop-filter]:backdrop-blur
-            shadow-2xl z-[95] border-r-4 ${
-              currentPage ? "border-r-orange-500" : "border-r-gray-100"
-            }
-            transition-transform duration-500 ease-in-out 
-            transform ${isDrawerOpen ? "translate-x-0" : "-translate-x-full"}
-            flex flex-col
-          `}
-        >
-          {/* Drawer Header - Fixed */}
-          <div className="bg-gradient-to-r from-orange-500 via-orange-400 to-green-600 p-6 flex-shrink-0">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="bg-white/90 p-3 rounded-xl shadow">
-                  <Heart className="h-8 w-8 text-transparent bg-gradient-to-r from-orange-500 to-green-600 bg-clip-text" />
-                </div>
-                <div>
-                  <h2 className="text-sm font-bold text-white">
-                    Azad Youth Organisation
-                  </h2>
-                  <p className="text-orange-100 text-sm">
-                    Building Better Tomorrow
-                  </p>
-                </div>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={toggleDrawer}
-                className="text-white hover:bg-white/20 p-2 rounded-lg"
-              >
-                <X className="h-6 w-6" />
-              </Button>
-            </div>
-          </div>
-
-          {/* Navigation Links - Scrollable */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-2">
-            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">
-              Navigation
-            </h3>
-            {navItems.map((item) => {
-              const IconComponent = item.icon;
-              const active = currentPage === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => handlePageChange(item.id)}
-                  className={`w-full flex items-center gap-4 p-4 rounded-xl transition-all duration-200 cursor-pointer ${
-                    active
-                      ? "bg-gradient-to-r from-orange-50 to-green-50 text-orange-700 shadow-sm border border-orange-100"
-                      : "text-gray-800 hover:bg-gradient-to-r hover:from-orange-50 hover:to-green-50 hover:shadow-sm"
-                  }`}
-                >
-                  <div
-                    className={`p-2 rounded-lg transition-all duration-200 ${
-                      active
-                        ? "bg-gradient-to-br from-orange-500 to-green-600"
-                        : "bg-gray-100 group-hover:bg-orange-100"
-                    }`}
-                  >
-                    <IconComponent
-                      className={`h-5 w-5 transition-colors duration-200 ${
-                        active ? "text-white" : "text-orange-600"
-                      }`}
-                    />
-                  </div>
-                  <span
-                    className={`font-medium transition-all duration-200 ${
-                      active
-                        ? "bg-gradient-to-r from-orange-700 to-green-700 bg-clip-text text-transparent"
-                        : ""
-                    }`}
-                  >
-                    {item.label}
-                  </span>
-                  {active && (
-                    <span className="ml-auto h-6 w-1 rounded-full bg-gradient-to-b from-orange-500 to-green-600"></span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Action Buttons - Fixed at bottom */}
-          <div className="flex-shrink-0 p-6 bg-white border-t border-gray-100">
-            <div className="h-px bg-gradient-to-r from-orange-200 via-gray-200 to-green-200 mb-3"></div>
-            <VolunteerBtn
-              classStyle="my-2 w-full justify-center"
-              onClick={handleMemberClick}
-              isLoggedIn={isLoggedIn}
-              userName={userName}
-              profilePic={userProfilePic}
-            />
-            <DonateBtn
-              classStyle="my-2 w-full justify-center"
-              onClick={handleDonateClick}
-            />
-          </div>
-        </div>
-      )}
     </>
   );
 }

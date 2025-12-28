@@ -64,6 +64,8 @@ export const formatDate = (dateString: string): string => {
 };
 
 export const formatAddress = (address: any): string => {
-  if (!address) return "Not provided";
+  if (!address) {
+    return "Not provided";
+  }
   return `${address.street}, ${address.city}, ${address.state} – ${address.pincode}`;
 };

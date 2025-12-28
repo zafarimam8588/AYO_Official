@@ -16,20 +16,12 @@ import type {
 export const logoutUser = async (token: string) => {
   try {
     if (token) {
-      const { data } = await axios.post<LogoutResponse>(
+      await axios.post<LogoutResponse>(
         `${import.meta.env.VITE_BACKEND_BASE_URL}/api/auth/logout`,
         null,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      if (data.success) {
-        console.log("Logout successful");
-      } else {
-        console.log("Logout response:", data.message);
-      }
     }
-  } catch (error) {
-    console.error("Logout error:", error);
   } finally {
     localStorage.removeItem("authToken");
     localStorage.removeItem("user");

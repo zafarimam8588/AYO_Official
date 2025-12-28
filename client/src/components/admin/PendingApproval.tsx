@@ -56,25 +56,25 @@ export const PendingApprovals = ({
 
   return (
     <>
-      <div className="bg-white rounded-2xl shadow-lg p-6">
+      <div className="bg-white rounded-2xl shadow-lg p-6 border border-slate-100">
         <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-orange-100 rounded-lg">
-            <AlertTriangle className="w-6 h-6 text-orange-600" />
+          <div className="p-2 bg-saffron-100 rounded-lg">
+            <AlertTriangle className="w-6 h-6 text-saffron-600" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-gray-800">
+            <h3 className="text-xl font-bold text-slate-800">
               Pending Approvals
             </h3>
-            <p className="text-gray-600">Members waiting for your review</p>
+            <p className="text-slate-600">Members waiting for your review</p>
           </div>
         </div>
 
         {pendingMembers.length === 0 ? (
           <div className="text-center py-8">
-            <div className="p-4 bg-green-100 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-              <CheckCircle className="w-8 h-8 text-green-600" />
+            <div className="p-4 bg-india-green-100 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+              <CheckCircle className="w-8 h-8 text-india-green-600" />
             </div>
-            <p className="text-gray-500 font-medium">
+            <p className="text-slate-500 font-medium">
               All caught up! No pending approvals.
             </p>
           </div>
@@ -83,25 +83,25 @@ export const PendingApprovals = ({
             {pendingMembers.map((member) => (
               <div
                 key={member._id}
-                className="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-colors duration-200"
+                className="bg-slate-50 rounded-xl p-4 hover:bg-saffron-50/50 transition-colors duration-200 border border-slate-100 hover:border-saffron-200"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div
                     className="flex items-center gap-4 cursor-pointer flex-1"
                     onClick={() => onMemberClick(member._id)}
                   >
-                    <div className="p-2 bg-white rounded-lg shadow-sm">
-                      <Users className="w-6 h-6 text-gray-600" />
+                    <div className="p-2 bg-white rounded-lg shadow-sm border border-slate-100">
+                      <Users className="w-6 h-6 text-slate-600" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-800">
+                      <h4 className="font-semibold text-slate-800">
                         {member.userId?.fullName}
                       </h4>
-                      <p className="text-gray-600 text-sm">
+                      <p className="text-slate-600 text-sm">
                         {member.userId?.email}
                       </p>
                     </div>
-                    <ChevronRight className="w-5 h-5 text-gray-400" />
+                    <ChevronRight className="w-5 h-5 text-slate-400" />
                   </div>
 
                   <div className="flex gap-3">
@@ -113,7 +113,7 @@ export const PendingApprovals = ({
                           member.userId?.fullName || "Member"
                         );
                       }}
-                      className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition-colors duration-200 shadow-sm hover:shadow-md cursor-pointer"
+                      className="px-4 py-2 bg-india-green-500 hover:bg-india-green-600 text-white rounded-lg font-medium transition-colors duration-200 shadow-sm hover:shadow-md cursor-pointer"
                     >
                       Approve
                     </button>

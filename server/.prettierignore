@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+dist/
+build/
+
+# Package files
+package-lock.json
+package.json
+
+# Generated files
+*.d.ts
+*.js.map
+
+# Config files
+*.config.js
+*.config.ts

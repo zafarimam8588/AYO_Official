@@ -1,4 +1,4 @@
-import type { Member, UserData } from "@/types";
+import type { Member, UserData, ArchivedUser } from "@/types";
 
 export const getStatusBadge = (status: string): string => {
   switch (status) {
@@ -35,5 +35,22 @@ export const filterUsers = (
     (user) =>
       user.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+};
+
+export const filterArchivedUsers = (
+  archivedUsers: ArchivedUser[],
+  searchTerm: string
+): ArchivedUser[] => {
+  if (!searchTerm.trim()) {
+    return archivedUsers;
+  }
+
+  const term = searchTerm.toLowerCase();
+  return archivedUsers.filter(
+    (user) =>
+      user.fullName?.toLowerCase().includes(term) ||
+      user.email?.toLowerCase().includes(term) ||
+      user.profile?.membershipId?.toLowerCase().includes(term)
   );
 };

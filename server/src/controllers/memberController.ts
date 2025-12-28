@@ -1,5 +1,6 @@
 // Validate date of birth (must be at least 18 years old) in next update
 import { Request, Response } from "express";
+
 import Member from "../models/ProfileModel";
 import User from "../models/UserModal";
 import { IUser } from "../types";
@@ -131,11 +132,21 @@ export const updateMemberProfile = async (
 
     // Validate required fields
     const missingFields = [];
-    if (!address) missingFields.push("address");
-    if (!phoneNumber) missingFields.push("phoneNumber");
-    if (!dateOfBirth) missingFields.push("dateOfBirth");
-    if (!gender) missingFields.push("gender");
-    if (!whyJoin) missingFields.push("whyJoin");
+    if (!address) {
+      missingFields.push("address");
+    }
+    if (!phoneNumber) {
+      missingFields.push("phoneNumber");
+    }
+    if (!dateOfBirth) {
+      missingFields.push("dateOfBirth");
+    }
+    if (!gender) {
+      missingFields.push("gender");
+    }
+    if (!whyJoin) {
+      missingFields.push("whyJoin");
+    }
 
     if (missingFields.length > 0) {
       res.status(400).json({
@@ -194,7 +205,9 @@ export const updateMemberProfile = async (
       whyJoin: whyJoin.trim(),
     };
 
-    if (idProof) updateData.idProof = idProof;
+    if (idProof) {
+      updateData.idProof = idProof;
+    }
 
     //  Reset status if was rejected
     if (existingProfile && existingProfile.memberStatus === "rejected") {
@@ -335,11 +348,21 @@ export const submitMemberRequest = async (
 
     // Check if required details are filled (from updateMemberData)
     const missingFields = [];
-    if (!existingProfile.address) missingFields.push("address");
-    if (!existingProfile.phoneNumber) missingFields.push("phoneNumber");
-    if (!existingProfile.dateOfBirth) missingFields.push("dateOfBirth");
-    if (!existingProfile.gender) missingFields.push("gender");
-    if (!existingProfile.whyJoin) missingFields.push("whyJoin");
+    if (!existingProfile.address) {
+      missingFields.push("address");
+    }
+    if (!existingProfile.phoneNumber) {
+      missingFields.push("phoneNumber");
+    }
+    if (!existingProfile.dateOfBirth) {
+      missingFields.push("dateOfBirth");
+    }
+    if (!existingProfile.gender) {
+      missingFields.push("gender");
+    }
+    if (!existingProfile.whyJoin) {
+      missingFields.push("whyJoin");
+    }
 
     if (missingFields.length > 0) {
       res.status(400).json({

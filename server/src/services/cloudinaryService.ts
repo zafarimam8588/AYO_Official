@@ -1,5 +1,4 @@
-import { v2 as cloudinary } from "cloudinary";
-import { UploadApiResponse } from "cloudinary";
+import { v2 as cloudinary, UploadApiResponse } from "cloudinary";
 
 // Configure Cloudinary with SHA-256
 cloudinary.config({
@@ -25,7 +24,7 @@ export const uploadBufferToCloudinary = async (
   folder: string = "ngo-pictures"
 ): Promise<CloudinaryUploadResult> => {
   try {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, _reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
           folder: folder,

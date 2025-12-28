@@ -16,29 +16,35 @@ export const InfoCard = ({
   fullWidth,
 }: InfoCardProps) => (
   <div className={fullWidth ? "md:col-span-2" : ""}>
-    <div className="flex items-start space-x-3 p-4 rounded-lg border-2 border-gray-100 border-r-4 border-r-gray-200 hover:border-orange-200 hover:border-r-orange-300 transition-colors duration-200">
+    <div
+      className={`flex items-start gap-3 p-3.5 rounded-xl border bg-gray-50/50
+                  hover:bg-white hover:shadow-sm transition-all duration-200
+                  ${completed ? "border-gray-100" : "border-dashed border-gray-200"}`}
+    >
       <div
         className={`p-2 rounded-lg flex-shrink-0 ${
           completed
-            ? "bg-green-100 text-green-600"
+            ? "bg-india-green-100 text-india-green-600"
             : "bg-gray-100 text-gray-400"
         }`}
       >
         {icon}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-gray-600 mb-1">{label}</p>
+        <p className="text-xs font-medium text-gray-500 mb-0.5">{label}</p>
         <p
-          className={`${completed ? "text-gray-800" : "text-gray-400"} ${
-            fullWidth ? "text-sm" : ""
-          } break-words`}
+          className={`text-sm font-medium break-words ${
+            completed ? "text-gray-800" : "text-gray-400 italic"
+          }`}
         >
           {value}
         </p>
       </div>
-      <div className="flex-shrink-0">
-        {completed && <CheckCircle className="w-5 h-5 text-green-500" />}
-      </div>
+      {completed && (
+        <div className="flex-shrink-0 mt-0.5">
+          <CheckCircle className="w-4 h-4 text-india-green-500" />
+        </div>
+      )}
     </div>
   </div>
 );

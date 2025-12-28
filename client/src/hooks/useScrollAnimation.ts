@@ -15,7 +15,9 @@ export const useScrollAnimation = (options: UseScrollAnimationOptions = {}) => {
 
   useEffect(() => {
     const element = ref.current;
-    if (!element) return;
+    if (!element) {
+      return;
+    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -53,13 +55,17 @@ export const useCountAnimation = (
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    if (!start) return;
+    if (!start) {
+      return;
+    }
 
     let startTime: number | null = null;
     const startValue = 0;
 
     const animate = (currentTime: number) => {
-      if (!startTime) startTime = currentTime;
+      if (!startTime) {
+        startTime = currentTime;
+      }
       const progress = Math.min((currentTime - startTime) / duration, 1);
 
       // Easing function for smooth animation

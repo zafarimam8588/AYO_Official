@@ -1,4 +1,5 @@
 import jwt, { SignOptions } from "jsonwebtoken";
+
 import { JwtPayload } from "../types";
 
 export const generateToken = (payload: JwtPayload): string => {

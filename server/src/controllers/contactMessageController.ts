@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
+
 import ContactMessage from "../models/ContactMessageModel";
-import { IUser } from "../types";
 import emailService from "../services/emailService";
+import { IUser } from "../types";
 
 // Create a new contact message (public route)
 export const createContactMessage = async (req: Request, res: Response) => {

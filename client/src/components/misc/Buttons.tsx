@@ -1,5 +1,4 @@
 import { Heart, Users } from "lucide-react";
-import { RainbowButton } from "../magicui/rainbow-button";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import { UserAvatar } from "../ui/UserAvatar";
@@ -23,7 +22,11 @@ export const VolunteerBtn = ({
   profilePic,
 }: VolunteerBtnProps) => {
   return (
-    <RainbowButton variant="outline" className={classStyle} onClick={onClick}>
+    <Button
+      variant="greenOutline"
+      className={`font-semibold rounded-lg sm:rounded-xl shadow-md hover:shadow-lg border-2 bg-white/90 cursor-pointer ${classStyle}`}
+      onClick={onClick}
+    >
       {isLoggedIn ? (
         <>
           <UserAvatar
@@ -36,20 +39,24 @@ export const VolunteerBtn = ({
         </>
       ) : (
         <>
-          <Users className="h-3 w-3 mr-1" />
-          Become a Member
+          <Users className="h-4 w-4 sm:h-5 sm:w-5 mr-1.5 sm:mr-2 flex-shrink-0" />
+          <span className="truncate">Become a Member</span>
         </>
       )}
-    </RainbowButton>
+    </Button>
   );
 };
 
 export const DonateBtn = ({ classStyle, onClick }: DonateButtonProps) => {
   return (
-    <RainbowButton className={classStyle} onClick={onClick}>
-      <Heart className="h-3 w-3 mr-1" />
+    <Button
+      variant="tricolor"
+      className={`h-12 px-8 text-base font-semibold rounded-xl shadow-lg hover:shadow-xl border-2 border-saffron-200/50 cursor-pointer ${classStyle}`}
+      onClick={onClick}
+    >
+      <Heart className="h-5 w-5 mr-2" />
       Donate
-    </RainbowButton>
+    </Button>
   );
 };
 export const SupportOurMissionBtn = () => {
@@ -58,9 +65,10 @@ export const SupportOurMissionBtn = () => {
     <Button
       onClick={() => navigate("/donate")}
       size="lg"
-      className="bg-gradient-to-r from-orange-500 to-green-500 hover:from-orange-600 hover:to-green-600 text-white px-6 py-3 text-base font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer"
+      variant="tricolor"
+      className="h-12 px-8 text-base font-semibold rounded-xl shadow-lg hover:shadow-xl border-2 border-saffron-200/50 cursor-pointer"
     >
-      <Heart className="h-4 w-4 mr-2" />
+      <Heart className="h-5 w-5 mr-2" />
       Support Our Mission
     </Button>
   );
@@ -72,10 +80,10 @@ export const VolunteerNowBtn = () => {
     <Button
       onClick={() => navigate("/login")}
       size="lg"
-      variant="outline"
-      className="border border-orange-500 text-orange-600 hover:bg-orange-500 hover:text-white px-6 py-3 text-base font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-300 bg-white/80 cursor-pointer"
+      variant="greenOutline"
+      className="h-12 px-8 text-base font-semibold rounded-xl shadow-lg hover:shadow-xl border-2 bg-white/90 cursor-pointer"
     >
-      <Users className="h-4 w-4 mr-2" />
+      <Users className="h-5 w-5 mr-2" />
       Become a Volunteer
     </Button>
   );

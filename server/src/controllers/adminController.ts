@@ -1,13 +1,14 @@
-//  IN THE NEXT UPDATE DONOT DELETE THE USER OR MEMBER JUST DEACTIVATE THEIR ACCOUNT
 import { Request, Response } from "express";
-import EmailService from "../services/emailService";
+import mongoose from "mongoose";
+
 import { AccountDeletionRequest } from "../models/AccountDeleteModal";
-import mongoose, { Types } from "mongoose";
-import User from "../models/UserModal";
-import Member from "../models/ProfileModel";
+import ArchivedUser from "../models/ArchivedUserModal";
 import OTP from "../models/OTPModel";
+import Member from "../models/ProfileModel";
 import SubscribedEmail from "../models/SubscribedEmailModal";
-import { IMemberProfile, IUser } from "../types";
+import User from "../models/UserModal";
+import EmailService from "../services/emailService";
+import { IArchivedUser, IMemberProfile, IUser } from "../types";
 import { generateMembershipId } from "../utils/membershipHelper";
 
 export const getAllMembers = async (
@@ -15,7 +16,10 @@ export const getAllMembers = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { status, page = 1, limit = 10, search } = req.query;
+    const { status, search } = req.query;
+    // Add pagination bounds to prevent DoS
+    const page = Math.max(Number(req.query.page) || 1, 1);
+    const limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 100);
 
     const query: any = {};
 
@@ -33,20 +37,15 @@ export const getAllMembers = async (
       ];
     }
 
-    // Debug: Log the constructed query
-    console.log("Query being executed:", JSON.stringify(query, null, 2));
-
-    const skip = (Number(page) - 1) * Number(limit);
+    const skip = (page - 1) * limit;
 
     const members = await Member.find(query)
       .sort({ createdAt: -1 })
       .skip(skip)
-      .limit(Number(limit))
+      .limit(limit)
       .populate("userId", "fullName email");
 
     const total = await Member.countDocuments(query);
-
-    console.log(`Found ${members.length} members out of ${total} total`);
 
     res.status(200).json({
       success: true,
@@ -54,26 +53,26 @@ export const getAllMembers = async (
       data: {
         members,
         pagination: {
-          current: Number(page),
-          total: Math.ceil(total / Number(limit)),
+          current: page,
+          total: Math.ceil(total / limit),
           count: members.length,
           totalMembers: total,
         },
       },
     });
-  } catch (error: any) {
-    console.error("Get all members error:", error);
+  } catch {
     res.status(500).json({
       success: false,
       message: "Failed to retrieve members",
-      error: error.message,
     });
   }
 };
 
 // Define populated member interface using your existing types
-interface PopulatedMember
-  extends Omit<IMemberProfile, "userId" | "approvedBy"> {
+interface PopulatedMember extends Omit<
+  IMemberProfile,
+  "userId" | "approvedBy"
+> {
   userId: IUser;
   approvedBy?: IUser;
 }
@@ -96,10 +95,9 @@ export const getMemberById = async (
 
     // Find member by ID and populate user information
     const member = await Member.findById(memberId)
-      .populate<{ userId: IUser }>(
-        "userId",
-        "fullName email role isVerified isProfileComplete"
-      )
+      .populate<{
+        userId: IUser;
+      }>("userId", "fullName email role isVerified isProfileComplete")
       .populate<{ approvedBy: IUser }>("approvedBy", "fullName");
 
     if (!member) {
@@ -396,7 +394,7 @@ export const getDashboardStats = async (
   res: Response
 ): Promise<void> => {
   try {
-    // Execute only the count queries we need (8 queries instead of 7)
+    // Execute only the count queries we need
     const [
       totalMembers,
       pendingMembers,
@@ -406,6 +404,7 @@ export const getDashboardStats = async (
       verifiedUsers,
       unverifiedUsers,
       totalSubscribedEmails,
+      totalArchivedUsers,
     ] = await Promise.all([
       // Member statistics
       Member.countDocuments({ memberStatus: "approved" }),
@@ -420,9 +419,11 @@ export const getDashboardStats = async (
 
       // Subscribed emails statistics
       SubscribedEmail.countDocuments(), // All subscribed emails
+
+      // Archived users statistics
+      ArchivedUser.countDocuments(),
     ]);
 
-    console.log(pendingMembers);
     res.status(200).json({
       success: true,
       message: "Dashboard stats retrieved successfully",
@@ -436,6 +437,7 @@ export const getDashboardStats = async (
           verifiedUsers,
           unverifiedUsers,
           totalSubscribedEmails,
+          totalArchivedUsers,
         },
         // Simplified response - only sending counts
         members: {
@@ -446,6 +448,9 @@ export const getDashboardStats = async (
         },
         emails: {
           total: totalSubscribedEmails,
+        },
+        archivedUsers: {
+          total: totalArchivedUsers,
         },
         lastUpdated: new Date().toISOString(),
       },
@@ -463,14 +468,14 @@ export const getDashboardStats = async (
   }
 };
 
-// This need to check
+// Approve user deletion request - archives user instead of hard delete
 export const getPendingDeletionRequests = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const user = req.user as IUser;
-    if (!user || user.role !== "admin") {
+    const adminUser = req.user as IUser;
+    if (!adminUser || adminUser.role !== "admin") {
       res.status(403).json({
         success: false,
         message: "Admin access required",
@@ -480,9 +485,8 @@ export const getPendingDeletionRequests = async (
 
     const { requestId } = req.params;
 
-    const deletionRequest = await AccountDeletionRequest.findById(
-      requestId
-    ).populate("userId");
+    const deletionRequest =
+      await AccountDeletionRequest.findById(requestId).populate("userId");
 
     if (!deletionRequest) {
       res.status(404).json({
@@ -500,37 +504,81 @@ export const getPendingDeletionRequests = async (
       return;
     }
 
-    const userId = deletionRequest.userId;
+    const userToArchive = deletionRequest.userId as unknown as IUser;
+    if (!userToArchive) {
+      res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+      return;
+    }
 
-    // Start transaction for complete data cleanup
+    // Find associated profile
+    const profile = await Member.findOne({ userId: userToArchive._id });
+
+    // Start transaction for archiving
     const session = await mongoose.startSession();
 
     try {
       await session.withTransaction(async () => {
+        // Build archived user data
+        const archivedUserData: Partial<IArchivedUser> = {
+          originalUserId: userToArchive._id,
+          email: userToArchive.email,
+          fullName: userToArchive.fullName,
+          role: userToArchive.role,
+          googleId: userToArchive.googleId,
+          profilePic: userToArchive.profilePic,
+          isVerified: userToArchive.isVerified,
+          isProfileComplete: userToArchive.isProfileComplete,
+          userCreatedAt: userToArchive.createdAt,
+          userUpdatedAt: userToArchive.updatedAt,
+          archivedAt: new Date(),
+          archivedBy: adminUser._id,
+          archiveReason:
+            deletionRequest.reason || "User requested account deletion",
+          archiveSource: "user_request",
+        };
+
+        // Include profile data if exists
+        if (profile) {
+          archivedUserData.profile = {
+            address: profile.address,
+            phoneNumber: profile.phoneNumber,
+            dateOfBirth: profile.dateOfBirth,
+            gender: profile.gender as "Male" | "Female" | "Other",
+            whyJoin: profile.whyJoin,
+            idProof: profile.idProof,
+            memberStatus: profile.memberStatus,
+            membershipId: profile.membershipId,
+            approvedBy: profile.approvedBy,
+            approvedAt: profile.approvedAt,
+            rejectionReason: profile.rejectionReason,
+            profileCreatedAt: profile.createdAt,
+            profileUpdatedAt: profile.updatedAt,
+          };
+        }
+
+        // Save to ArchivedUsers collection
+        await ArchivedUser.create([archivedUserData], { session });
+
         // Update deletion request status
         await AccountDeletionRequest.findByIdAndUpdate(
           requestId,
           {
             deletionStatus: "approved",
-            processedBy: user._id,
+            processedBy: adminUser._id,
           },
           { session }
         );
 
-        // Delete all user-related data
+        // Delete from active collections
         await Promise.all([
-          // Delete user account
-          User.findByIdAndDelete(userId, { session }),
-
-          // Delete member profile
-          Member.findOneAndDelete({ userId }, { session }),
-
-          // Delete any OTPs
-          OTP.deleteMany({ email: (userId as any).email }, { session }),
-
-          // Delete other account deletion requests for this user
+          User.findByIdAndDelete(userToArchive._id, { session }),
+          Member.findOneAndDelete({ userId: userToArchive._id }, { session }),
+          OTP.deleteMany({ email: userToArchive.email }, { session }),
           AccountDeletionRequest.deleteMany(
-            { userId, _id: { $ne: requestId } },
+            { userId: userToArchive._id, _id: { $ne: requestId } },
             { session }
           ),
         ]);
@@ -538,10 +586,9 @@ export const getPendingDeletionRequests = async (
 
       res.status(200).json({
         success: true,
-        message: "Account deletion approved and completed successfully",
+        message:
+          "Account deletion approved - user has been archived successfully",
       });
-    } catch (transactionError) {
-      throw transactionError;
     } finally {
       await session.endSession();
     }
@@ -559,7 +606,10 @@ export const getAllUsers = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { page = 1, limit = 10, search, role } = req.query;
+    const { search, role } = req.query;
+    // Add pagination bounds to prevent DoS
+    const page = Math.max(Number(req.query.page) || 1, 1);
+    const limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 100);
 
     const query: any = {};
 
@@ -574,7 +624,7 @@ export const getAllUsers = async (
       ];
     }
 
-    const skip = (Number(page) - 1) * Number(limit);
+    const skip = (page - 1) * limit;
 
     const users = await User.find(
       query,
@@ -582,8 +632,7 @@ export const getAllUsers = async (
     )
       .sort({ createdAt: -1 })
       .skip(skip)
-      .limit(Number(limit));
-    console.log(users);
+      .limit(limit);
 
     const total = await User.countDocuments(query);
 
@@ -593,8 +642,8 @@ export const getAllUsers = async (
       data: {
         users,
         pagination: {
-          current: Number(page),
-          total: Math.ceil(total / Number(limit)),
+          current: page,
+          total: Math.ceil(total / limit),
           count: users.length,
           totalUsers: total,
         },
@@ -610,7 +659,7 @@ export const getAllUsers = async (
   }
 };
 
-export const DeleteUser = async (
+export const archiveUser = async (
   req: Request,
   res: Response
 ): Promise<void> => {
@@ -625,6 +674,7 @@ export const DeleteUser = async (
     }
 
     const { userId } = req.params;
+    const { archiveReason } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       res.status(400).json({
@@ -644,71 +694,220 @@ export const DeleteUser = async (
       return;
     }
 
-    // Prevent admin from revoking themselves
+    // Prevent admin from archiving themselves
     if (user._id.toString() === adminUser._id.toString()) {
       res.status(400).json({
         success: false,
-        message: "Cannot revoke your own account",
+        message: "Cannot archive your own account",
       });
       return;
     }
 
-    // Prevent revoking other admins (optional security measure)
+    // Prevent archiving other admins
     if (user.role === "admin") {
       res.status(400).json({
         success: false,
-        message: "Cannot revoke admin accounts",
+        message: "Cannot archive admin accounts",
       });
       return;
     }
+
+    // Find associated profile
+    const profile = await Member.findOne({ userId });
 
     // Use transaction to ensure data integrity
     const session = await mongoose.startSession();
 
     try {
       await session.withTransaction(async () => {
-        // Delete member profile if exists
-        await Member.findOneAndDelete({ userId }, { session });
+        // Build archived user data
+        const archivedUserData: Partial<IArchivedUser> = {
+          originalUserId: user._id,
+          email: user.email,
+          fullName: user.fullName,
+          role: user.role,
+          googleId: user.googleId,
+          profilePic: user.profilePic,
+          isVerified: user.isVerified,
+          isProfileComplete: user.isProfileComplete,
+          userCreatedAt: user.createdAt,
+          userUpdatedAt: user.updatedAt,
+          archivedAt: new Date(),
+          archivedBy: adminUser._id,
+          archiveReason: archiveReason?.trim() || undefined,
+          archiveSource: "admin_action",
+        };
 
-        // TODO: Delete other related data here
-        // - Delete payments/donations
-        // - Delete user logs/activities
-        // - Delete uploaded files/documents
+        // Include profile data if exists
+        if (profile) {
+          archivedUserData.profile = {
+            address: profile.address,
+            phoneNumber: profile.phoneNumber,
+            dateOfBirth: profile.dateOfBirth,
+            gender: profile.gender as "Male" | "Female" | "Other",
+            whyJoin: profile.whyJoin,
+            idProof: profile.idProof,
+            memberStatus: profile.memberStatus,
+            membershipId: profile.membershipId,
+            approvedBy: profile.approvedBy,
+            approvedAt: profile.approvedAt,
+            rejectionReason: profile.rejectionReason,
+            profileCreatedAt: profile.createdAt,
+            profileUpdatedAt: profile.updatedAt,
+          };
+        }
 
-        // Finally delete the user
-        await User.findByIdAndDelete(userId, { session });
+        // Save to ArchivedUsers collection
+        await ArchivedUser.create([archivedUserData], { session });
+
+        // Delete from active collections
+        await Promise.all([
+          User.findByIdAndDelete(userId, { session }),
+          Member.findOneAndDelete({ userId }, { session }),
+          OTP.deleteMany({ email: user.email }, { session }),
+          AccountDeletionRequest.deleteMany({ userId }, { session }),
+        ]);
       });
-
-      await session.commitTransaction();
 
       res.status(200).json({
         success: true,
-        message: "User and all related data have been permanently deleted",
+        message: "User has been archived successfully",
         data: {
-          deletedUser: {
+          archivedUser: {
             id: user._id,
             fullName: user.fullName,
             email: user.email,
-            deletedAt: new Date(),
-            deletedBy: adminUser.fullName,
+            archivedAt: new Date(),
+            archivedBy: adminUser.fullName,
+            archiveReason: archiveReason?.trim() || null,
           },
         },
       });
-    } catch (transactionError) {
-      await session.abortTransaction();
-      throw transactionError;
     } finally {
       session.endSession();
     }
   } catch (error: any) {
-    console.error("Revoke user error:", error);
+    console.error("Archive user error:", error);
     res.status(500).json({
       success: false,
-      message: "Failed to revoke user",
+      message: "Failed to archive user",
       error:
         process.env.NODE_ENV === "development"
           ? error.message
           : "Internal server error",
+    });
+  }
+};
+
+// Get all archived users with pagination
+export const getArchivedUsers = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const user = req.user as IUser;
+    if (!user || user.role !== "admin") {
+      res.status(403).json({
+        success: false,
+        message: "Admin access required",
+      });
+      return;
+    }
+
+    const { page = 1, limit = 50, search } = req.query;
+
+    const query: any = {};
+
+    if (search) {
+      query.$or = [
+        { fullName: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+        { "profile.membershipId": { $regex: search, $options: "i" } },
+      ];
+    }
+
+    const skip = (Number(page) - 1) * Number(limit);
+
+    const archivedUsers = await ArchivedUser.find(query)
+      .sort({ archivedAt: -1 })
+      .skip(skip)
+      .limit(Number(limit))
+      .populate("archivedBy", "fullName email");
+
+    const total = await ArchivedUser.countDocuments(query);
+
+    res.status(200).json({
+      success: true,
+      message: "Archived users retrieved successfully",
+      data: {
+        archivedUsers,
+        pagination: {
+          current: Number(page),
+          total: Math.ceil(total / Number(limit)),
+          count: archivedUsers.length,
+          totalArchivedUsers: total,
+        },
+      },
+    });
+  } catch (error: any) {
+    console.error("Get archived users error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to retrieve archived users",
+      error: error.message,
+    });
+  }
+};
+
+// Get single archived user by ID
+export const getArchivedUserById = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const user = req.user as IUser;
+    if (!user || user.role !== "admin") {
+      res.status(403).json({
+        success: false,
+        message: "Admin access required",
+      });
+      return;
+    }
+
+    const { archivedUserId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(archivedUserId)) {
+      res.status(400).json({
+        success: false,
+        message: "Invalid archived user ID format",
+      });
+      return;
+    }
+
+    const archivedUser = await ArchivedUser.findById(archivedUserId).populate(
+      "archivedBy",
+      "fullName email"
+    );
+
+    if (!archivedUser) {
+      res.status(404).json({
+        success: false,
+        message: "Archived user not found",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Archived user retrieved successfully",
+      data: archivedUser,
+    });
+  } catch (error: any) {
+    console.error("Get archived user by ID error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to retrieve archived user",
+      error: error.message,
     });
   }
 };

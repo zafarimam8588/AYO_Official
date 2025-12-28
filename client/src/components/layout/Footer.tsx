@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 
 const Footer = () => {
   const [copied, setCopied] = useState(false);
-  const email = "info@azadyouthorg.org";
+  const email = "ayoindia1@gmail.com";
 
   const handleCopy = async (email: string) => {
     try {
@@ -22,7 +22,7 @@ const Footer = () => {
   };
 
   // Fixed scroll function with proper element parameter handling
-  const scrollWithOffset = (el: any) => {
+  const scrollWithOffset = (el: HTMLElement) => {
     setTimeout(() => {
       const yCoordinate = el.getBoundingClientRect().top + window.pageYOffset;
       const yOffset = -80;
@@ -34,9 +34,13 @@ const Footer = () => {
   };
 
   return (
-    <footer className="relative bg-white overflow-hidden">
-      {/* Wave SVG Background - Same as before */}
-      <div className="absolute inset-0">
+    <footer
+      className="relative bg-white overflow-hidden"
+      role="contentinfo"
+      aria-label="Site footer"
+    >
+      {/* Wave SVG Background */}
+      <div className="absolute inset-0" aria-hidden="true">
         <svg
           className="absolute bottom-0 w-full h-full"
           viewBox="0 0 1440 800"
@@ -73,60 +77,60 @@ const Footer = () => {
         </svg>
       </div>
 
-      <div className="relative z-10 container mx-auto px-6 py-6">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 mb-16">
-          {/* Company Info - Same as before */}
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 mb-12 lg:mb-16">
+          {/* Company Info */}
           <div className="col-span-2 lg:col-span-1 space-y-6">
             <div>
               <Link
                 to="/"
-                className="hover:text-orange-600 transition-colors duration-200"
+                className="hover:text-saffron-600 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-saffron-500 focus-visible:ring-offset-2 rounded-sm"
               >
-                <h3 className="font-bold text-xl text-gray-800 mb-4">
+                <h3 className="font-bold text-xl text-slate-800 mb-4">
                   Azad Youth Organisation
                 </h3>
               </Link>
             </div>
             <div className="space-y-3">
-              <div className="flex items-center gap-3 text-gray-600">
-                <Mail className="w-5 h-5 text-orange-500 flex-shrink-0" />
+              <div className="flex items-center gap-3 text-slate-600">
+                <Mail className="w-5 h-5 text-saffron-500 flex-shrink-0" />
                 <a
                   href={`mailto:${email}`}
-                  className="break-all text-sm hover:text-orange-600 transition-colors duration-200"
+                  className="break-all text-sm hover:text-saffron-600 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-saffron-500 focus-visible:ring-offset-2 rounded-sm"
                 >
                   {email}
                 </a>
                 <button
                   onClick={() => handleCopy(email)}
-                  className="p-1 rounded hover:bg-gray-100 transition-colors"
-                  aria-label="Copy email"
+                  className="p-1 rounded hover:bg-slate-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-saffron-500 focus-visible:ring-offset-2"
+                  aria-label="Copy email address"
                 >
-                  <Copy className="w-4 h-4 text-gray-500 hover:text-orange-600" />
+                  <Copy className="w-4 h-4 text-slate-500 hover:text-saffron-600" />
                 </button>
                 {copied && (
-                  <span className="text-xs text-green-600 animate-pulse">
+                  <span className="text-xs text-india-green-600 animate-pulse">
                     Copied!
                   </span>
                 )}
               </div>
-              <div className="flex items-start gap-3 text-gray-600">
-                <Phone className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+              <div className="flex items-start gap-3 text-slate-600">
+                <Phone className="w-5 h-5 text-india-green-500 flex-shrink-0 mt-0.5" />
                 <a
-                  href="tel:+919876543210"
-                  className="whitespace-nowrap text-sm hover:text-green-600 transition-colors duration-200"
+                  href="tel:+919942495941"
+                  className="whitespace-nowrap text-sm hover:text-india-green-600 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-india-green-500 focus-visible:ring-offset-2 rounded-sm"
                 >
-                  +91 98765 43210
+                  +91 9942495941
                 </a>
               </div>
-              <div className="flex items-start gap-3 text-gray-600">
-                <MapPin className="w-5 h-5 text-orange-400 flex-shrink-0 mt-0.5" />
+              <div className="flex items-start gap-3 text-slate-600">
+                <MapPin className="w-5 h-5 text-saffron-400 flex-shrink-0 mt-0.5" />
                 <a
-                  href="https://www.google.com/maps?q=New+Delhi,+India"
+                  href="https://www.google.com/maps?q=Motihari,+East+Champaran,+Bihar,+India"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm hover:text-orange-600 transition-colors duration-200"
+                  className="text-sm hover:text-saffron-600 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-saffron-500 focus-visible:ring-offset-2 rounded-sm"
                 >
-                  New Delhi, India
+                  Motihari, East Champaran, Bihar
                 </a>
               </div>
             </div>
@@ -134,8 +138,11 @@ const Footer = () => {
 
           {/* About AYO */}
           <div className="col-span-1 space-y-4">
-            <h4 className="font-semibold text-gray-800 text-lg">About AYO</h4>
-            <nav className="flex flex-col space-y-3">
+            <h4 className="font-semibold text-slate-800 text-lg">About AYO</h4>
+            <nav
+              className="flex flex-col space-y-3"
+              aria-label="About AYO links"
+            >
               {[
                 { name: "Our Mission", path: "/about/#our-principle" },
                 { name: "Our Impact", path: "/about/#our-impact" },
@@ -147,7 +154,7 @@ const Footer = () => {
                   key={item.name}
                   to={item.path}
                   scroll={(el) => scrollWithOffset(el)}
-                  className="text-gray-600 hover:text-green-600 transition-colors duration-200 hover:translate-x-1 transform text-sm"
+                  className="text-slate-600 hover:text-india-green-600 transition-all duration-200 hover:pl-1 text-sm inline-block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-india-green-500 focus-visible:ring-offset-2 rounded-sm"
                 >
                   {item.name}
                 </HashLink>
@@ -155,10 +162,13 @@ const Footer = () => {
             </nav>
           </div>
 
-          {/* Programs & Initiatives - CORRECTED */}
+          {/* Programs & Initiatives */}
           <div className="col-span-1 space-y-4">
-            <h4 className="font-semibold text-gray-800 text-lg">Programs</h4>
-            <nav className="flex flex-col space-y-3">
+            <h4 className="font-semibold text-slate-800 text-lg">Programs</h4>
+            <nav
+              className="flex flex-col space-y-3"
+              aria-label="Programs links"
+            >
               {[
                 {
                   name: "Education Support",
@@ -185,7 +195,7 @@ const Footer = () => {
                   key={item.name}
                   to={item.path}
                   scroll={(el) => scrollWithOffset(el)}
-                  className="text-gray-600 hover:text-orange-600 transition-colors duration-200 hover:translate-x-1 transform text-sm"
+                  className="text-slate-600 hover:text-saffron-600 transition-all duration-200 hover:pl-1 text-sm inline-block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-saffron-500 focus-visible:ring-offset-2 rounded-sm"
                 >
                   {item.name}
                 </HashLink>
@@ -195,8 +205,8 @@ const Footer = () => {
 
           {/* Support & Legal */}
           <div className="col-span-1 space-y-4">
-            <h4 className="font-semibold text-gray-800 text-lg">Support</h4>
-            <nav className="flex flex-col space-y-3">
+            <h4 className="font-semibold text-slate-800 text-lg">Support</h4>
+            <nav className="flex flex-col space-y-3" aria-label="Support links">
               {[
                 { name: "Donate Now", path: "/donate" },
                 { name: "Partnership", path: "/partnership" },
@@ -207,7 +217,7 @@ const Footer = () => {
                 <Link
                   key={item.name}
                   to={item.path}
-                  className="text-gray-600 hover:text-orange-600 transition-colors duration-200 hover:translate-x-1 transform text-sm"
+                  className="text-slate-600 hover:text-saffron-600 transition-all duration-200 hover:pl-1 text-sm inline-block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-saffron-500 focus-visible:ring-offset-2 rounded-sm"
                 >
                   {item.name}
                 </Link>
@@ -216,64 +226,88 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom Section - Same as before */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6 pt-8 border-t border-gray-200">
-          <div className="text-gray-600">
-            <p>&copy; 2024 Azad Youth Organisation. All rights reserved.</p>
+        {/* Bottom Section */}
+        <div className="flex flex-col md:flex-row justify-between items-center gap-6 pt-8 border-t border-slate-200">
+          <div className="text-slate-600">
+            <p>
+              &copy; {new Date().getFullYear()} Azad Youth Organisation. All
+              rights reserved.
+            </p>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-gray-600 font-medium">Follow us:</span>
+            <span className="text-slate-600 font-medium">Follow us:</span>
             <div className="flex gap-2">
               {[
                 {
                   icon: CiTwitter,
-                  color: "hover:bg-orange-500",
+                  color: "hover:bg-saffron-500",
                   name: "Twitter",
+                  url: "https://x.com/AYOindia1",
                 },
                 {
                   icon: FaFacebookF,
-                  color: "hover:bg-orange-600",
+                  color: "hover:bg-saffron-600",
                   name: "Facebook",
+                  url: "https://www.facebook.com/share/19sKrxDR6F/",
                 },
                 {
                   icon: FaInstagram,
-                  color: "hover:bg-green-500",
+                  color: "hover:bg-india-green-500",
                   name: "Instagram",
+                  url: "https://www.instagram.com/azadyouthorg",
                 },
                 {
                   icon: CiLinkedin,
-                  color: "hover:bg-green-600",
+                  color: "hover:bg-india-green-600",
                   name: "LinkedIn",
+                  url: null,
                 },
                 {
                   icon: CiYoutube,
-                  color: "hover:bg-orange-500",
+                  color: "hover:bg-saffron-500",
                   name: "YouTube",
+                  url: null,
                 },
-              ].map(({ icon: Icon, color, name }) => (
-                <button
-                  key={name}
-                  type="button"
-                  onClick={() =>
-                    toast(`${name} link coming soon!`, {
-                      icon: "🔗",
-                      style: {
-                        background: "#3b82f6",
-                        color: "white",
-                      },
-                    })
-                  }
-                  className={`p-3 rounded-full bg-gray-100 text-gray-600 hover:text-white transition-all duration-300 transform hover:scale-110 ${color}`}
-                  aria-label={name}
-                >
-                  <Icon className="w-4 h-4" />
-                </button>
-              ))}
+              ].map(({ icon: Icon, color, name, url }) =>
+                url ? (
+                  <a
+                    key={name}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`p-3 rounded-full bg-slate-100 text-slate-600 hover:text-white transition-all duration-300 transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-saffron-500 focus-visible:ring-offset-2 ${color}`}
+                    aria-label={`Follow us on ${name}`}
+                  >
+                    <Icon className="w-4 h-4" />
+                  </a>
+                ) : (
+                  <button
+                    key={name}
+                    type="button"
+                    onClick={() =>
+                      toast(`${name} link coming soon!`, {
+                        icon: "🔗",
+                        style: {
+                          background: "#3b82f6",
+                          color: "white",
+                        },
+                      })
+                    }
+                    className={`p-3 rounded-full bg-slate-100 text-slate-600 hover:text-white transition-all duration-300 transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-saffron-500 focus-visible:ring-offset-2 ${color}`}
+                    aria-label={`Follow us on ${name}`}
+                  >
+                    <Icon className="w-4 h-4" />
+                  </button>
+                )
+              )}
             </div>
           </div>
         </div>
 
-        <div className="mt-6 h-0.5 w-full bg-gradient-to-r from-orange-200 via-gray-100 to-green-200 rounded-full" />
+        <div
+          className="mt-6 h-0.5 w-full bg-gradient-to-r from-saffron-200 via-slate-100 to-india-green-200 rounded-full"
+          aria-hidden="true"
+        />
       </div>
     </footer>
   );

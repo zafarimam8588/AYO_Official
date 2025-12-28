@@ -1,5 +1,5 @@
 import { useForm, type SubmitHandler } from "react-hook-form";
-import { Mail, Shield, ArrowLeft, Heart } from "lucide-react";
+import { Mail, Shield, ArrowLeft, Heart, Home } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -63,8 +63,8 @@ const VerifyEmailPage = () => {
       }
     } catch (err) {
       const message =
-        (err as any)?.response?.data?.message ??
-        "Verification failed. Please try again.";
+        (err as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message ?? "Verification failed. Please try again.";
       toast.error(message);
     }
   };
@@ -88,203 +88,217 @@ const VerifyEmailPage = () => {
       }
     } catch (err) {
       const message =
-        (err as any)?.response?.data?.message ||
-        (err as any)?.response?.data?.error ||
+        (err as { response?: { data?: { message?: string; error?: string } } })
+          ?.response?.data?.message ||
+        (err as { response?: { data?: { message?: string; error?: string } } })
+          ?.response?.data?.error ||
         "Failed to send OTP. Please check your connection and try again.";
       toast.error(message);
-      console.error("Resend OTP error:", err);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-green-50 p-4 flex items-center justify-center">
-      {/* Main Container */}
-      <div className="max-w-4xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col lg:flex-row">
-        {/* Mobile Background Pattern Section */}
-        <div className="lg:hidden bg-gradient-to-br from-orange-500 via-orange-600 to-green-600 relative overflow-hidden h-48">
-          {/* Decorative patterns for mobile */}
-          <div className="absolute top-4 right-4 w-20 h-20 opacity-20">
-            <svg viewBox="0 0 200 200" className="w-full h-full">
-              <path
-                fill="white"
-                d="M40.7,-65.2C50.9,-58.1,56.3,-42.5,63.4,-27.2C70.5,-11.9,79.3,3.1,79.9,19.2C80.5,35.3,72.9,52.5,60.1,63.1C47.3,73.7,29.3,77.7,11.8,78.5C-5.7,79.3,-22.7,76.9,-37.4,69.3C-52.1,61.7,-64.5,48.9,-71.7,33.4C-78.9,17.9,-80.9,-0.3,-77.8,-17.2C-74.7,-34.1,-66.5,-49.7,-54.4,-56C-42.3,-62.3,-26.3,-59.3,-10.1,-59.8C6.1,-60.3,30.5,-72.3,40.7,-65.2Z"
-                transform="translate(100 100)"
-              />
-            </svg>
-          </div>
-          <div className="absolute bottom-2 left-4 w-16 h-16 opacity-15">
-            <svg viewBox="0 0 200 200" className="w-full h-full">
-              <path
-                fill="white"
-                d="M51.4,-72.8C66.3,-65.1,77.4,-49.7,82.9,-32.1C88.4,-14.5,88.3,5.3,83.8,23.4C79.3,41.5,70.4,58,57.2,68.9C44,79.8,26.5,85.1,8.2,84.4C-10.1,83.7,-29.2,76.9,-44.3,66.4C-59.4,55.9,-70.5,41.7,-76.8,25.2C-83.1,8.7,-84.6,-10.1,-80.3,-27.1C-76,-44.1,-65.9,-59.3,-51.8,-67.2C-37.7,-75.1,-18.8,-75.7,-0.3,-75.2C18.2,-74.7,36.5,-80.5,51.4,-72.8Z"
-                transform="translate(100 100)"
-              />
-            </svg>
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-saffron-50/30 via-warm-50/30 to-india-green-50/20 flex items-center justify-center relative font-sans p-0 sm:p-4 md:p-6 lg:p-8">
+      {/* Modern Grid Background */}
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,#ff993308_1px,transparent_1px),linear-gradient(to_bottom,#13880808_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
 
-          {/* Mobile Content */}
-          <div className="flex flex-col justify-center items-center h-full p-6 relative z-10 text-white text-center">
-            <div className="flex items-center mb-3">
-              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center mr-3">
-                <Heart className="w-6 h-6 text-orange-600" />
+      <div className="relative z-10 w-full sm:max-w-md md:max-w-xl lg:max-w-5xl xl:max-w-6xl mx-auto h-full min-h-screen sm:min-h-0 sm:h-auto flex flex-col">
+        <div className="bg-white/90 backdrop-blur-2xl shadow-none sm:shadow-2xl border-0 sm:border border-white/20 overflow-x-hidden overflow-y-auto rounded-none sm:rounded-2xl md:rounded-3xl lg:rounded-[2.5rem] ring-0 sm:ring-1 ring-black/5 flex-1 flex flex-col min-h-screen sm:min-h-0 sm:h-auto">
+          <div className="flex flex-col lg:flex-row flex-1 lg:min-h-[600px] xl:min-h-[650px]">
+            {/* Desktop Sidebar */}
+            <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-saffron-500 via-saffron-600 to-india-green-600 relative overflow-hidden">
+              {/* Large Mail Icon Background */}
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-10">
+                <Mail className="w-48 h-48 text-white" />
               </div>
-              <span className="text-2xl font-bold">AYO</span>
-            </div>
-            <h1 className="text-2xl font-bold mb-3 leading-tight">
-              Almost There! 📧
-            </h1>
-            <p className="text-orange-100 text-sm leading-relaxed px-4">
-              We've sent a verification code to your email. Check your inbox!
-            </p>
-          </div>
-        </div>
 
-        {/* Left Side - Original Design with Mail Icon */}
-        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-orange-500 via-orange-600 to-green-600 relative overflow-hidden">
-          {/* Decorative waves/shapes */}
-          <div className="absolute top-0 right-0 w-64 h-64 opacity-20">
-            <svg viewBox="0 0 200 200" className="w-full h-full">
-              <path
-                fill="white"
-                d="M40.7,-65.2C50.9,-58.1,56.3,-42.5,63.4,-27.2C70.5,-11.9,79.3,3.1,79.9,19.2C80.5,35.3,72.9,52.5,60.1,63.1C47.3,73.7,29.3,77.7,11.8,78.5C-5.7,79.3,-22.7,76.9,-37.4,69.3C-52.1,61.7,-64.5,48.9,-71.7,33.4C-78.9,17.9,-80.9,-0.3,-77.8,-17.2C-74.7,-34.1,-66.5,-49.7,-54.4,-56C-42.3,-62.3,-26.3,-59.3,-10.1,-59.8C6.1,-60.3,30.5,-72.3,40.7,-65.2Z"
-                transform="translate(100 100)"
-              />
-            </svg>
-          </div>
-          <div className="absolute bottom-0 left-0 w-48 h-48 opacity-10">
-            <svg viewBox="0 0 200 200" className="w-full h-full">
-              <path
-                fill="white"
-                d="M51.4,-72.8C66.3,-65.1,77.4,-49.7,82.9,-32.1C88.4,-14.5,88.3,5.3,83.8,23.4C79.3,41.5,70.4,58,57.2,68.9C44,79.8,26.5,85.1,8.2,84.4C-10.1,83.7,-29.2,76.9,-44.3,66.4C-59.4,55.9,-70.5,41.7,-76.8,25.2C-83.1,8.7,-84.6,-10.1,-80.3,-27.1C-76,-44.1,-65.9,-59.3,-51.8,-67.2C-37.7,-75.1,-18.8,-75.7,-0.3,-75.2C18.2,-74.7,36.5,-80.5,51.4,-72.8Z"
-                transform="translate(100 100)"
-              />
-            </svg>
-          </div>
-
-          {/* Large Email Icon Background */}
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-10">
-            <Mail className="w-64 h-64 text-white" />
-          </div>
-
-          {/* Desktop Content */}
-          <div className="flex flex-col justify-center items-start p-12 relative z-10 text-white">
-            <div className="mb-8">
-              <div className="flex items-center mb-6">
-                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mr-4">
-                  <Heart className="w-7 h-7 text-orange-600" />
+              <div className="flex flex-col justify-center items-start p-8 xl:p-10 relative z-10 text-white h-full w-full">
+                <div className="mb-6">
+                  <div className="flex items-center mb-6">
+                    <div className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center mr-4 shadow-lg border border-white/20">
+                      <Heart className="w-6 h-6 text-white" />
+                    </div>
+                    <span className="text-2xl font-bold tracking-tight">
+                      AYO
+                    </span>
+                  </div>
+                  <h1 className="text-3xl xl:text-4xl font-bold mb-4 leading-tight tracking-tight">
+                    Almost There,
+                    <br />
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-saffron-100">
+                      Changemaker!
+                    </span>
+                  </h1>
+                  <p className="text-saffron-50 text-base leading-relaxed max-w-md">
+                    We've sent a 6-digit verification code to your email. Enter
+                    it below to complete your registration and join our mission!
+                  </p>
                 </div>
-                <span className="text-3xl font-bold">AYO</span>
-              </div>
-              <h1 className="text-4xl font-bold mb-4 leading-tight">
-                Almost There,
-                <br />
-                Changemaker! 📧
-              </h1>
-              <p className="text-orange-100 text-lg leading-relaxed">
-                We've sent a 6-digit verification code to your email. Enter it
-                below to complete your registration and join our mission!
-              </p>
-            </div>
 
-            {/* Info */}
-            <div className="grid grid-cols-3 gap-6 mt-8">
-              <div className="text-center">
-                <div className="text-2xl font-bold">✓</div>
-                <div className="text-orange-200 text-sm">Secure</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold">10min</div>
-                <div className="text-orange-200 text-sm">Expires</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold">📱</div>
-                <div className="text-orange-200 text-sm">Easy</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Side - First Enhanced Background Solution */}
-        <div className="w-full lg:w-1/2 relative overflow-hidden">
-          {/* Enhanced Background Pattern */}
-          <div className="absolute inset-0 bg-white">
-            {/* Subtle Grid Pattern */}
-            <div className="absolute inset-0 opacity-5">
-              <div
-                className="w-full h-full"
-                style={{
-                  backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,149,0,0.3) 1px, transparent 0)`,
-                  backgroundSize: "20px 20px",
-                }}
-              ></div>
-            </div>
-
-            {/* Wavy Pattern */}
-            <div className="absolute inset-0 opacity-10">
-              <svg className="w-full h-full" viewBox="0 0 400 400" fill="none">
-                <path
-                  d="M0,100 Q100,50 200,100 T400,100 L400,150 Q300,200 200,150 T0,150 Z"
-                  fill="url(#wave1)"
-                />
-                <path
-                  d="M0,250 Q100,200 200,250 T400,250 L400,300 Q300,350 200,300 T0,300 Z"
-                  fill="url(#wave2)"
-                />
-                <defs>
-                  <linearGradient id="wave1" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#ff6b35" stopOpacity="0.1" />
-                    <stop offset="100%" stopColor="#28a745" stopOpacity="0.1" />
-                  </linearGradient>
-                  <linearGradient id="wave2" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#28a745" stopOpacity="0.1" />
-                    <stop offset="100%" stopColor="#ff6b35" stopOpacity="0.1" />
-                  </linearGradient>
-                </defs>
-              </svg>
-            </div>
-
-            {/* Email Icon Pattern */}
-            <div className="absolute top-1/4 left-8 opacity-5">
-              <Mail className="w-32 h-32 text-orange-400" />
-            </div>
-            <div className="absolute bottom-1/4 right-12 opacity-5">
-              <Shield className="w-24 h-24 text-green-400" />
-            </div>
-          </div>
-
-          {/* Content */}
-          <div className="relative z-10 p-8 lg:p-12 flex flex-col justify-center min-h-full">
-            <div className="max-w-sm mx-auto w-full">
-              {/* Back Button */}
-              <button
-                onClick={() => navigate("/login")}
-                className="flex items-center text-gray-600 hover:text-gray-800 mb-6 transition-colors hover:cursor-pointer"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Login
-              </button>
-
-              <div className="mb-8 text-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-green-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                  <Shield className="w-8 h-8 text-white" />
+                {/* Info Stats */}
+                <div className="flex items-center space-x-6 mt-4">
+                  <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/10">
+                    <Shield className="w-4 h-4 text-white" />
+                    <span className="text-saffron-100 text-sm font-medium">
+                      Secure
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/10">
+                    <span className="text-white text-sm font-bold">10min</span>
+                    <span className="text-saffron-100 text-sm">Expires</span>
+                  </div>
                 </div>
-                <h2 className="text-3xl font-bold text-gray-800 mb-2">
-                  Verify Your Email 📧
-                </h2>
-                <p className="text-gray-600 mb-2">
-                  Enter the 6-digit code sent to:
-                </p>
-                <p className="text-orange-600 font-semibold  bg-white/50 backdrop-blur-sm rounded-lg px-3 py-1 inline-block">
-                  {email}
-                </p>
               </div>
+            </div>
 
-              {/* Verification Form */}
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700 block text-center">
-                    Verification Code
-                  </label>
+            {/* Form Side */}
+            <div className="w-full lg:w-1/2 flex flex-col relative overflow-y-auto flex-1">
+              <div className="w-full max-w-md mx-auto px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10 lg:px-8 lg:py-10 xl:px-10 xl:py-12 flex flex-col justify-center min-h-full lg:min-h-0">
+                {/* Mobile Header */}
+                <div className="lg:hidden relative -mx-4 sm:-mx-6 md:-mx-8 -mt-6 sm:-mt-8 md:-mt-10 mb-5 sm:mb-6 h-36 sm:h-40 md:h-44 overflow-hidden bg-gradient-to-br from-saffron-500 via-saffron-600 to-india-green-600 rounded-t-none sm:rounded-t-2xl flex-shrink-0">
+                  {/* Static Background Pattern - Hexagonal Mesh */}
+                  <div className="absolute inset-0 opacity-25">
+                    <svg
+                      className="absolute inset-0 w-full h-full"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <defs>
+                        <pattern
+                          id="hex-pattern-verify"
+                          x="0"
+                          y="0"
+                          width="60"
+                          height="52"
+                          patternUnits="userSpaceOnUse"
+                        >
+                          <path
+                            d="M30,0 L50,13 L50,39 L30,52 L10,39 L10,13 Z"
+                            fill="none"
+                            stroke="white"
+                            strokeWidth="0.5"
+                            opacity="0.4"
+                          />
+                          <circle
+                            cx="30"
+                            cy="26"
+                            r="3"
+                            fill="white"
+                            opacity="0.3"
+                          />
+                        </pattern>
+                        <pattern
+                          id="dots-pattern-verify"
+                          x="0"
+                          y="0"
+                          width="30"
+                          height="30"
+                          patternUnits="userSpaceOnUse"
+                        >
+                          <circle
+                            cx="15"
+                            cy="15"
+                            r="1.5"
+                            fill="white"
+                            opacity="0.5"
+                          />
+                        </pattern>
+                      </defs>
+                      <rect
+                        width="100%"
+                        height="100%"
+                        fill="url(#hex-pattern-verify)"
+                      />
+                      <rect
+                        width="100%"
+                        height="100%"
+                        fill="url(#dots-pattern-verify)"
+                      />
+                    </svg>
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(255,255,255,0.15)_0%,transparent_50%)]"></div>
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(255,255,255,0.1)_0%,transparent_50%)]"></div>
+                  </div>
+                  {/* Decorative Bottom Border Pattern - Geometric Scalloped */}
+                  <div className="absolute bottom-0 left-0 w-full z-20">
+                    <svg
+                      className="w-full h-10 sm:h-12"
+                      viewBox="0 0 1200 120"
+                      preserveAspectRatio="none"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <defs>
+                        <pattern
+                          id="scallop-verify"
+                          x="0"
+                          y="0"
+                          width="60"
+                          height="120"
+                          patternUnits="userSpaceOnUse"
+                        >
+                          <path
+                            d="M0,80 Q30,40 60,80 L60,120 L0,120 Z"
+                            fill="white"
+                            opacity="0.98"
+                          />
+                          <circle
+                            cx="30"
+                            cy="60"
+                            r="8"
+                            fill="white"
+                            opacity="0.6"
+                          />
+                        </pattern>
+                      </defs>
+                      <rect
+                        width="1200"
+                        height="120"
+                        fill="url(#scallop-verify)"
+                      />
+                      <path
+                        d="M0,80 L0,120 M60,80 L60,120 M120,80 L120,120 M180,80 L180,120 M240,80 L240,120 M300,80 L300,120 M360,80 L360,120 M420,80 L420,120 M480,80 L480,120 M540,80 L540,120 M600,80 L600,120 M660,80 L660,120 M720,80 L720,120 M780,80 L780,120 M840,80 L840,120 M900,80 L900,120 M960,80 L960,120 M1020,80 L1020,120 M1080,80 L1080,120 M1140,80 L1140,120 M1200,80 L1200,120"
+                        stroke="white"
+                        strokeWidth="1"
+                        opacity="0.3"
+                      />
+                    </svg>
+                  </div>
+                  <div className="relative z-10 h-full flex items-center justify-center">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/30">
+                        <Mail className="w-5 h-5 text-white" />
+                      </div>
+                      <span className="text-xl font-bold text-white">
+                        Azad Youth Organisation
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Back Button */}
+                <button
+                  onClick={() => navigate("/login")}
+                  className="inline-flex items-center text-slate-600 hover:text-slate-800 mb-4 transition-colors cursor-pointer self-start"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  <span className="text-sm font-medium">Back to Login</span>
+                </button>
+
+                {/* Header */}
+                <div className="mb-4 text-center lg:text-left">
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1.5 tracking-tight">
+                    Verify Your Email
+                  </h2>
+                  <p className="text-gray-500 text-xs sm:text-sm">
+                    Enter the 6-digit code sent to:
+                  </p>
+                  <p className="text-saffron-600 font-semibold text-sm mt-1">
+                    {email}
+                  </p>
+                </div>
+
+                {/* Form */}
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                  {/* Verification Code Field */}
                   <div className="relative">
                     <input
                       type="text"
@@ -296,52 +310,68 @@ const VerifyEmailPage = () => {
                           message: "Code must be 6 digits",
                         },
                       })}
-                      className={`w-full px-4 py-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 text-center text-2xl tracking-widest font-mono bg-white/70 backdrop-blur-sm shadow-sm ${
+                      className={`peer w-full px-4 pt-5 pb-2 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-saffron-500/10 focus:border-saffron-500 focus:bg-white transition-all duration-300 placeholder-transparent text-center text-lg tracking-widest font-mono ${
                         errors.verificationCode
-                          ? "border-red-300 focus:ring-red-500"
-                          : ""
+                          ? "border-red-300 focus:ring-red-500/10 focus:border-red-500"
+                          : "hover:border-gray-300"
                       }`}
                       placeholder="000000"
                     />
-                    <Mail className="absolute right-3 top-4 w-5 h-5 text-gray-400" />
+                    <label className="absolute left-4 top-1.5 text-xs font-light text-gray-400 transition-all duration-300 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-focus:top-1.5 peer-focus:text-xs peer-focus:text-saffron-600">
+                      Verification Code
+                    </label>
+                    <Mail className="absolute right-3 top-3.5 w-4 h-4 text-gray-400 peer-focus:text-saffron-500 transition-colors" />
                   </div>
                   {errors.verificationCode && (
-                    <p className="text-red-500 text-sm text-center">
+                    <p className="text-red-500 text-xs ml-1 flex items-center gap-1">
+                      <span className="w-1 h-1 rounded-full bg-red-500"></span>
                       {errors.verificationCode.message}
                     </p>
                   )}
+
+                  {/* Submit Button */}
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full h-11 sm:h-12 bg-gradient-to-r from-saffron-500 via-saffron-600 to-india-green-500 hover:from-saffron-600 hover:via-saffron-700 hover:to-india-green-600 shadow-lg shadow-saffron-500/25 hover:shadow-saffron-500/40 transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 rounded-xl font-semibold text-white text-sm sm:text-base flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                        Verifying...
+                      </>
+                    ) : (
+                      <>
+                        <Shield className="w-4 h-4 mr-2" />
+                        Verify & Continue
+                      </>
+                    )}
+                  </button>
+                </form>
+
+                {/* Resend Code */}
+                <div className="mt-4 sm:mt-5 text-center">
+                  <p className="text-gray-500 text-xs sm:text-sm font-medium mb-2">
+                    Didn't receive the code?
+                  </p>
+                  <button
+                    onClick={handleResendCode}
+                    className="text-india-green-600 hover:text-india-green-700 font-bold hover:underline transition-colors cursor-pointer text-sm"
+                  >
+                    Resend the code
+                  </button>
                 </div>
 
-                {/* Verify Button */}
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className={`w-full py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg ${
-                    isSubmitting
-                      ? "bg-gray-400 cursor-not-allowed text-white"
-                      : "bg-gradient-to-r from-orange-500 to-green-500 text-white hover:from-orange-600 hover:to-green-600 hover:shadow-xl transform hover:scale-[1.02]"
-                  }`}
-                >
-                  {isSubmitting ? (
-                    <div className="flex items-center justify-center">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                      Verifying...
-                    </div>
-                  ) : (
-                    "Verify & Continue 🚀"
-                  )}
-                </button>
-              </form>
-
-              {/* Resend Code */}
-              <div className="mt-8 text-center">
-                <p className="text-gray-600 mb-3">Didn't receive the code?</p>
-                <button
-                  onClick={handleResendCode}
-                  className="text-green-600 hover:text-green-700 font-semibold transition-colors hover:underline hover:cursor-pointer"
-                >
-                  Resend the code
-                </button>
+                {/* Back to Home */}
+                <div className="mt-4 text-center">
+                  <button
+                    onClick={() => navigate("/")}
+                    className="inline-flex items-center text-gray-500 hover:text-gray-700 text-xs sm:text-sm font-medium transition-colors cursor-pointer"
+                  >
+                    <Home className="w-3.5 h-3.5 mr-1.5" />
+                    Back to Home
+                  </button>
+                </div>
               </div>
             </div>
           </div>

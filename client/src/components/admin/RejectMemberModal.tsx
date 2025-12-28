@@ -32,7 +32,9 @@ export const RejectMemberModal = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (reason.trim().length === 0) return;
+    if (reason.trim().length === 0) {
+      return;
+    }
     onConfirm(reason.trim());
     setReason("");
   };

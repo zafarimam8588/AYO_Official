@@ -1,10 +1,8 @@
+/* eslint-disable react-refresh/only-export-components */
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import React from "react";
-
-interface RainbowButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
 
 const rainbowButtonVariants = cva(
   cn(
@@ -38,7 +36,8 @@ const rainbowButtonVariants = cva(
 );
 
 interface RainbowButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof rainbowButtonVariants> {
   asChild?: boolean;
 }
@@ -59,4 +58,5 @@ const RainbowButton = React.forwardRef<HTMLButtonElement, RainbowButtonProps>(
 
 RainbowButton.displayName = "RainbowButton";
 
-export { RainbowButton, rainbowButtonVariants, type RainbowButtonProps };
+export { RainbowButton, rainbowButtonVariants };
+export type { RainbowButtonProps };

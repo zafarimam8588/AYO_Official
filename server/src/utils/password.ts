@@ -8,7 +8,6 @@ import bcrypt from "bcryptjs";
  */
 export const hashPassword = async (password: string): Promise<string> => {
   try {
-    console.log("inside hash password");
     if (!password) {
       throw new Error("Password is required");
     }

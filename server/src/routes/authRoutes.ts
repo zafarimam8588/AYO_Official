@@ -1,5 +1,7 @@
 // routes/authRoutes.ts
 import { Router } from "express";
+import passport from "passport";
+
 import {
   register,
   verifyEmail,
@@ -9,12 +11,11 @@ import {
   resetPassword,
   logout,
 } from "../controllers/authController";
-import { isLoggedIn } from "../middleware/authMiddleware";
-import passport from "passport";
 import {
   getGoogleAuthURL,
   googleAuthCallback,
 } from "../controllers/googleAuthController";
+import { isLoggedIn } from "../middleware/authMiddleware";
 
 const router = Router();
 

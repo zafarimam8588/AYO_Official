@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 import dotenv from "dotenv";
 // ╔══════════════════════════════════════════════════════════════════╗
 // ║                      ENVIRONMENT CONFIG                          ║
@@ -5,29 +6,23 @@ import dotenv from "dotenv";
 // Load environment variables FIRST before any other imports
 dotenv.config();
 
-import express from "express";
 import cors from "cors";
+import express from "express";
+import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import morgan from "morgan";
-import rateLimit from "express-rate-limit";
 import passport from "passport";
 
-// ╔══════════════════════════════════════════════════════════════════╗
-// ║                        IMPORT MODULES                            ║
-// ╚══════════════════════════════════════════════════════════════════╝
 import connectDB from "./config/database";
-import "./config/passport"; // Import passport configuration
-
-// ╔══════════════════════════════════════════════════════════════════╗
-// ║                         ROUTE IMPORTS                            ║
-// ╚══════════════════════════════════════════════════════════════════╝
-import authRoutes from "./routes/authRoutes";
-import memberRoutes from "./routes/memberRoutes";
+import "./config/passport";
 import accountDeletionRoutes from "./routes/accountDeletionRoute";
 import adminRoutes from "./routes/adminRoutes";
-import subscribedEmailRoute from "./routes/subscribedEmailRoute";
-import pictureRoutes from "./routes/pictureRoutes";
+import authRoutes from "./routes/authRoutes";
 import contactMessageRoutes from "./routes/contactMessageRoutes";
+import memberRoutes from "./routes/memberRoutes";
+import pictureRoutes from "./routes/pictureRoutes";
+import subscribedEmailRoute from "./routes/subscribedEmailRoute";
+/* eslint-enable import/order */
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -180,7 +175,7 @@ app.use(
     error: any,
     req: express.Request,
     res: express.Response,
-    next: express.NextFunction
+    _next: express.NextFunction
   ) => {
     // Log the error details
     console.error("🔥 Global Error:", {

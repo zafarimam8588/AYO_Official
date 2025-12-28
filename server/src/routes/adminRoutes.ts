@@ -1,5 +1,6 @@
 // routes/adminRoutes.ts
 import { Router } from "express";
+
 import {
   getAllMembers,
   approveMember,
@@ -7,7 +8,9 @@ import {
   getDashboardStats,
   getPendingDeletionRequests,
   getAllUsers,
-  DeleteUser,
+  archiveUser,
+  getArchivedUsers,
+  getArchivedUserById,
   getMemberById,
 } from "../controllers/adminController";
 import { isLoggedIn, isAdmin } from "../middleware/authMiddleware";
@@ -26,9 +29,19 @@ router.get("/dashboard/stats", isLoggedIn, isAdmin, getDashboardStats);
 
 router.get("/users", isLoggedIn, isAdmin, getAllUsers);
 
-// ⚠️ In the next update: don’t delete users, just deactivate them
-router.post("/users/:userId/delete-user", isLoggedIn, isAdmin, DeleteUser);
+// Archive user (soft delete - moves to ArchivedUsers collection)
+router.post("/users/:userId/archive", isLoggedIn, isAdmin, archiveUser);
 
+// Archived users management
+router.get("/archived-users", isLoggedIn, isAdmin, getArchivedUsers);
+router.get(
+  "/archived-users/:archivedUserId",
+  isLoggedIn,
+  isAdmin,
+  getArchivedUserById
+);
+
+// Approve user deletion request (archives user)
 router.get(
   "/deletion-requests/:requestId",
   isLoggedIn,

@@ -1,10 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { Mail, Calendar, Download, Send, Trash2, X } from "lucide-react";
+import {
+  Mail,
+  Calendar,
+  Download,
+  Send,
+  Trash2,
+  X,
+  Copy,
+  Users,
+  Loader2,
+} from "lucide-react";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import type { SubscribedEmail } from "@/types/subscribedEmail";
+import { EmailCardSkeleton } from "@/components/skeletons";
+import { cn } from "@/lib/utils";
 
 interface SubscribedEmailsListProps {
   emails: SubscribedEmail[];
@@ -27,7 +39,6 @@ export const SubscribedEmailsList: React.FC<SubscribedEmailsListProps> = ({
   const [emailToDelete, setEmailToDelete] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Lock body scroll when modal is open
   useEffect(() => {
     if (showSendModal || deleteModalOpen) {
       document.body.style.overflow = "hidden";
@@ -53,7 +64,7 @@ export const SubscribedEmailsList: React.FC<SubscribedEmailsListProps> = ({
       setShowSendModal(false);
       setEmailSubject("");
       setEmailMessage("");
-    } catch (error) {
+    } catch {
       toast.error("Failed to send email. Please try again.");
     } finally {
       setIsSending(false);
@@ -66,7 +77,9 @@ export const SubscribedEmailsList: React.FC<SubscribedEmailsListProps> = ({
   };
 
   const handleDeleteConfirm = async () => {
-    if (!emailToDelete) return;
+    if (!emailToDelete) {
+      return;
+    }
 
     try {
       setIsDeleting(true);
@@ -74,7 +87,7 @@ export const SubscribedEmailsList: React.FC<SubscribedEmailsListProps> = ({
       toast.success("Email deleted successfully");
       setDeleteModalOpen(false);
       setEmailToDelete(null);
-    } catch (error) {
+    } catch {
       toast.error("Failed to delete email");
     } finally {
       setIsDeleting(false);
@@ -94,15 +107,9 @@ export const SubscribedEmailsList: React.FC<SubscribedEmailsListProps> = ({
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
 
-      toast.success(
-        `Downloaded ${emails.length} email addresses successfully!`,
-        {
-          icon: "📥",
-          duration: 3000,
-        }
-      );
-    } catch (error) {
-      toast.error("Failed to download emails. Please try again.");
+      toast.success(`Downloaded ${emails.length} email addresses!`);
+    } catch {
+      toast.error("Failed to download emails");
     }
   };
 
@@ -110,13 +117,8 @@ export const SubscribedEmailsList: React.FC<SubscribedEmailsListProps> = ({
     try {
       const emailList = emails.map((email) => email.email).join(", ");
       await navigator.clipboard.writeText(emailList);
-
-      toast.success(`Copied ${emails.length} email addresses to clipboard!`, {
-        icon: "📋",
-        duration: 3000,
-      });
-    } catch (error) {
-      // Fallback for browsers that don't support clipboard API
+      toast.success(`Copied ${emails.length} emails to clipboard!`);
+    } catch {
       try {
         const emailList = emails.map((email) => email.email).join(", ");
         const textArea = document.createElement("textarea");
@@ -125,31 +127,23 @@ export const SubscribedEmailsList: React.FC<SubscribedEmailsListProps> = ({
         textArea.select();
         document.execCommand("copy");
         document.body.removeChild(textArea);
-
-        toast.success(`Copied ${emails.length} email addresses to clipboard!`, {
-          icon: "📋",
-          duration: 3000,
-        });
-      } catch (fallbackError) {
-        toast.error("Failed to copy emails. Please try again.");
+        toast.success(`Copied ${emails.length} emails to clipboard!`);
+      } catch {
+        toast.error("Failed to copy emails");
       }
     }
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-      </div>
-    );
+    return <EmailCardSkeleton count={6} />;
   }
 
   if (emails.length === 0) {
     return (
       <div className="text-center py-12">
-        <Mail className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-        <p className="text-gray-500 text-lg">No subscribed emails found</p>
-        <p className="text-gray-400 text-sm mt-2">
+        <Mail className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+        <p className="text-slate-500 text-lg">No subscribed emails found</p>
+        <p className="text-slate-400 text-sm mt-2">
           Users who subscribe to your newsletter will appear here
         </p>
       </div>
@@ -158,94 +152,95 @@ export const SubscribedEmailsList: React.FC<SubscribedEmailsListProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Header with stats and actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-200">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
-            Subscribed Emails
-          </h2>
-          <p className="text-gray-600">
-            Total subscribers:{" "}
-            <span className="font-semibold text-blue-600">{emails.length}</span>
-          </p>
+      {/* Stats & Actions Header */}
+      <div className="space-y-4">
+        {/* Total Count */}
+        <div className="flex items-center gap-2 pb-4 border-b border-slate-200">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-purple-50 rounded-lg border border-purple-200">
+            <Users className="w-4 h-4 text-purple-600" />
+            <span className="text-purple-700">
+              <span className="font-semibold">{emails.length}</span> Total
+              Subscribers
+            </span>
+          </div>
         </div>
 
-        <div className="flex items-center gap-3 flex-wrap">
-          <button
+        {/* Action Buttons */}
+        <div className="flex flex-wrap gap-2">
+          <Button
             onClick={() => setShowSendModal(true)}
-            className="px-4 py-2 bg-gradient-to-r from-orange-500 to-green-500 text-white rounded-lg hover:from-orange-600 hover:to-green-600 transition-colors duration-200 font-medium text-sm flex items-center gap-2 cursor-pointer shadow-md"
+            className="bg-india-green-500 hover:bg-india-green-600 text-white gap-2"
           >
             <Send className="w-4 h-4" />
             Send to All
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="outline"
             onClick={copyAllEmails}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200 font-medium text-sm flex items-center gap-2 cursor-pointer"
+            className="gap-2 border-slate-200 hover:bg-slate-50"
           >
-            <Mail className="w-4 h-4" />
+            <Copy className="w-4 h-4" />
             Copy All
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="outline"
             onClick={downloadEmails}
-            className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 font-medium text-sm flex items-center gap-2 cursor-pointer"
+            className="gap-2 border-slate-200 hover:bg-slate-50"
           >
             <Download className="w-4 h-4" />
             Download
-          </button>
+          </Button>
         </div>
       </div>
 
-      {/* Email list */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* Email List */}
+      <div className="space-y-3">
         {emails.map((emailData) => (
           <div
             key={emailData._id}
-            className="bg-white rounded-lg p-4 border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all duration-200"
+            className="bg-slate-50 hover:bg-purple-50/50 rounded-xl p-4 transition-colors duration-200 border border-slate-200 hover:border-purple-300"
           >
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex items-center gap-2 flex-1 min-w-0">
-                <div className="p-2 bg-blue-100 rounded-full flex-shrink-0">
-                  <Mail className="w-4 h-4 text-blue-600" />
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3 min-w-0 flex-1">
+                <div className="p-2 bg-purple-100 rounded-full flex-shrink-0">
+                  <Mail className="w-4 h-4 text-purple-600" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-gray-900 truncate">
+                  <p className="text-sm font-medium text-slate-800 truncate">
                     {emailData.email}
                   </p>
+                  <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-0.5">
+                    <Calendar className="w-3 h-3" />
+                    <span>
+                      {new Date(emailData.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
                 </div>
               </div>
-              <button
-                onClick={() => handleDeleteClick(emailData._id)}
-                className="flex-shrink-0 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                title="Delete email"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-            </div>
 
-            <div className="flex items-center gap-2 text-xs text-gray-500">
-              <Calendar className="w-3 h-3" />
-              <span>
-                Subscribed: {new Date(emailData.createdAt).toLocaleDateString()}
-              </span>
-            </div>
-
-            <div className="mt-3 pt-3 border-t border-gray-100">
-              <button
-                onClick={async () => {
-                  try {
-                    await navigator.clipboard.writeText(emailData.email);
-                    toast.success("Email copied to clipboard!", {
-                      icon: "📋",
-                      duration: 2000,
-                    });
-                  } catch (error) {
-                    toast.error("Failed to copy email");
-                  }
-                }}
-                className="text-xs text-blue-600 hover:text-blue-800 font-medium cursor-pointer"
-              >
-                Copy email
-              </button>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <button
+                  onClick={async () => {
+                    try {
+                      await navigator.clipboard.writeText(emailData.email);
+                      toast.success("Email copied!");
+                    } catch {
+                      toast.error("Failed to copy");
+                    }
+                  }}
+                  className="p-2 text-slate-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+                  title="Copy email"
+                >
+                  <Copy className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => handleDeleteClick(emailData._id)}
+                  className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                  title="Delete email"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
         ))}
@@ -255,17 +250,17 @@ export const SubscribedEmailsList: React.FC<SubscribedEmailsListProps> = ({
       {showSendModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start justify-center z-50 pt-20 pb-4 px-4 overflow-y-auto">
           <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full mb-4 transform transition-all max-h-[calc(100vh-7rem)] flex flex-col">
-            {/* Fixed Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 flex-shrink-0">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b border-slate-200 flex-shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-r from-orange-100 to-green-100 rounded-full flex items-center justify-center">
-                  <Send className="w-6 h-6 text-orange-600" />
+                <div className="w-12 h-12 bg-india-green-100 rounded-full flex items-center justify-center">
+                  <Send className="w-6 h-6 text-india-green-600" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900">
+                  <h3 className="text-xl font-bold text-slate-900">
                     Send Email to All Subscribers
                   </h3>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-slate-600">
                     This email will be sent to {emails.length} subscribers
                   </p>
                 </div>
@@ -273,17 +268,17 @@ export const SubscribedEmailsList: React.FC<SubscribedEmailsListProps> = ({
               <button
                 onClick={() => setShowSendModal(false)}
                 disabled={isSending}
-                className="text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-full p-1 transition-all cursor-pointer flex-shrink-0"
+                className="text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-full p-1 transition-all cursor-pointer flex-shrink-0"
               >
                 <X className="w-6 h-6" />
               </button>
             </div>
 
-            {/* Scrollable Content */}
+            {/* Content */}
             <div className="overflow-y-auto flex-1 p-6">
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
                     Subject <span className="text-red-500">*</span>
                   </label>
                   <Input
@@ -292,12 +287,12 @@ export const SubscribedEmailsList: React.FC<SubscribedEmailsListProps> = ({
                     onChange={(e) => setEmailSubject(e.target.value)}
                     placeholder="Enter email subject..."
                     disabled={isSending}
-                    className="w-full"
+                    className="w-full border-slate-200"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
                     Message <span className="text-red-500">*</span>
                   </label>
                   <Textarea
@@ -305,22 +300,22 @@ export const SubscribedEmailsList: React.FC<SubscribedEmailsListProps> = ({
                     onChange={(e) => setEmailMessage(e.target.value)}
                     placeholder="Enter your message here..."
                     disabled={isSending}
-                    className="w-full min-h-[300px] resize-none"
+                    className="w-full min-h-[250px] resize-none border-slate-200"
                   />
-                  <p className="text-xs text-gray-500 mt-2">
-                    💡 Tip: Use line breaks for better formatting
+                  <p className="text-xs text-slate-500 mt-2">
+                    Use line breaks for better formatting
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Fixed Footer */}
-            <div className="flex gap-3 p-6 border-t border-gray-200 flex-shrink-0">
+            {/* Footer */}
+            <div className="flex gap-3 p-6 border-t border-slate-200 flex-shrink-0">
               <Button
                 variant="outline"
                 onClick={() => setShowSendModal(false)}
                 disabled={isSending}
-                className="flex-1"
+                className="flex-1 border-slate-200"
               >
                 Cancel
               </Button>
@@ -329,11 +324,15 @@ export const SubscribedEmailsList: React.FC<SubscribedEmailsListProps> = ({
                 disabled={
                   isSending || !emailSubject.trim() || !emailMessage.trim()
                 }
-                className="flex-1 bg-gradient-to-r from-orange-500 to-green-500 hover:from-orange-600 hover:to-green-600 text-white"
+                className={cn(
+                  "flex-1 bg-india-green-500 hover:bg-india-green-600 text-white",
+                  (isSending || !emailSubject.trim() || !emailMessage.trim()) &&
+                    "opacity-50"
+                )}
               >
                 {isSending ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                     Sending...
                   </>
                 ) : (
@@ -357,11 +356,11 @@ export const SubscribedEmailsList: React.FC<SubscribedEmailsListProps> = ({
                 <Trash2 className="w-6 h-6 text-red-600" />
               </div>
 
-              <h3 className="text-xl font-bold text-gray-900 text-center mb-2">
-                Delete Subscribed Email
+              <h3 className="text-xl font-bold text-slate-900 text-center mb-2">
+                Delete Subscriber
               </h3>
 
-              <p className="text-gray-600 text-center mb-6">
+              <p className="text-slate-600 text-center mb-6">
                 Are you sure you want to remove this email from your subscriber
                 list? This action cannot be undone.
               </p>
@@ -371,7 +370,7 @@ export const SubscribedEmailsList: React.FC<SubscribedEmailsListProps> = ({
                   variant="outline"
                   onClick={() => setDeleteModalOpen(false)}
                   disabled={isDeleting}
-                  className="flex-1"
+                  className="flex-1 border-slate-200"
                 >
                   Cancel
                 </Button>
@@ -382,7 +381,7 @@ export const SubscribedEmailsList: React.FC<SubscribedEmailsListProps> = ({
                 >
                   {isDeleting ? (
                     <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                       Deleting...
                     </>
                   ) : (

@@ -1,19 +1,17 @@
 // WRITE FUNCTANILITY FOR CHANGE PASSWORD IN NEXT UPDATE
 // FORGOT AND RESET PASSWWORD FUNCTUNALITY VIA CRYPTO AND SEND TO EMAIL
 import { Request, Response } from "express";
+
 import User from "../models/UserModal";
-import OTP from "../models/OTPModel";
 import EmailService from "../services/emailService";
-import { comparePassword } from "../utils/password";
-import { generateToken } from "../utils/generateToken";
-import { hashPassword } from "../utils/password";
-import {
-  generateOTP,
-  generateOTPExpiry,
-  validateOTP,
-  isOTPExpired,
-} from "../utils/generateOtp";
 import { LoginResponse } from "../types";
+import { generateToken } from "../utils/generateToken";
+import {
+  createSecureOTP,
+  verifySecureOTP,
+  deleteOTPsForEmail,
+} from "../utils/otpSecurity";
+import { comparePassword, hashPassword } from "../utils/password";
 
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -68,19 +66,37 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
     // For regular registration, send OTP BEFORE creating user
     if (!googleId) {
-      // Generate OTP for email verification
-      const otp = generateOTP();
-      const expiresAt = generateOTPExpiry(10); // 10 minutes
+      // Generate secure OTP with rate limiting and hashing
+      const otpResult = await createSecureOTP(email, "email-verification", req);
+
+      if (!otpResult.success) {
+        // Handle rate limiting or blocked status
+        const statusCode =
+          otpResult.error === "RATE_LIMITED" || otpResult.error === "BLOCKED"
+            ? 429
+            : 500;
+
+        res.status(statusCode).json({
+          success: false,
+          message: otpResult.message,
+          error: otpResult.error,
+          retryAfter: otpResult.retryAfter,
+        });
+        return;
+      }
 
       try {
         // STEP 1: Send email first (before creating user)
-        await EmailService.sendOTPEmail(email, otp, "email-verification");
-        console.log(
-          "OTP email sent successfully, proceeding with user creation"
+        await EmailService.sendOTPEmail(
+          email,
+          otpResult.otp!,
+          "email-verification"
         );
       } catch (emailError) {
         const error = emailError as Error;
-        console.error("Failed to send OTP email:", emailError);
+
+        // Clean up OTP since email failed
+        await deleteOTPsForEmail(email, "email-verification");
 
         // Fail registration if email can't be sent
         res.status(500).json({
@@ -108,14 +124,6 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
       const user = new User(userData);
       await user.save();
-
-      // STEP 3: Save OTP only after user is created
-      await OTP.create({
-        email: email.toLowerCase(),
-        otp,
-        type: "email-verification",
-        expiresAt,
-      });
 
       res.status(201).json({
         success: true,
@@ -211,7 +219,6 @@ export const verifyEmail = async (
 ): Promise<void> => {
   try {
     const { email, otp } = req.body;
-    console.log(email, otp);
 
     if (!email || !otp) {
       res.status(400).json({
@@ -221,34 +228,30 @@ export const verifyEmail = async (
       return;
     }
 
-    // Find the OTP record
-    const otpRecord = await OTP.findOne({
-      email: email.toLowerCase(),
-      type: "email-verification",
-    }).sort({ createdAt: -1 });
+    // Verify OTP with security checks
+    const verifyResult = await verifySecureOTP(
+      email,
+      otp,
+      "email-verification",
+      req
+    );
 
-    if (!otpRecord) {
-      res.status(400).json({
-        success: false,
-        message: "No verification request found for this email",
-      });
-      return;
-    }
+    if (!verifyResult.success) {
+      // Map error to appropriate status code
+      let statusCode = 400;
+      if (
+        verifyResult.error === "BLOCKED" ||
+        verifyResult.error === "MAX_ATTEMPTS_EXCEEDED"
+      ) {
+        statusCode = 429;
+      }
 
-    // Check if OTP is expired
-    if (isOTPExpired(otpRecord.expiresAt)) {
-      res.status(400).json({
+      res.status(statusCode).json({
         success: false,
-        message: "OTP has expired. Please request a new one.",
-      });
-      return;
-    }
-
-    // Validate OTP
-    if (!validateOTP(otp, otpRecord.otp)) {
-      res.status(400).json({
-        success: false,
-        message: "Invalid OTP",
+        message: verifyResult.message,
+        error: verifyResult.error,
+        remainingAttempts: verifyResult.remainingAttempts,
+        retryAfter: verifyResult.retryAfter,
       });
       return;
     }
@@ -267,12 +270,6 @@ export const verifyEmail = async (
       });
       return;
     }
-
-    // Delete the used OTP
-    await OTP.deleteOne({ _id: otpRecord._id });
-
-    // Send welcome email
-    await EmailService.sendWelcomeEmail(user);
 
     // Generate token
     const token = generateToken({
@@ -420,22 +417,26 @@ export const resendOTP = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Delete any existing OTPs for this email and type
-    await OTP.deleteMany({ email: email.toLowerCase(), type });
+    // Generate secure OTP with rate limiting
+    const otpResult = await createSecureOTP(email, type, req);
 
-    // Generate new OTP
-    const otp = generateOTP();
-    const expiresAt = generateOTPExpiry(10);
+    if (!otpResult.success) {
+      const statusCode =
+        otpResult.error === "RATE_LIMITED" || otpResult.error === "BLOCKED"
+          ? 429
+          : 500;
 
-    await OTP.create({
-      email: email.toLowerCase(),
-      otp,
-      type,
-      expiresAt,
-    });
+      res.status(statusCode).json({
+        success: false,
+        message: otpResult.message,
+        error: otpResult.error,
+        retryAfter: otpResult.retryAfter,
+      });
+      return;
+    }
 
     // Send OTP email
-    await EmailService.sendOTPEmail(email, otp, type);
+    await EmailService.sendOTPEmail(email, otpResult.otp!, type);
 
     res.status(200).json({
       success: true,
@@ -475,25 +476,26 @@ export const forgotPassword = async (
       return;
     }
 
-    // Delete any existing password reset OTPs
-    await OTP.deleteMany({
-      email: email.toLowerCase(),
-      type: "password-reset",
-    });
+    // Generate secure OTP with rate limiting
+    const otpResult = await createSecureOTP(email, "password-reset", req);
 
-    // Generate OTP
-    const otp = generateOTP();
-    const expiresAt = generateOTPExpiry(10);
+    if (!otpResult.success) {
+      const statusCode =
+        otpResult.error === "RATE_LIMITED" || otpResult.error === "BLOCKED"
+          ? 429
+          : 500;
 
-    await OTP.create({
-      email: email.toLowerCase(),
-      otp,
-      type: "password-reset",
-      expiresAt,
-    });
+      res.status(statusCode).json({
+        success: false,
+        message: otpResult.message,
+        error: otpResult.error,
+        retryAfter: otpResult.retryAfter,
+      });
+      return;
+    }
 
     // Send reset email
-    await EmailService.sendOTPEmail(email, otp, "password-reset");
+    await EmailService.sendOTPEmail(email, otpResult.otp!, "password-reset");
 
     res.status(200).json({
       success: true,
@@ -532,37 +534,34 @@ export const resetPassword = async (
       });
       return;
     }
-    // Find the OTP record
-    const otpRecord = await OTP.findOne({
-      email: email.toLowerCase(),
-      type: "password-reset",
-    }).sort({ createdAt: -1 });
 
-    if (!otpRecord) {
-      res.status(400).json({
+    // Verify OTP with security checks
+    const verifyResult = await verifySecureOTP(
+      email,
+      otp,
+      "password-reset",
+      req
+    );
+
+    if (!verifyResult.success) {
+      let statusCode = 400;
+      if (
+        verifyResult.error === "BLOCKED" ||
+        verifyResult.error === "MAX_ATTEMPTS_EXCEEDED"
+      ) {
+        statusCode = 429;
+      }
+
+      res.status(statusCode).json({
         success: false,
-        message: "No password reset request found",
+        message: verifyResult.message,
+        error: verifyResult.error,
+        remainingAttempts: verifyResult.remainingAttempts,
+        retryAfter: verifyResult.retryAfter,
       });
       return;
     }
 
-    // Check if OTP is expired
-    if (isOTPExpired(otpRecord.expiresAt)) {
-      res.status(400).json({
-        success: false,
-        message: "OTP has expired. Please request a new one.",
-      });
-      return;
-    }
-
-    // Validate OTP
-    if (!validateOTP(otp, otpRecord.otp)) {
-      res.status(400).json({
-        success: false,
-        message: "Invalid OTP",
-      });
-      return;
-    }
     const password = await hashPassword(newPassword);
     const user = await User.findOneAndUpdate(
       { email: email.toLowerCase() },
@@ -577,9 +576,6 @@ export const resetPassword = async (
       });
       return;
     }
-
-    // Delete the used OTP
-    await OTP.deleteOne({ _id: otpRecord._id });
 
     // NEED TO SEND MAIL AFTER RESETTING THE PASSWORD (OPTIONAL)
 

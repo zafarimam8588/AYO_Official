@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+
 import SubscribedEmaiLModal from "../models/SubscribedEmailModal";
 import emailService from "../services/emailService";
 

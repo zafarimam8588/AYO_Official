@@ -44,10 +44,7 @@ export const useAuth = () => {
   };
 
   useEffect(() => {
-    console.log("Auth check:", { hasToken: !!token, hasUser: !!currentUser });
-
     if (!token || !currentUser) {
-      console.log("Missing authentication, redirecting to login");
       localStorage.removeItem("authToken");
       localStorage.removeItem("user");
       navigate("/login", { replace: true });

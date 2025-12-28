@@ -28,6 +28,7 @@ export type {
   MemberResponse,
   MembersResponse,
   SharedMemberDashboardProps,
+  ProfileUpdateData,
 } from "./member";
 
 // Admin types
@@ -46,10 +47,34 @@ export type {
 export type {
   Picture,
   PictureFormData,
+  PictureUpdateData,
   PicturesResponse,
   PictureResponse,
   PictureStats,
   PictureStatsResponse,
+  GalleryCategory,
+  PageName,
+  CategorizedGalleryResponse,
+  SlotExistsResponse,
+  NextNumberResponse,
+  SlotConflictResponse,
 } from "./picture";
 
-export { PAGE_OPTIONS } from "./picture";
+export {
+  PAGE_OPTIONS,
+  GALLERY_CATEGORIES,
+  PAGE_IMAGE_LIMITS,
+  formatImageIdentifier,
+  getShortImageIdentifier,
+  getMaxImageNumber,
+  pageAcceptsImages,
+  isValidImageNumber,
+} from "./picture";
+
+// Archived User types
+export type {
+  ArchivedUser,
+  ArchivedUserProfile,
+  ArchivedUsersResponse,
+  ArchivedUserResponse,
+} from "./archivedUser";

@@ -1,6 +1,7 @@
 // this data is just demo data
 // need to redesign it
 import { Request, Response } from "express";
+
 import Payment from "../models/PaymentModal";
 import PaymentService from "../services/paymentService";
 import { IUser } from "../types";
@@ -112,7 +113,7 @@ export const getPaymentHistory = async (
     const { page = 1, limit = 10 } = req.query;
     const skip = (Number(page) - 1) * Number(limit);
 
-    let query: any = {};
+    const query: any = {};
     const user = req.user as IUser;
     // If regular member, show only their payments
     if (user.role === "member") {

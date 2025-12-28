@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import React, { useEffect, useState } from "react";
 
-interface ScrollProgressProps extends React.HTMLAttributes<HTMLDivElement> {}
+type ScrollProgressProps = React.HTMLAttributes<HTMLDivElement>;
 
 export const ScrollProgress = React.forwardRef<
   HTMLDivElement,

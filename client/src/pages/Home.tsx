@@ -4,7 +4,7 @@ import HeroTitleSection from "@/components/sections/home/HeroTitleSection";
 import OurProgramSection from "@/components/sections/home/OurProgramSection";
 import KeyActivitiesSection from "@/components/sections/home/KeyActivitiesSection";
 import FounderMessageSection from "@/components/sections/home/FounderMessageSection";
-import ReadyToMakeDifference from "@/components/sections/ReadyToMakeDifference";
+import { UnifiedCTASection } from "@/components/common";
 import TestimonialSection from "@/components/sections/home/TestimonialSection";
 import { useEffect } from "react";
 
@@ -56,8 +56,7 @@ const Home = () => {
         <TestimonialSection />
 
         {/* Call to Action Section */}
-
-        <ReadyToMakeDifference />
+        <UnifiedCTASection />
       </div>
     </>
   );

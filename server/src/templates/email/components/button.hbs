@@ -1,0 +1,21 @@
+{{!--
+  CTA Button Component
+  Usage: {{> button href="/dashboard" text="Visit Dashboard" icon="🚀"}}
+--}}
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 25px auto;">
+  <tr>
+    <td style="border-radius: 30px; background: linear-gradient(135deg, #FF9933, #138808); box-shadow: 0 4px 15px rgba(255, 153, 51, 0.25);">
+      <!--[if mso]>
+      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{href}}" style="height:50px;v-text-anchor:middle;width:200px;" arcsize="60%" strokecolor="#FF9933" fillcolor="#FF9933">
+      <w:anchorlock/>
+      <center style="color:#ffffff;font-family:sans-serif;font-size:15px;font-weight:bold;">{{#if icon}}{{icon}} {{/if}}{{text}}</center>
+      </v:roundrect>
+      <![endif]-->
+      <!--[if !mso]><!-->
+      <a href="{{href}}" target="_blank" class="cta-button" style="display: inline-block; padding: 14px 40px; color: #FFFFFF; text-decoration: none; font-weight: 600; font-size: 15px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; border-radius: 30px;">
+        {{#if icon}}{{icon}} {{/if}}{{text}}
+      </a>
+      <!--<![endif]-->
+    </td>
+  </tr>
+</table>

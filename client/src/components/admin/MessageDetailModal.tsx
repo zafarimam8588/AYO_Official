@@ -29,7 +29,9 @@ export default function MessageDetailModal({
   const [isReplying, setIsReplying] = useState(false);
   const [showReplyForm, setShowReplyForm] = useState(false);
 
-  if (!open) return null;
+  if (!open) {
+    return null;
+  }
 
   const handleReply = async () => {
     if (!replyText.trim()) {

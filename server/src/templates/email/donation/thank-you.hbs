@@ -1,0 +1,101 @@
+{{!-- Donation Thank You Email Template --}}
+
+<!-- Thank You Heading -->
+<h2 style="color: #333333; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">
+  &#x1F64F; Thank You, {{donorName}}!
+</h2>
+
+<!-- Gratitude Message -->
+<p style="color: #666666; line-height: 1.8; margin: 0 0 25px 0; font-size: 16px;">
+  Your generous donation of
+  <strong style="color: #138808; font-size: 20px;">{{formatCurrency amount}}</strong>
+  has been received with immense gratitude. Your contribution will directly impact the lives of
+  youth and communities across Bihar.
+</p>
+
+<!-- Impact Section -->
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 25px 0;">
+  <tr>
+    <td style="background: #FFFFFF; border: 2px solid #138808; border-radius: 15px; padding: 25px;">
+      <h3 style="color: #138808; margin: 0 0 20px 0; font-size: 18px; font-weight: 600; text-align: center;">
+        &#x1F31F; Your Impact
+      </h3>
+
+      <!-- Impact Grid -->
+      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+        <tr>
+          <td width="50%" style="padding: 10px; text-align: center; vertical-align: top;">
+            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+              <tr>
+                <td style="background: #F0F8FF; border-radius: 10px; padding: 15px;">
+                  <div style="font-size: 28px; margin-bottom: 8px;">&#x1F4DA;</div>
+                  <div style="font-size: 13px; color: #666666; font-weight: 500;">Education Support</div>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td width="50%" style="padding: 10px; text-align: center; vertical-align: top;">
+            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+              <tr>
+                <td style="background: #F0FFF0; border-radius: 10px; padding: 15px;">
+                  <div style="font-size: 28px; margin-bottom: 8px;">&#x1F3E5;</div>
+                  <div style="font-size: 13px; color: #666666; font-weight: 500;">Healthcare Access</div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+
+      <p style="color: #666666; text-align: center; margin: 20px 0 0 0; font-size: 14px; line-height: 1.6;">
+        Your donation helps us provide quality education, healthcare services,
+        skill development, and women empowerment programs.
+      </p>
+    </td>
+  </tr>
+</table>
+
+<!-- Receipt Details -->
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 25px 0;">
+  <tr>
+    <td style="background: #E8F5E8; border-radius: 10px; padding: 20px;">
+      <h4 style="color: #138808; margin: 0 0 15px 0; font-size: 16px; font-weight: 600;">
+        &#x1F4CA; Donation Receipt Details:
+      </h4>
+      <ul style="color: #666666; margin: 0; padding-left: 20px; line-height: 1.8;">
+        <li><strong>Amount:</strong> {{formatCurrency amount}}</li>
+        <li><strong>Date:</strong> {{formatDate (currentYear)}}</li>
+        <li><strong>Transaction ID:</strong> Will be sent separately</li>
+        <li><strong>Tax Benefits:</strong> As per 80G guidelines</li>
+      </ul>
+    </td>
+  </tr>
+</table>
+
+<!-- Follow-up Message -->
+<p style="color: #666666; line-height: 1.8; margin: 0 0 25px 0; font-size: 16px;">
+  We'll keep you updated on how your contribution is creating positive change.
+  Together, we're building a stronger, more empowered Bihar.
+</p>
+
+<!-- CTA Button -->
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 30px auto;">
+  <tr>
+    <td style="border-radius: 30px; background: linear-gradient(135deg, #FF9933, #138808); box-shadow: 0 4px 15px rgba(255, 153, 51, 0.25);">
+      <a href="{{frontendUrl}}/impact" target="_blank" style="display: inline-block; padding: 15px 40px; color: #FFFFFF; text-decoration: none; font-weight: 600; font-size: 16px; border-radius: 30px;">
+        &#x1F4C8; See Our Impact Stories
+      </a>
+    </td>
+  </tr>
+</table>
+
+<!-- Closing Message -->
+<p style="color: #138808; font-weight: bold; font-size: 18px; margin: 30px 0 0 0; text-align: center;">
+  &#x1F3C6; Together, We Transform Bihar!
+</p>
+
+<!-- Signature -->
+<p style="color: #666666; line-height: 1.8; margin: 20px 0 0 0; font-size: 16px; text-align: center;">
+  With heartfelt gratitude,<br>
+  <strong style="color: #138808;">Team Azad Youth Organisation</strong>
+</p>

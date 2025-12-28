@@ -1,0 +1,111 @@
+<!-- Footer -->
+<tr>
+  <td class="footer-padding" style="background: #F8FAFC; padding: 30px 35px; border-top: 3px solid transparent; border-image: linear-gradient(90deg, #FF9933, #138808) 1;">
+
+    <!-- Social Links Section -->
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="social-links">
+      <tr>
+        <td align="center" style="padding-bottom: 20px;">
+          <p style="color: #2C3E50; margin: 0 0 15px 0; font-size: 14px; font-weight: 600;">
+            Stay Connected With Us
+          </p>
+          <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 0 auto;">
+            <tr>
+              <!-- Twitter/X -->
+              <td style="padding: 0 8px;">
+                <a href="{{socialLinks.twitter}}" target="_blank" style="display: inline-block; text-decoration: none;">
+                  <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                    <tr>
+                      <td class="social-icon" style="width: 36px; height: 36px; background-color: #1DA1F2; border-radius: 50%; text-align: center; vertical-align: middle;">
+                        <span style="color: #ffffff; font-size: 14px; font-weight: bold; line-height: 36px;">X</span>
+                      </td>
+                    </tr>
+                  </table>
+                </a>
+              </td>
+              <!-- Facebook -->
+              <td style="padding: 0 8px;">
+                <a href="{{socialLinks.facebook}}" target="_blank" style="display: inline-block; text-decoration: none;">
+                  <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                    <tr>
+                      <td class="social-icon" style="width: 36px; height: 36px; background-color: #1877F2; border-radius: 50%; text-align: center; vertical-align: middle;">
+                        <span style="color: #ffffff; font-size: 16px; font-weight: bold; line-height: 36px;">f</span>
+                      </td>
+                    </tr>
+                  </table>
+                </a>
+              </td>
+              <!-- Instagram -->
+              <td style="padding: 0 8px;">
+                <a href="{{socialLinks.instagram}}" target="_blank" style="display: inline-block; text-decoration: none;">
+                  <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                    <tr>
+                      <td class="social-icon" style="width: 36px; height: 36px; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); border-radius: 50%; text-align: center; vertical-align: middle;">
+                        <span style="color: #ffffff; font-size: 14px; line-height: 36px;">&#x1F4F7;</span>
+                      </td>
+                    </tr>
+                  </table>
+                </a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Divider -->
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+      <tr>
+        <td style="border-top: 1px solid #E2E8F0; padding: 15px 0;"></td>
+      </tr>
+    </table>
+
+    <!-- Organization Info -->
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+      <tr>
+        <td align="center">
+          <p style="color: #64748B; margin: 0 0 8px 0; font-size: 13px; font-weight: 500;">
+            {{contact.orgName}}
+          </p>
+          <p style="color: #94A3B8; margin: 0 0 8px 0; font-size: 12px; line-height: 1.5;">
+            {{contact.tagline}}
+          </p>
+          <p style="color: #94A3B8; margin: 0 0 8px 0; font-size: 12px;">
+            {{contact.address}}
+          </p>
+          <p style="color: #94A3B8; margin: 0 0 15px 0; font-size: 12px;">
+            &#x1F4E7; {{contact.email}} | &#x1F4F1; {{contact.phone}}
+          </p>
+        </td>
+      </tr>
+    </table>
+
+    {{#if showUnsubscribe}}
+    <!-- Unsubscribe Link -->
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+      <tr>
+        <td align="center" style="padding-bottom: 15px;">
+          <p style="color: #64748B; margin: 0 0 8px 0; font-size: 11px; line-height: 1.6;">
+            You're receiving this email because you subscribed to updates from Azad Youth Organisation.
+          </p>
+          <a href="{{frontendUrl}}/unsubscribe" style="color: #94A3B8; font-size: 11px; text-decoration: underline;">
+            Unsubscribe from future emails
+          </a>
+        </td>
+      </tr>
+    </table>
+    {{/if}}
+
+    <!-- Copyright -->
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+      <tr>
+        <td align="center">
+          <p style="color: #CBD5E1; margin: 0; font-size: 11px;">
+            &copy; {{currentYear}} {{contact.orgName}}. All rights reserved.
+          </p>
+        </td>
+      </tr>
+    </table>
+
+  </td>
+</tr>

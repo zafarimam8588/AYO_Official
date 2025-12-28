@@ -1,49 +1,112 @@
+import { Heart } from "lucide-react";
+
 export const RegisterHeader = () => {
   return (
-    <div className="mb-6">
+    <div className="mb-4 sm:mb-5 md:mb-6 text-center lg:text-left">
       {/* Mobile Background Pattern Section */}
-      <div className="lg:hidden bg-gradient-to-br from-green-500 via-green-600 to-orange-600 relative overflow-hidden h-48 -mx-8 -mt-8 mb-8">
-        <DecorativePatterns />
-        <div className="flex flex-col justify-center items-center h-full p-6 relative z-10 text-white text-center">
-          <div className="flex items-center mb-3">
-            <span className="text-2xl font-bold">Azad Youth Organisation</span>
+      <div className="lg:hidden relative -mt-6 sm:-mt-8 md:-mt-10 mb-5 sm:mb-6 h-36 sm:h-40 md:h-44 overflow-hidden bg-gradient-to-br from-india-green-500 via-india-green-600 to-saffron-600 rounded-t-none sm:rounded-t-2xl">
+        {/* Static Background Pattern - Hexagonal Mesh */}
+        <div className="absolute inset-0 opacity-25">
+          <svg
+            className="absolute inset-0 w-full h-full"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <defs>
+              <pattern
+                id="hex-pattern-register"
+                x="0"
+                y="0"
+                width="60"
+                height="52"
+                patternUnits="userSpaceOnUse"
+              >
+                <path
+                  d="M30,0 L50,13 L50,39 L30,52 L10,39 L10,13 Z"
+                  fill="none"
+                  stroke="white"
+                  strokeWidth="0.5"
+                  opacity="0.4"
+                />
+                <circle cx="30" cy="26" r="3" fill="white" opacity="0.3" />
+              </pattern>
+              <pattern
+                id="dots-pattern-register"
+                x="0"
+                y="0"
+                width="30"
+                height="30"
+                patternUnits="userSpaceOnUse"
+              >
+                <circle cx="15" cy="15" r="1.5" fill="white" opacity="0.5" />
+              </pattern>
+            </defs>
+            <rect
+              width="100%"
+              height="100%"
+              fill="url(#hex-pattern-register)"
+            />
+            <rect
+              width="100%"
+              height="100%"
+              fill="url(#dots-pattern-register)"
+            />
+          </svg>
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(255,255,255,0.15)_0%,transparent_50%)]"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(255,255,255,0.1)_0%,transparent_50%)]"></div>
+        </div>
+        {/* Decorative Bottom Border Pattern - Geometric Scalloped */}
+        <div className="absolute bottom-0 left-0 w-full z-20">
+          <svg
+            className="w-full h-10 sm:h-12"
+            viewBox="0 0 1200 120"
+            preserveAspectRatio="none"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <defs>
+              <pattern
+                id="scallop-register"
+                x="0"
+                y="0"
+                width="60"
+                height="120"
+                patternUnits="userSpaceOnUse"
+              >
+                <path
+                  d="M0,80 Q30,40 60,80 L60,120 L0,120 Z"
+                  fill="white"
+                  opacity="0.98"
+                />
+                <circle cx="30" cy="60" r="8" fill="white" opacity="0.6" />
+              </pattern>
+            </defs>
+            <rect width="1200" height="120" fill="url(#scallop-register)" />
+            <path
+              d="M0,80 L0,120 M60,80 L60,120 M120,80 L120,120 M180,80 L180,120 M240,80 L240,120 M300,80 L300,120 M360,80 L360,120 M420,80 L420,120 M480,80 L480,120 M540,80 L540,120 M600,80 L600,120 M660,80 L660,120 M720,80 L720,120 M780,80 L780,120 M840,80 L840,120 M900,80 L900,120 M960,80 L960,120 M1020,80 L1020,120 M1080,80 L1080,120 M1140,80 L1140,120 M1200,80 L1200,120"
+              stroke="white"
+              strokeWidth="1"
+              opacity="0.3"
+            />
+          </svg>
+        </div>
+        <div className="relative z-10 h-full flex items-center justify-center">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/30">
+              <Heart className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-xl font-bold text-white">
+              Azad Youth Organisation
+            </span>
           </div>
-          <p className="text-green-100 text-sm leading-relaxed px-4">
-            Start making a difference! Create your account and join thousands of
-            changemakers.
-          </p>
         </div>
       </div>
 
-      <h2 className="text-3xl font-bold text-gray-800 mb-2">
-        Join Our Mission! 🌟
+      <h2 className="text-xl sm:text-2xl lg:text-2xl font-bold text-gray-900 mb-1.5 sm:mb-2 tracking-tight">
+        Join Our Mission!
       </h2>
-      <p className="text-gray-600 mb-6">
+      <p className="text-gray-600 text-xs sm:text-sm leading-relaxed max-w-sm mx-auto lg:mx-0">
         Create your account and start making a positive impact
       </p>
     </div>
   );
 };
-
-const DecorativePatterns = () => (
-  <>
-    <div className="absolute top-4 right-4 w-20 h-20 opacity-20">
-      <svg viewBox="0 0 200 200" className="w-full h-full">
-        <path
-          fill="white"
-          d="M40.7,-65.2C50.9,-58.1,56.3,-42.5,63.4,-27.2C70.5,-11.9,79.3,3.1,79.9,19.2C80.5,35.3,72.9,52.5,60.1,63.1C47.3,73.7,29.3,77.7,11.8,78.5C-5.7,79.3,-22.7,76.9,-37.4,69.3C-52.1,61.7,-64.5,48.9,-71.7,33.4C-78.9,17.9,-80.9,-0.3,-77.8,-17.2C-74.7,-34.1,-66.5,-49.7,-54.4,-56C-42.3,-62.3,-26.3,-59.3,-10.1,-59.8C6.1,-60.3,30.5,-72.3,40.7,-65.2Z"
-          transform="translate(100 100)"
-        />
-      </svg>
-    </div>
-    <div className="absolute bottom-2 left-4 w-16 h-16 opacity-15">
-      <svg viewBox="0 0 200 200" className="w-full h-full">
-        <path
-          fill="white"
-          d="M51.4,-72.8C66.3,-65.1,77.4,-49.7,82.9,-32.1C88.4,-14.5,88.3,5.3,83.8,23.4C79.3,41.5,70.4,58,57.2,68.9C44,79.8,26.5,85.1,8.2,84.4C-10.1,83.7,-29.2,76.9,-44.3,66.4C-59.4,55.9,-70.5,41.7,-76.8,25.2C-83.1,8.7,-84.6,-10.1,-80.3,-27.1C-76,-44.1,-65.9,-59.3,-51.8,-67.2C-37.7,-75.1,-18.8,-75.7,-0.3,-75.2C18.2,-74.7,36.5,-80.5,51.4,-72.8Z"
-          transform="translate(100 100)"
-        />
-      </svg>
-    </div>
-  </>
-);

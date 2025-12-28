@@ -75,10 +75,23 @@ export interface IPayment extends Document {
 
 export interface IOTP extends Document {
   email: string;
-  otp: string;
+  otpHash: string;
+  salt: string;
   type: "email-verification" | "password-reset";
   expiresAt: Date;
   createdAt: Date;
+
+  // Security fields
+  ipAddress: string;
+  userAgent?: string;
+  attempts: number;
+  maxAttempts: number;
+  isBlocked: boolean;
+  blockedUntil?: Date;
+
+  // Rate limiting fields
+  requestCount: number;
+  windowStart: Date;
 }
 
 export interface LoginResponse {
@@ -129,4 +142,53 @@ export interface JwtPayload {
   email: string;
   iat?: number;
   exp?: number;
+}
+
+export interface IArchivedUserProfile {
+  address?: {
+    street: string;
+    city: string;
+    state: string;
+    pincode: string;
+  };
+  phoneNumber?: string;
+  dateOfBirth?: Date;
+  gender?: "Male" | "Female" | "Other";
+  whyJoin?: string;
+  idProof?: string;
+  memberStatus?: "not_submitted" | "pending" | "approved" | "rejected";
+  membershipId?: string;
+  approvedBy?: Types.ObjectId;
+  approvedAt?: Date;
+  rejectionReason?: string;
+  profileCreatedAt?: Date;
+  profileUpdatedAt?: Date;
+}
+
+export interface IArchivedUser extends Document {
+  _id: Types.ObjectId;
+  originalUserId: Types.ObjectId;
+
+  // Preserved User Data
+  email: string;
+  fullName: string;
+  role: "member" | "admin";
+  googleId?: string;
+  profilePic?: string;
+  isVerified: boolean;
+  isProfileComplete: boolean;
+  userCreatedAt: Date;
+  userUpdatedAt: Date;
+
+  // Preserved Profile Data (optional)
+  profile?: IArchivedUserProfile;
+
+  // Archive Metadata
+  archivedAt: Date;
+  archivedBy: Types.ObjectId;
+  archiveReason?: string;
+  archiveSource: "admin_action" | "user_request" | "system";
+
+  createdAt: Date;
+  updatedAt: Date;
 }

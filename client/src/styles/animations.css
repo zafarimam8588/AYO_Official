@@ -1,10 +1,28 @@
-/* Scroll Reveal Animations - Add to index.css */
+/* =============================================
+   AYO Official NGO - Animation System
+   Indian Tricolor Theme Animations
+   ============================================= */
+
+/* =============================================
+   BASE KEYFRAMES
+   ============================================= */
 
 /* Fade in from bottom animation */
 @keyframes fadeInUp {
   from {
     opacity: 0;
     transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
   }
   to {
     opacity: 1;
@@ -32,7 +50,64 @@
   }
 }
 
-/* Utility classes for scroll animations */
+/* Slide animations */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Bounce in animation */
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Counter animation */
+@keyframes countUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =============================================
+   SCROLL-TRIGGERED ANIMATION CLASSES
+   ============================================= */
+
+/* Base scroll animation */
 .animate-on-scroll {
   opacity: 0;
   animation: fadeInUp 0.8s ease-out forwards;
@@ -43,10 +118,43 @@
   animation: fadeIn 0.6s ease-out forwards;
 }
 
+.animate-fade-in-down {
+  opacity: 0;
+  animation: fadeInDown 0.6s ease-out forwards;
+}
+
+.animate-fade-in-up {
+  opacity: 0;
+  animation: fadeInUp 0.7s ease-out forwards;
+}
+
 .animate-scale-in {
   opacity: 0;
   animation: scaleIn 0.6s ease-out forwards;
 }
+
+.animate-slide-in-left {
+  opacity: 0;
+  animation: slideInLeft 0.7s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  opacity: 0;
+  animation: slideInRight 0.7s ease-out forwards;
+}
+
+.animate-bounce-in {
+  opacity: 0;
+  animation: bounceIn 0.8s ease-out forwards;
+}
+
+.animate-count-up {
+  animation: countUp 0.5s ease-out forwards;
+}
+
+/* =============================================
+   STAGGER ANIMATION SYSTEM
+   ============================================= */
 
 /* Stagger delays */
 .animation-delay-100 {
@@ -69,6 +177,114 @@
   animation-delay: 500ms;
 }
 
+.animation-delay-600 {
+  animation-delay: 600ms;
+}
+
+.animation-delay-700 {
+  animation-delay: 700ms;
+}
+
+.animation-delay-800 {
+  animation-delay: 800ms;
+}
+
+/* Stagger animation container - children animate in sequence */
+.stagger-animation > * {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.stagger-animation > *:nth-child(1) {
+  animation-delay: 0ms;
+}
+.stagger-animation > *:nth-child(2) {
+  animation-delay: 100ms;
+}
+.stagger-animation > *:nth-child(3) {
+  animation-delay: 200ms;
+}
+.stagger-animation > *:nth-child(4) {
+  animation-delay: 300ms;
+}
+.stagger-animation > *:nth-child(5) {
+  animation-delay: 400ms;
+}
+.stagger-animation > *:nth-child(6) {
+  animation-delay: 500ms;
+}
+.stagger-animation > *:nth-child(7) {
+  animation-delay: 600ms;
+}
+.stagger-animation > *:nth-child(8) {
+  animation-delay: 700ms;
+}
+.stagger-animation > *:nth-child(9) {
+  animation-delay: 800ms;
+}
+.stagger-animation > *:nth-child(10) {
+  animation-delay: 900ms;
+}
+.stagger-animation > *:nth-child(11) {
+  animation-delay: 1000ms;
+}
+.stagger-animation > *:nth-child(12) {
+  animation-delay: 1100ms;
+}
+.stagger-animation > *:nth-child(13) {
+  animation-delay: 1200ms;
+}
+.stagger-animation > *:nth-child(14) {
+  animation-delay: 1300ms;
+}
+.stagger-animation > *:nth-child(15) {
+  animation-delay: 1400ms;
+}
+.stagger-animation > *:nth-child(16) {
+  animation-delay: 1500ms;
+}
+.stagger-animation > *:nth-child(17) {
+  animation-delay: 1600ms;
+}
+.stagger-animation > *:nth-child(18) {
+  animation-delay: 1700ms;
+}
+.stagger-animation > *:nth-child(19) {
+  animation-delay: 1800ms;
+}
+.stagger-animation > *:nth-child(20) {
+  animation-delay: 1900ms;
+}
+
+/* Faster stagger variant */
+.stagger-animation-fast > * {
+  opacity: 0;
+  animation: fadeInUp 0.4s ease-out forwards;
+}
+
+.stagger-animation-fast > *:nth-child(1) {
+  animation-delay: 0ms;
+}
+.stagger-animation-fast > *:nth-child(2) {
+  animation-delay: 50ms;
+}
+.stagger-animation-fast > *:nth-child(3) {
+  animation-delay: 100ms;
+}
+.stagger-animation-fast > *:nth-child(4) {
+  animation-delay: 150ms;
+}
+.stagger-animation-fast > *:nth-child(5) {
+  animation-delay: 200ms;
+}
+.stagger-animation-fast > *:nth-child(6) {
+  animation-delay: 250ms;
+}
+
+/* =============================================
+   CONTINUOUS ANIMATIONS
+   ============================================= */
+
 /* Smooth scroll behavior */
 html {
   scroll-behavior: smooth;
@@ -81,12 +297,43 @@ html {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-20px);
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes floatSlow {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(1deg);
+  }
+}
+
+/* Gentle breathing animation for gradient mesh backgrounds */
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.08;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.12;
+    transform: scale(1.05);
   }
 }
 
 .animate-float {
   animation: float 3s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: floatSlow 6s ease-in-out infinite;
+}
+
+.animate-breathe {
+  animation: breathe 8s ease-in-out infinite;
 }
 
 /* Pulse animation for CTAs */
@@ -100,8 +347,22 @@ html {
   }
 }
 
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 5px rgba(255, 153, 51, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 153, 51, 0.6);
+  }
+}
+
 .animate-pulse-subtle {
   animation: pulse-subtle 2s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
 }
 
 /* Gradient shimmer effect */
@@ -122,6 +383,216 @@ html {
   animation: gradient-shimmer 3s ease infinite;
 }
 
+/* Shimmer loading effect */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--warm-100) 0%,
+    var(--warm-50) 50%,
+    var(--warm-100) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Spin animation */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
+
+/* =============================================
+   HOVER EFFECT UTILITIES
+   ============================================= */
+
+/* Lift effect on hover */
+.hover-lift {
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.15);
+}
+
+/* Subtle lift */
+.hover-lift-sm {
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.hover-lift-sm:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.1);
+}
+
+/* Glow effect for CTAs */
+.hover-glow {
+  transition: box-shadow 0.3s ease;
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 25px rgba(255, 153, 51, 0.4);
+}
+
+.hover-glow-green:hover {
+  box-shadow: 0 0 25px rgba(19, 136, 8, 0.4);
+}
+
+/* Scale effect */
+.hover-scale {
+  transition: transform 0.3s ease;
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+.hover-scale-sm {
+  transition: transform 0.3s ease;
+}
+
+.hover-scale-sm:hover {
+  transform: scale(1.02);
+}
+
+/* =============================================
+   CARD INTERACTION EFFECTS
+   ============================================= */
+
+/* Card hover with lift and shadow */
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+}
+
+/* Image reveal on hover */
+.image-reveal {
+  overflow: hidden;
+}
+
+.image-reveal img {
+  transition: transform 0.5s ease;
+}
+
+.image-reveal:hover img {
+  transform: scale(1.08);
+}
+
+/* Border animation on hover */
+.border-animate {
+  position: relative;
+}
+
+.border-animate::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    var(--saffron-500),
+    var(--india-green-500)
+  );
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.border-animate:hover::after {
+  width: 100%;
+}
+
+/* =============================================
+   CTA GLOW ANIMATIONS
+   ============================================= */
+
+/* Slow pulsing glow for CTA section orbs */
+@keyframes pulse-glow-slow {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+.animate-pulse-glow-slow {
+  animation: pulse-glow-slow 6s ease-in-out infinite;
+}
+
+/* =============================================
+   TRICOLOR SPECIFIC ANIMATIONS
+   ============================================= */
+
+/* Tricolor gradient animation */
+@keyframes tricolor-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-tricolor {
+  background: linear-gradient(
+    90deg,
+    var(--saffron-500),
+    white,
+    var(--india-green-500),
+    var(--saffron-500)
+  );
+  background-size: 300% 100%;
+  animation: tricolor-shift 4s ease infinite;
+}
+
+/* Tricolor border */
+.tricolor-border {
+  border-image: linear-gradient(
+      to right,
+      var(--saffron-500),
+      white,
+      var(--india-green-500)
+    )
+    1;
+}
+
+/* =============================================
+   ACCESSIBILITY
+   ============================================= */
+
 /* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -134,5 +605,316 @@ html {
 
   html {
     scroll-behavior: auto;
+  }
+
+  .animate-float,
+  .animate-float-slow,
+  .animate-breathe,
+  .animate-pulse-subtle,
+  .animate-pulse-glow,
+  .animate-gradient,
+  .animate-shimmer,
+  .animate-spin-slow,
+  .animate-tricolor {
+    animation: none !important;
+  }
+}
+
+/* =============================================
+   FOCUS STATES
+   ============================================= */
+
+/* Animated focus ring */
+.focus-ring-animated:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--saffron-500),
+    0 0 0 4px rgba(255, 153, 51, 0.3);
+  transition: box-shadow 0.2s ease;
+}
+
+/* =============================================
+   PAGE TRANSITIONS
+   ============================================= */
+
+/* Page enter animation */
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-enter {
+  animation: pageEnter 0.4s ease-out;
+}
+
+/* Section reveal */
+.section-reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+}
+
+.section-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* =============================================
+   ABOUT PAGE SPECIFIC ANIMATIONS
+   ============================================= */
+
+/* Slower stagger for large content blocks */
+.stagger-animation-slow > * {
+  opacity: 0;
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.stagger-animation-slow > *:nth-child(1) {
+  animation-delay: 0ms;
+}
+.stagger-animation-slow > *:nth-child(2) {
+  animation-delay: 150ms;
+}
+.stagger-animation-slow > *:nth-child(3) {
+  animation-delay: 300ms;
+}
+.stagger-animation-slow > *:nth-child(4) {
+  animation-delay: 450ms;
+}
+.stagger-animation-slow > *:nth-child(5) {
+  animation-delay: 600ms;
+}
+.stagger-animation-slow > *:nth-child(6) {
+  animation-delay: 750ms;
+}
+
+/* Scale in with bounce animation for badges/pills */
+@keyframes scaleInBounce {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  60% {
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-in-bounce {
+  opacity: 0;
+  animation: scaleInBounce 0.5s ease-out forwards;
+}
+
+/* Fade in from left */
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-in-left {
+  opacity: 0;
+  animation: fadeInLeft 0.6s ease-out forwards;
+}
+
+/* Fade in from right */
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-in-right {
+  opacity: 0;
+  animation: fadeInRight 0.6s ease-out forwards;
+}
+
+/* Subtle pulse for interactive elements */
+@keyframes pulseSoft {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.animate-pulse-soft {
+  animation: pulseSoft 2s ease-in-out infinite;
+}
+
+/* Slide up with fade for cards */
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up-fade {
+  opacity: 0;
+  animation: slideUpFade 0.5s ease-out forwards;
+}
+
+/* =============================================
+   GALLERY PAGE ANIMATIONS
+   ============================================= */
+
+/* Gallery image reveal animation */
+@keyframes imageReveal {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-image-reveal {
+  opacity: 0;
+  animation: imageReveal 0.5s ease-out forwards;
+}
+
+/* Lightbox fade in */
+@keyframes lightboxFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-lightbox-fade {
+  animation: lightboxFadeIn 0.3s ease-out forwards;
+}
+
+/* Lightbox zoom in */
+@keyframes lightboxZoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-lightbox-zoom {
+  animation: lightboxZoomIn 0.3s ease-out forwards;
+}
+
+/* Gallery category section reveal */
+@keyframes gallerySectionReveal {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-gallery-section {
+  opacity: 0;
+  animation: gallerySectionReveal 0.7s ease-out forwards;
+}
+
+/* Respect reduced motion for gallery animations */
+@media (prefers-reduced-motion: reduce) {
+  .animate-image-reveal,
+  .animate-lightbox-fade,
+  .animate-lightbox-zoom,
+  .animate-gallery-section {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* =============================================
+   TEAM PAGE ANIMATIONS
+   ============================================= */
+
+/* Team grid stagger animation - up to 8 members */
+.team-stagger > * {
+  opacity: 0;
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.team-stagger > *:nth-child(1) {
+  animation-delay: 0ms;
+}
+.team-stagger > *:nth-child(2) {
+  animation-delay: 80ms;
+}
+.team-stagger > *:nth-child(3) {
+  animation-delay: 160ms;
+}
+.team-stagger > *:nth-child(4) {
+  animation-delay: 240ms;
+}
+.team-stagger > *:nth-child(5) {
+  animation-delay: 320ms;
+}
+.team-stagger > *:nth-child(6) {
+  animation-delay: 400ms;
+}
+.team-stagger > *:nth-child(7) {
+  animation-delay: 480ms;
+}
+.team-stagger > *:nth-child(8) {
+  animation-delay: 560ms;
+}
+
+/* Avatar glow effects on hover */
+.avatar-glow:hover {
+  box-shadow: 0 0 20px rgba(255, 153, 51, 0.3);
+}
+
+.avatar-glow-green:hover {
+  box-shadow: 0 0 20px rgba(19, 136, 8, 0.3);
+}
+
+/* Respect reduced motion for team animations */
+@media (prefers-reduced-motion: reduce) {
+  .team-stagger > * {
+    animation: none !important;
+    opacity: 1;
+  }
+
+  .avatar-glow:hover,
+  .avatar-glow-green:hover {
+    box-shadow: none;
   }
 }
