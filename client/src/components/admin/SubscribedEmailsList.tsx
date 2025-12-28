@@ -17,6 +17,8 @@ import { Input } from "@/components/ui/input";
 import type { SubscribedEmail } from "@/types/subscribedEmail";
 import { EmailCardSkeleton } from "@/components/skeletons";
 import { cn } from "@/lib/utils";
+import { useIsViewer } from "@/context/AdminContext";
+import { showToast } from "@/lib/toast";
 
 interface SubscribedEmailsListProps {
   emails: SubscribedEmail[];
@@ -38,6 +40,7 @@ export const SubscribedEmailsList: React.FC<SubscribedEmailsListProps> = ({
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [emailToDelete, setEmailToDelete] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const isViewer = useIsViewer();
 
   useEffect(() => {
     if (showSendModal || deleteModalOpen) {
@@ -72,8 +75,20 @@ export const SubscribedEmailsList: React.FC<SubscribedEmailsListProps> = ({
   };
 
   const handleDeleteClick = (id: string) => {
+    if (isViewer) {
+      showToast.info("You have view-only access");
+      return;
+    }
     setEmailToDelete(id);
     setDeleteModalOpen(true);
+  };
+
+  const handleSendModalOpen = () => {
+    if (isViewer) {
+      showToast.info("You have view-only access");
+      return;
+    }
+    setShowSendModal(true);
   };
 
   const handleDeleteConfirm = async () => {
@@ -168,7 +183,7 @@ export const SubscribedEmailsList: React.FC<SubscribedEmailsListProps> = ({
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-2">
           <Button
-            onClick={() => setShowSendModal(true)}
+            onClick={handleSendModalOpen}
             className="bg-india-green-500 hover:bg-india-green-600 text-white gap-2"
           >
             <Send className="w-4 h-4" />

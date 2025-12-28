@@ -13,40 +13,54 @@ import {
   getArchivedUserById,
   getMemberById,
 } from "../controllers/adminController";
-import { isLoggedIn, isAdmin } from "../middleware/authMiddleware";
+import {
+  isLoggedIn,
+  isAdminOrViewer,
+  isFullAdmin,
+} from "../middleware/authMiddleware";
 
 const router = Router();
 
-router.get("/members", isLoggedIn, isAdmin, getAllMembers);
-
-router.get("/member/:memberId", isLoggedIn, isAdmin, getMemberById);
-
-router.post("/members/:memberId/approve", isLoggedIn, isAdmin, approveMember);
-
-router.post("/members/:memberId/reject", isLoggedIn, isAdmin, rejectMember);
-
-router.get("/dashboard/stats", isLoggedIn, isAdmin, getDashboardStats);
-
-router.get("/users", isLoggedIn, isAdmin, getAllUsers);
-
-// Archive user (soft delete - moves to ArchivedUsers collection)
-router.post("/users/:userId/archive", isLoggedIn, isAdmin, archiveUser);
-
-// Archived users management
-router.get("/archived-users", isLoggedIn, isAdmin, getArchivedUsers);
+// Read-only routes (accessible by both admin and viewer)
+router.get("/members", isLoggedIn, isAdminOrViewer, getAllMembers);
+router.get("/member/:memberId", isLoggedIn, isAdminOrViewer, getMemberById);
+router.get("/dashboard/stats", isLoggedIn, isAdminOrViewer, getDashboardStats);
+router.get("/users", isLoggedIn, isAdminOrViewer, getAllUsers);
+router.get("/archived-users", isLoggedIn, isAdminOrViewer, getArchivedUsers);
 router.get(
   "/archived-users/:archivedUserId",
   isLoggedIn,
-  isAdmin,
+  isAdminOrViewer,
   getArchivedUserById
 );
-
-// Approve user deletion request (archives user)
 router.get(
   "/deletion-requests/:requestId",
   isLoggedIn,
-  isAdmin,
+  isAdminOrViewer,
   getPendingDeletionRequests
+);
+
+// Write routes (admin only - viewers blocked)
+router.post(
+  "/members/:memberId/approve",
+  isLoggedIn,
+  isAdminOrViewer,
+  isFullAdmin,
+  approveMember
+);
+router.post(
+  "/members/:memberId/reject",
+  isLoggedIn,
+  isAdminOrViewer,
+  isFullAdmin,
+  rejectMember
+);
+router.post(
+  "/users/:userId/archive",
+  isLoggedIn,
+  isAdminOrViewer,
+  isFullAdmin,
+  archiveUser
 );
 
 export default router;

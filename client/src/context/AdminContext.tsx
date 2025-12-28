@@ -9,6 +9,7 @@ import {
 
 interface AdminContextValue {
   isAdmin: boolean;
+  isViewer: boolean;
   showOverlays: boolean;
   toggleOverlays: () => void;
 }
@@ -22,8 +23,9 @@ interface AdminProviderProps {
 export function AdminProvider({ children }: AdminProviderProps) {
   const [showOverlays, setShowOverlays] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isViewer, setIsViewer] = useState(false);
 
-  // Check admin status from localStorage
+  // Check admin/viewer status from localStorage
   useEffect(() => {
     const checkAdminStatus = () => {
       try {
@@ -31,11 +33,14 @@ export function AdminProvider({ children }: AdminProviderProps) {
         if (userStr) {
           const user = JSON.parse(userStr);
           setIsAdmin(user?.role === "admin");
+          setIsViewer(user?.role === "viewer");
         } else {
           setIsAdmin(false);
+          setIsViewer(false);
         }
       } catch {
         setIsAdmin(false);
+        setIsViewer(false);
       }
     };
 
@@ -57,10 +62,11 @@ export function AdminProvider({ children }: AdminProviderProps) {
   const value = useMemo(
     () => ({
       isAdmin,
-      showOverlays: isAdmin && showOverlays,
+      isViewer,
+      showOverlays: (isAdmin || isViewer) && showOverlays,
       toggleOverlays: () => setShowOverlays((prev) => !prev),
     }),
-    [isAdmin, showOverlays]
+    [isAdmin, isViewer, showOverlays]
   );
 
   return (
@@ -90,5 +96,19 @@ function useIsAdmin(): boolean {
   return false;
 }
 
+// Hook to check if current user is viewer (read-only admin)
+function useIsViewer(): boolean {
+  try {
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      return user?.role === "viewer";
+    }
+  } catch {
+    // Ignore errors
+  }
+  return false;
+}
+
 // eslint-disable-next-line react-refresh/only-export-components
-export { useAdminContext, useIsAdmin };
+export { useAdminContext, useIsAdmin, useIsViewer };

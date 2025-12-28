@@ -15,6 +15,8 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ApproveMemberModal } from "../ApproveMemberModal";
 import { RejectMemberModal } from "../RejectMemberModal";
+import { useIsViewer } from "@/context/AdminContext";
+import { showToast } from "@/lib/toast";
 
 interface PendingApprovalsPanelProps {
   pendingMembers: Member[];
@@ -37,14 +39,23 @@ export function PendingApprovalsPanel({
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
   const [selectedMemberName, setSelectedMemberName] = useState<string>("");
+  const isViewer = useIsViewer();
 
   const handleApproveClick = (memberId: string, memberName: string) => {
+    if (isViewer) {
+      showToast.info("You have view-only access");
+      return;
+    }
     setSelectedMemberId(memberId);
     setSelectedMemberName(memberName);
     setIsApproveModalOpen(true);
   };
 
   const handleRejectClick = (memberId: string, memberName: string) => {
+    if (isViewer) {
+      showToast.info("You have view-only access");
+      return;
+    }
     setSelectedMemberId(memberId);
     setSelectedMemberName(memberName);
     setIsRejectModalOpen(true);

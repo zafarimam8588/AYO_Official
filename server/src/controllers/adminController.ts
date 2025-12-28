@@ -475,7 +475,10 @@ export const getPendingDeletionRequests = async (
 ): Promise<void> => {
   try {
     const adminUser = req.user as IUser;
-    if (!adminUser || adminUser.role !== "admin") {
+    if (
+      !adminUser ||
+      (adminUser.role !== "admin" && adminUser.role !== "viewer")
+    ) {
       res.status(403).json({
         success: false,
         message: "Admin access required",
@@ -806,7 +809,7 @@ export const getArchivedUsers = async (
 ): Promise<void> => {
   try {
     const user = req.user as IUser;
-    if (!user || user.role !== "admin") {
+    if (!user || (user.role !== "admin" && user.role !== "viewer")) {
       res.status(403).json({
         success: false,
         message: "Admin access required",
@@ -866,7 +869,7 @@ export const getArchivedUserById = async (
 ): Promise<void> => {
   try {
     const user = req.user as IUser;
-    if (!user || user.role !== "admin") {
+    if (!user || (user.role !== "admin" && user.role !== "viewer")) {
       res.status(403).json({
         success: false,
         message: "Admin access required",

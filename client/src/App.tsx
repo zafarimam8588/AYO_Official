@@ -177,7 +177,7 @@ function App() {
               <Route
                 path="/dashboard"
                 element={
-                  userRole === "admin" ? (
+                  userRole === "admin" || userRole === "viewer" ? (
                     <AdminDashboard />
                   ) : (
                     <SharedMemberProfile isAdmin={false} />
@@ -187,14 +187,20 @@ function App() {
 
               <Route
                 path="/admin/member/:memberId"
-                element={<SharedMemberProfile isAdmin={true} />}
+                element={
+                  userRole === "admin" || userRole === "viewer" ? (
+                    <SharedMemberProfile isAdmin={true} />
+                  ) : (
+                    <Navigate to="/login" replace />
+                  )
+                }
               />
 
               {/* Admin Picture Upload Route */}
               <Route
                 path="/admin/upload-pic"
                 element={
-                  userRole === "admin" ? (
+                  userRole === "admin" || userRole === "viewer" ? (
                     <UploadPicture />
                   ) : (
                     <Navigate to="/login" replace />
@@ -206,7 +212,7 @@ function App() {
               <Route
                 path="/admin/messages"
                 element={
-                  userRole === "admin" ? (
+                  userRole === "admin" || userRole === "viewer" ? (
                     <AdminMessagesPage />
                   ) : (
                     <Navigate to="/login" replace />
@@ -218,7 +224,7 @@ function App() {
               <Route
                 path="/admin/messages/:id"
                 element={
-                  userRole === "admin" ? (
+                  userRole === "admin" || userRole === "viewer" ? (
                     <MessageDetail />
                   ) : (
                     <Navigate to="/login" replace />

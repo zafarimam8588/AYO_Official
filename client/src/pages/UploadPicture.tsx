@@ -36,6 +36,8 @@ import {
   pageAcceptsImages,
 } from "@/types";
 import { cn } from "@/lib/utils";
+import { useIsViewer } from "@/context/AdminContext";
+import { showToast } from "@/lib/toast";
 
 type UploadStep = 1 | 2 | 3 | 4;
 
@@ -49,6 +51,7 @@ interface ExistingSlot {
 
 export default function UploadPicture() {
   const navigate = useNavigate();
+  const isViewer = useIsViewer();
 
   // Tab state
   const [activeTab, setActiveTab] = useState("upload");
@@ -227,6 +230,11 @@ export default function UploadPicture() {
 
   // Handle upload
   const handleUpload = async () => {
+    if (isViewer) {
+      showToast.info("You have view-only access");
+      return;
+    }
+
     if (!selectedPage || !imageNumber || !selectedFile) {
       toast.error("Please complete all steps");
       return;
@@ -316,6 +324,10 @@ export default function UploadPicture() {
 
   // Delete handlers
   const handleDeleteClick = (picture: Picture) => {
+    if (isViewer) {
+      showToast.info("You have view-only access");
+      return;
+    }
     setPictureToDelete(picture);
     setDeleteModalOpen(true);
   };

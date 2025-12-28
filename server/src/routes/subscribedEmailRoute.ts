@@ -6,16 +6,34 @@ import {
   deleteSubscribedEmail,
   sendEmailToAllSubscribers,
 } from "../controllers/subscribedEmailController";
-import { isAdmin, isLoggedIn } from "../middleware/authMiddleware";
+import {
+  isLoggedIn,
+  isAdminOrViewer,
+  isFullAdmin,
+} from "../middleware/authMiddleware";
 
 const router = Router();
 
+// Public route
 router.post("/subscribe-to-email", SubscribedEmail);
 
-router.get("/allEmails", isLoggedIn, isAdmin, getAllEmails);
+// Read-only route (accessible by both admin and viewer)
+router.get("/allEmails", isLoggedIn, isAdminOrViewer, getAllEmails);
 
-router.delete("/:id", isLoggedIn, isAdmin, deleteSubscribedEmail);
-
-router.post("/send-to-all", isLoggedIn, isAdmin, sendEmailToAllSubscribers);
+// Write routes (admin only - viewers blocked)
+router.delete(
+  "/:id",
+  isLoggedIn,
+  isAdminOrViewer,
+  isFullAdmin,
+  deleteSubscribedEmail
+);
+router.post(
+  "/send-to-all",
+  isLoggedIn,
+  isAdminOrViewer,
+  isFullAdmin,
+  sendEmailToAllSubscribers
+);
 
 export default router;

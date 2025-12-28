@@ -13,7 +13,11 @@ import {
   getNextImageNumber,
   replacePictureImage,
 } from "../controllers/pictureController";
-import { isLoggedIn, isAdmin } from "../middleware/authMiddleware";
+import {
+  isLoggedIn,
+  isAdminOrViewer,
+  isFullAdmin,
+} from "../middleware/authMiddleware";
 import { upload } from "../middleware/uploadMiddleware";
 
 const router = express.Router();
@@ -36,36 +40,38 @@ router.get("/slot", getImageBySlot);
 // Get next available image number for a page/category
 router.get("/next-number", getNextImageNumber);
 
-// Get picture statistics (admin only)
-router.get("/stats/summary", isLoggedIn, isAdmin, getPictureStats);
+// Get picture statistics (accessible by both admin and viewer)
+router.get("/stats/summary", isLoggedIn, isAdminOrViewer, getPictureStats);
 
 // Single picture by ID (must be after other /xyz routes to avoid conflicts)
 router.get("/:id", getPictureById);
 
-// ==================== Admin routes ====================
+// ==================== Admin routes (write operations) ====================
 
-// Upload new picture
+// Upload new picture (admin only - viewers blocked)
 router.post(
   "/upload",
   isLoggedIn,
-  isAdmin,
+  isAdminOrViewer,
+  isFullAdmin,
   upload.single("image"),
   uploadPicture
 );
 
-// Update picture metadata (move to different slot)
-router.put("/:id", isLoggedIn, isAdmin, updatePicture);
+// Update picture metadata (move to different slot) (admin only)
+router.put("/:id", isLoggedIn, isAdminOrViewer, isFullAdmin, updatePicture);
 
-// Replace picture image (keep slot)
+// Replace picture image (keep slot) (admin only)
 router.put(
   "/:id/replace",
   isLoggedIn,
-  isAdmin,
+  isAdminOrViewer,
+  isFullAdmin,
   upload.single("image"),
   replacePictureImage
 );
 
-// Delete picture
-router.delete("/:id", isLoggedIn, isAdmin, deletePicture);
+// Delete picture (admin only)
+router.delete("/:id", isLoggedIn, isAdminOrViewer, isFullAdmin, deletePicture);
 
 export default router;

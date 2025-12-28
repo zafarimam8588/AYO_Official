@@ -20,6 +20,8 @@ import {
   getShortImageIdentifier,
 } from "@/types";
 import toast from "react-hot-toast";
+import { useIsViewer } from "@/context/AdminContext";
+import { showToast } from "@/lib/toast";
 
 interface Filters {
   page: PageName | "all";
@@ -43,6 +45,7 @@ export function ImageManager({ onDelete, refreshTrigger }: ImageManagerProps) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [pictureToDelete, setPictureToDelete] = useState<Picture | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const isViewer = useIsViewer();
 
   // Fetch pictures
   const fetchData = useCallback(async () => {
@@ -90,6 +93,10 @@ export function ImageManager({ onDelete, refreshTrigger }: ImageManagerProps) {
 
   // Delete handlers
   const handleDeleteClick = (picture: Picture) => {
+    if (isViewer) {
+      showToast.info("You have view-only access");
+      return;
+    }
     if (onDelete) {
       onDelete(picture);
     } else {

@@ -17,7 +17,8 @@
     "format": "prettier --write \"src/**/*.{ts,json}\"",
     "format:check": "prettier --check \"src/**/*.{ts,json}\"",
     "type-check": "tsc --noEmit",
-    "validate": "npm run type-check && npm run lint && npm run format:check"
+    "validate": "npm run type-check && npm run lint && npm run format:check",
+    "create-viewer": "ts-node scripts/createViewerAdmin.ts"
   },
   "dependencies": {
     "@types/bcryptjs": "^2.4.6",

@@ -6,7 +6,7 @@ export interface IUser extends Document {
   password?: string;
   googleId?: string;
   fullName: string;
-  role: "member" | "admin";
+  role: "member" | "admin" | "viewer";
   profilePic?: string;
   isVerified: boolean;
   isProfileComplete: boolean;
@@ -172,7 +172,7 @@ export interface IArchivedUser extends Document {
   // Preserved User Data
   email: string;
   fullName: string;
-  role: "member" | "admin";
+  role: "member" | "admin" | "viewer";
   googleId?: string;
   profilePic?: string;
   isVerified: boolean;

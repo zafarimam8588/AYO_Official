@@ -16,12 +16,15 @@ import {
   DeleteModal,
 } from "@/components/admin/messages";
 import { useMediaQuery } from "@/hooks/use-mobile";
+import { useIsViewer } from "@/context/AdminContext";
+import { showToast } from "@/lib/toast";
 
 type FilterType = "all" | "unread" | "read" | "replied";
 
 export default function AdminMessagesPage() {
   const navigate = useNavigate();
   const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const isViewer = useIsViewer();
 
   // Data state
   const [messages, setMessages] = useState<ContactMessage[]>([]);
@@ -131,6 +134,10 @@ export default function AdminMessagesPage() {
   };
 
   const handleDeleteClick = (id: string) => {
+    if (isViewer) {
+      showToast.info("You have view-only access");
+      return;
+    }
     setMessageToDelete(id);
     setDeleteModalOpen(true);
   };
@@ -165,6 +172,11 @@ export default function AdminMessagesPage() {
   };
 
   const handleReply = async (messageId: string, replyText: string) => {
+    if (isViewer) {
+      showToast.info("You have view-only access");
+      return;
+    }
+
     try {
       setIsReplying(true);
       const response = await replyToContactMessage(messageId, {

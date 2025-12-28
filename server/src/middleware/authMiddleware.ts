@@ -81,3 +81,38 @@ export const isAdmin = (
   }
   next();
 };
+
+// Allows both admin and viewer roles to access admin routes (read operations)
+export const isAdminOrViewer = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
+  const user = req.user as IUser;
+  if (!user || (user.role !== "admin" && user.role !== "viewer")) {
+    res.status(403).json({
+      success: false,
+      message: "Admin access required",
+    });
+    return;
+  }
+  next();
+};
+
+// Blocks viewers, only allows full admins (for write operations)
+export const isFullAdmin = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
+  const user = req.user as IUser;
+  if (user.role === "viewer") {
+    res.status(403).json({
+      success: false,
+      message: "You have view-only access",
+      isViewerRestriction: true,
+    });
+    return;
+  }
+  next();
+};

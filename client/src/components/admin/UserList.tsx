@@ -2,6 +2,8 @@ import { useState } from "react";
 import { UserCheck, Users } from "lucide-react";
 import type { UserData } from "@/types";
 import { ArchiveUserModal } from "./ArchiveUserModal";
+import { useIsViewer } from "@/context/AdminContext";
+import { showToast } from "@/lib/toast";
 
 interface UsersListProps {
   users: UserData[];
@@ -19,11 +21,16 @@ export const UsersList = ({
   const [showArchiveModal, setShowArchiveModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
   const [isArchiving, setIsArchiving] = useState(false);
+  const isViewer = useIsViewer();
 
   // Suppress unused variable warning
   void _onUserClick;
 
   const handleArchiveClick = (user: UserData) => {
+    if (isViewer) {
+      showToast.info("You have view-only access");
+      return;
+    }
     setSelectedUser(user);
     setShowArchiveModal(true);
   };

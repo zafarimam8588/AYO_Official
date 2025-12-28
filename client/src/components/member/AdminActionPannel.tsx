@@ -3,6 +3,8 @@ import { CheckCircle, XCircle } from "lucide-react";
 import type { MemberProfile } from "@/types";
 import { RejectMemberModal } from "@/components/admin/RejectMemberModal";
 import { ApproveMemberModal } from "@/components/admin/ApproveMemberModal";
+import { useIsViewer } from "@/context/AdminContext";
+import { showToast } from "@/lib/toast";
 
 interface AdminActionPanelProps {
   profile: MemberProfile;
@@ -21,11 +23,16 @@ export const AdminActionPanel = ({
 }: AdminActionPanelProps) => {
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
+  const isViewer = useIsViewer();
 
   const canApprove = profile.memberStatus === "pending";
   const canReject = profile.memberStatus === "pending";
 
   const handleApproveClick = () => {
+    if (isViewer) {
+      showToast.info("You have view-only access");
+      return;
+    }
     setIsApproveModalOpen(true);
   };
 
@@ -35,6 +42,10 @@ export const AdminActionPanel = ({
   };
 
   const handleRejectClick = () => {
+    if (isViewer) {
+      showToast.info("You have view-only access");
+      return;
+    }
     setIsRejectModalOpen(true);
   };
 
