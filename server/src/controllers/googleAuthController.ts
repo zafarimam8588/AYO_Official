@@ -57,19 +57,14 @@ export const googleAuthCallback = async (
       profilePic: user.profilePic,
     };
 
-    // Set JWT as httpOnly secure cookie (more secure than URL params)
-    res.cookie("authToken", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
-
-    // Encode user data for frontend (token is now in cookie)
+    // Encode user data and token for frontend
+    // Note: Token is passed in URL for cross-origin compatibility (Vercel frontend + Render backend)
+    // The frontend should immediately store it in localStorage and redirect (clearing URL)
     const encodedUserData = encodeURIComponent(JSON.stringify(userData));
+    const encodedToken = encodeURIComponent(token);
 
     res.redirect(
-      `${process.env.FRONTEND_URL}/auth/callback?success=true&user=${encodedUserData}`
+      `${process.env.FRONTEND_URL}/auth/callback?success=true&user=${encodedUserData}&token=${encodedToken}`
     );
   } catch {
     res.redirect(`${process.env.FRONTEND_URL}/login?error=server_error`);
